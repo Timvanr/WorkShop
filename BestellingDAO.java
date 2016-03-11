@@ -61,72 +61,49 @@ public class BestellingDAO {
 			
 	}
 	
-	public static void updateBestelling(int bestelling_id) throws IOException, SQLException{
+public static void updateBestelling(int bestelling_id) throws IOException, SQLException{
 		
-		String updateBestellingQuery = "UPDATE bestelling SET artikel1_naam=?, artikel1_prijs=?, artikel1_aantal=?, artikel1_id=? "
-				//+ "artikel2_naam=?, artikel2_prijs=?, artikel2_aantal=?, artikel2_id=?,"
-				+ /*"artikel3_naam=?, artikel3_prijs=?, artikel3_aantal=?, artikel3_id=?,*/"WHERE bestelling_id=?;";
 		Connection connection = null;
-		PreparedStatement updateAdres = null;
-		String newArtikel1_naam = null;
-		String newArtikel1_prijsstring = null;
-		String newArtikel1_aantalstring = null;
-		String newArtikel1_idstring = null;
-		/*String newArtikel2_naam = null;
-		String newArtikel2_prijsstring = null;
-		String newArtikel2_aantalstring = null;
-		String newArtikel2_idstring = null;
-		String newArtikel3_naam = null;
-		String newArtikel3_prijsstring = null;
-		String newArtikel3_aantalstring = null;
-		String newArtikel3_idstring = null;
-		*/
-		int newArtikel1_prijs = 0;
-		int newArtikel1_aantal = 0;
-		int newArtikel1_id = 0;
-		/*int newArtikel2_prijs = 0;		DEZE EVEN LATEN ZITTEN MOET TOCH VERANDERD WORDEN LATER
-		int newArtikel2_aantal = 0;
-		int newArtikel2_id = 0;
-		int newArtikel3_prijs = 0;
-		int newArtikel3_aantal = 0;
-		int newArtikel3_id = 0;
-		*/
-		try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))){
+		PreparedStatement updateBestelling= null;
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		connection = DatabaseConnection.getConnection();
+		
+		for (int i = 1; i <= 3; i++){
+		String updateBestellingQuery = String.format("UPDATE bestelling SET artikel%d_naam=?, artikel%d_prijs=?, artikel%d_aantal=?, artikel%d_id=? WHERE bestelling_id=?", i, i, i, i);
+				
+		try {
+			System.out.println("enter new artikel naam");
+			String artikelNaam = br.readLine();
+			System.out.println("enter new prijs");
+			String artikelPrijsStr = br.readLine();
+			int artikelPrijs = Integer.parseInt(artikelPrijsStr);
+			System.out.println("enter new aantal");
+			String artikelAantalStr = br.readLine();
+			int artikelAantal = Integer.parseInt(artikelAantalStr);
+			System.out.println("enter new artikel id");
+			String artikelIdStr = br.readLine();
+			int artikelId = Integer.parseInt(artikelIdStr);
 			
-			System.out.println("enter new naam voor artikel1");
-			newArtikel1_naam = input.readLine();
-			System.out.println("enter new prijs voor artikel1");
-			newArtikel1_prijsstring = input.readLine();
-			newArtikel1_prijs = Integer.parseInt(newArtikel1_prijsstring);
-			System.out.println("enter new aantal voor artikel1");
-			newArtikel1_aantalstring = input.readLine();
-			newArtikel1_aantal = Integer.parseInt(newArtikel1_aantalstring);
-			System.out.println("enter new id voor artikel1");
-			newArtikel1_idstring = input.readLine();
-			newArtikel1_id = Integer.parseInt(newArtikel1_idstring);
+		
+			updateBestelling = connection.prepareStatement(updateBestellingQuery);
+			updateBestelling.setString(1, artikelNaam);
+			updateBestelling.setInt(2, artikelPrijs);
+			updateBestelling.setInt(3, artikelAantal);
+			updateBestelling.setInt(4, artikelId);
+			updateBestelling.setInt(5, bestelling_id);
+			
+			updateBestelling.executeUpdate();
 		}
 		catch (IOException ex){
 			ex.printStackTrace();
 		}
-		try{
-			connection = DatabaseConnection.getConnection();
-			updateAdres = connection.prepareStatement(updateBestellingQuery);
-			updateAdres.setString(1, newArtikel1_naam);
-			updateAdres.setInt(2, newArtikel1_prijs);
-			updateAdres.setInt(3, newArtikel1_aantal);
-			updateAdres.setInt(4, newArtikel1_id);
-			updateAdres.setInt(5, bestelling_id);
-			
-			updateAdres.executeUpdate();
-		}
 		catch (SQLException ex){
 			ex.printStackTrace();
 		}
-		finally {
-			updateAdres.close();
-			connection.close();
-		}
 		
+	}
+			updateBestelling.close();
+			connection.close();
 		
 	}
 	public static void deleteBestellingFromId(int bestelling_id) throws SQLException{
