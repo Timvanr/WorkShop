@@ -19,13 +19,13 @@ public class Bestellijst implements BestellingenDAO {
 		}
 	}
 	
-	public static Connection getConnection() throws SQLException {
+	public static Connection getConnection(String user, String password) throws SQLException {
 		if (connection == null || connection.isClosed()){
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
 				System.out.print("Driver loaded... ");
 			
-				connection = DriverManager.getConnection("jdbc:mysql://localhost/Adresboek", "root", "komt_ie");
+				connection = DriverManager.getConnection("jdbc:mysql://localhost/Adresboek", user, password);
 				System.out.println("Database connected!");
 				
 			} catch (ClassNotFoundException e) {
@@ -36,7 +36,7 @@ public class Bestellijst implements BestellingenDAO {
 		return connection;
 	}
 	
-	@Override
+	@Override//Het was volgens mij de bedoeling dat iedere keer als er ingelogd wordt er een nieuwe tabel wordt aangemaakt
 	public void maakTabel() throws SQLException {
 		getConnection();
 		
