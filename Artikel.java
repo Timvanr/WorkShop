@@ -1,28 +1,50 @@
 
 public class Artikel {
-
 	private int artikel_id;
 	private String artikel_naam;
-	private String artikel_prijs;
+	private int artikel_aantal;
+	private double artikel_prijs;
 	
-	public int getArtikel_id() {
+	public Artikel(int id, String naam, int aantal, double prijs){
+		this.artikel_id = id;
+		this.artikel_naam = naam;
+		this.artikel_aantal = aantal;
+		this.artikel_prijs = prijs;
+	}
+	
+	public Artikel(){
+		this(0, null, 0, 0.0);
+	}
+
+	public int getId() {
 		return artikel_id;
 	}
-	public void setArtikel_id(int artikel_id) {
-		this.artikel_id = artikel_id;
-	}
-	public String getArtikel_naam() {
+
+	public String getNaam() {
 		return artikel_naam;
 	}
-	public void setArtikel_naam(String artikel_naam) {
-		this.artikel_naam = artikel_naam;
+	
+	public int getAantal() {
+		return artikel_aantal;
 	}
-	public String getArtikel_prijs() {
+
+	public void setArtikel_aantal(int artikel_aantal) {
+		this.artikel_aantal = artikel_aantal;
+	}
+
+	public double getPrijs() {
 		return artikel_prijs;
 	}
-	public void setArtikel_prijs(String artikel_prijs) {
+
+	public void setArtikel_prijs(double artikel_prijs) {
 		this.artikel_prijs = artikel_prijs;
 	}
 	
+	public Artikel getRandomArtikel(){
+		return new Artikel();
+	}
 	
+	public String toString(){
+		return this.artikel_id + " " + this.artikel_naam + " " + this.artikel_aantal + " " + this.artikel_prijs;
+	}
 }
