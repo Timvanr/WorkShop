@@ -6,10 +6,12 @@ import java.sql.Connection;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import javax.sql.RowSet;
 import com.sun.rowset.JdbcRowSetImpl;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import org.apache.commons.validator.routines.*;
 public class KlantDAO {
@@ -19,32 +21,31 @@ public class KlantDAO {
 	final static String pw = "FrIkandel";
 	final static String URL = "jdbc:mysql://localhost:3306/workshop?rewriteBatchedStatements=true&autoReconnect=true&useSSL=false";
 	
-	
 	public static void createKlant(Klant klant) {
 
 		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email, straatnaam, postcode, toevoeging, huisnummer, woonplaats) values (?,?,?,?,?,?,?,?,?);";
-		String insertBestellingString = "INSERT INTO bestelling (artikel1_id, artikel1_naam, artikel1_prijs, artikel1_aantal, artikel2_id, "
-				+ "artikel2_naam, artikel2_prijs, artikel2_aantal, artikel3_id, artikel3_naam, artikel3_prijs, artikel3_aantal, klant_id) values (?,?,?,?,?,?,?,?,?,?,?,?, LAST_INSERT_ID());";
 		
 		PreparedStatement insertKlantNaam = null;
-		PreparedStatement insertBestelling = null;
 		Connection connection = null;
+		ResultSet rs = null;
 		
 		try {
 			connection = DatabaseConnection.getConnection();
-			insertKlantNaam = connection.prepareStatement(insertKlantNaamString);
-			
-			insertBestelling = connection.prepareStatement(insertBestellingString);
-			connection.setAutoCommit(false);
-			
+			insertKlantNaam = connection.prepareStatement(insertKlantNaamString, Statement.RETURN_GENERATED_KEYS);
+						
 			if (klant.heeftAdres() == false && klant.heeftBestelling() == false) {
 				insertKlantNaam.setString(1, klant.getVoornaam());
 				insertKlantNaam.setString(2, klant.getTussenvoegsel());
 				insertKlantNaam.setString(3, klant.getAchternaam());
 				insertKlantNaam.setString(4, klant.getEmail());
-
 				insertKlantNaam.executeUpdate();
-				//connection.commit();
+				rs = insertKlantNaam.getGeneratedKeys();
+				if (rs.isBeforeFirst()){
+					rs.next();
+					klant.setId(rs.getInt(1));
+				}
+				
+				
 			} else if (klant.heeftAdres() == true && klant.heeftBestelling() == false) {
 				insertKlantNaam.setString(1, klant.getVoornaam());
 				insertKlantNaam.setString(2, klant.getTussenvoegsel());
@@ -56,8 +57,12 @@ public class KlantDAO {
 				insertKlantNaam.setInt(8, klant.adres.getHuisnummer());
 				insertKlantNaam.setString(9, klant.adres.getWoonplaats());
 				insertKlantNaam.executeUpdate();
+				rs = insertKlantNaam.getGeneratedKeys();
+				if (rs.isBeforeFirst()){
+					rs.next();
+					klant.setId(rs.getInt(1));
+				}
 				
-				connection.commit();
 			}
 			else if (klant.heeftAdres() == false && klant.heeftBestelling() == true){
 				insertKlantNaam.setString(1, klant.getVoornaam());
@@ -65,20 +70,12 @@ public class KlantDAO {
 				insertKlantNaam.setString(3, klant.getAchternaam());
 				insertKlantNaam.setString(4, klant.getEmail());
 				insertKlantNaam.executeUpdate();
-				insertBestelling.setInt(1, klant.bestelling.getArtikel1_id());
-				insertBestelling.setString(2, klant.bestelling.getArtikel1_naam());
-				insertBestelling.setInt(3, klant.bestelling.getArtikel1_aantal());
-				insertBestelling.setInt(4, klant.bestelling.getArtikel1_prijs());
-				insertBestelling.setInt(5, klant.bestelling.getArtikel2_id());
-				insertBestelling.setString(6, klant.bestelling.getArtikel2_naam());
-				insertBestelling.setInt(7, klant.bestelling.getArtikel2_aantal());
-				insertBestelling.setInt(8, klant.bestelling.getArtikel2_prijs());
-				insertBestelling.setInt(9, klant.bestelling.getArtikel3_id());
-				insertBestelling.setString(10, klant.bestelling.getArtikel3_naam());
-				insertBestelling.setInt(11, klant.bestelling.getArtikel3_aantal());
-				insertBestelling.setInt(12, klant.bestelling.getArtikel3_prijs());
-				insertBestelling.executeUpdate();
-				connection.commit();
+				rs = insertKlantNaam.getGeneratedKeys();
+				if (rs.isBeforeFirst()){
+					rs.next();
+					klant.setId(rs.getInt(1));
+				}
+				BestellingDAO.voegBestellingToe(klant, klant.bestelling);
 			}
 			else if (klant.heeftAdres() == true && klant.heeftBestelling() == true){
 				insertKlantNaam.setString(1, klant.getVoornaam());
@@ -91,20 +88,12 @@ public class KlantDAO {
 				insertKlantNaam.setInt(8, klant.adres.getHuisnummer());
 				insertKlantNaam.setString(9, klant.adres.getWoonplaats());
 				insertKlantNaam.executeUpdate();
-				insertBestelling.setInt(1, klant.bestelling.getArtikel1_id());
-				insertBestelling.setString(2, klant.bestelling.getArtikel1_naam());
-				insertBestelling.setInt(3, klant.bestelling.getArtikel1_aantal());
-				insertBestelling.setInt(4, klant.bestelling.getArtikel1_prijs());
-				insertBestelling.setInt(5, klant.bestelling.getArtikel2_id());
-				insertBestelling.setString(6, klant.bestelling.getArtikel2_naam());
-				insertBestelling.setInt(7, klant.bestelling.getArtikel2_aantal());
-				insertBestelling.setInt(8, klant.bestelling.getArtikel2_prijs());
-				insertBestelling.setInt(9, klant.bestelling.getArtikel3_id());
-				insertBestelling.setString(10, klant.bestelling.getArtikel3_naam());
-				insertBestelling.setInt(11, klant.bestelling.getArtikel3_aantal());
-				insertBestelling.setInt(12, klant.bestelling.getArtikel3_prijs());
-				insertBestelling.executeUpdate();
-				connection.commit();
+				rs = insertKlantNaam.getGeneratedKeys();
+				if (rs.isBeforeFirst()){
+					rs.next();
+					klant.setId(rs.getInt(1));
+				}
+				BestellingDAO.voegBestellingToe(klant, klant.bestelling);
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -113,7 +102,8 @@ public class KlantDAO {
 				System.out.println();
 				connection.close();
 				insertKlantNaam.close();
-				insertBestelling.close();
+				rs.close();
+			
 			} catch (SQLException ex1) {
 				ex1.printStackTrace();
 			}
@@ -435,13 +425,13 @@ public static ArrayList<Klant> readAll() throws SQLException{
 		try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))){
 			EmailValidator emailVal = EmailValidator.getInstance();
 			boolean invalidInput = true;
-			System.out.println("enter new voornaam");
+			System.out.println("Nieuwe voornaam");
 			newVoornaam = input.readLine();
-			System.out.println("enter new achternaam");
+			System.out.println("Nieuwe achternaam");
 			newAchternaam = input.readLine();
-			System.out.println("enter new tussenvoegsel");
+			System.out.println("Nieuw tussenvoegsel");
 			newTussenvoegsel = input.readLine();
-			System.out.println("enter new Email adres");
+			System.out.println("Nieuw Email adres");
 			
 			while(invalidInput){
 				newEmail = input.readLine();
@@ -491,16 +481,16 @@ public static ArrayList<Klant> readAll() throws SQLException{
 			
 			try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))){
 				
-				System.out.println("enter new straatnaam");
+				System.out.println("Nieuwe straatnaam");
 				newStraatnaam = input.readLine();
-				System.out.println("enter new huisnummer");
+				System.out.println("Nieuw huisnummer");
 				newHuisnummerString = input.readLine();
 				newHuisnummer = Integer.parseInt(newHuisnummerString);
-				System.out.println("enter new toevoeging");
+				System.out.println("Nieuwe toevoeging");
 				newToevoeging = input.readLine();
-				System.out.println("enter new postcode");
+				System.out.println("Nieuwe postcode");
 				newPostcode = input.readLine();
-				System.out.println("enter new woonplaats");
+				System.out.println("Nieuwe woonplaats");
 				newWoonplaats = input.readLine();
 			}
 			catch (IOException ex){
@@ -546,7 +536,6 @@ public static ArrayList<Klant> readAll() throws SQLException{
 			
 			deleteFromId.executeUpdate();
 			
-			
 		}
 		catch (SQLException ex){
 			ex.printStackTrace();
@@ -570,6 +559,7 @@ public static ArrayList<Klant> readAll() throws SQLException{
 			deleteAllFromNaam.setString(3, tussenvoegsel);
 			
 			deleteAllFromNaam.executeUpdate();
+			
 		}
 		catch (SQLException ex){
 			ex.printStackTrace();
@@ -579,6 +569,6 @@ public static ArrayList<Klant> readAll() throws SQLException{
 			deleteAllFromNaam.close();
 		}
 	}
-	
+
 	
 }

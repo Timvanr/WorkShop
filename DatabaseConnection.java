@@ -19,8 +19,8 @@ public class DatabaseConnection {
 	
 	public static Connection getConnection(){
 		final String DRIVER_CLASS = "com.mysql.jdbc.Driver";
-		final String USERNAME = "sandermegens";
-		final String pw = "FrIkandel";
+		final String USERNAME = "scott";
+		final String pw = "tiger";
 		final String URL = "jdbc:mysql://localhost:3306/workshop?rewriteBatchedStatements=true&autoReconnect=true&useSSL=false";
 		Connection connection = null;
 		
