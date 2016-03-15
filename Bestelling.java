@@ -1,74 +1,47 @@
 import java.util.ArrayList;
 
+public class Bestelling{
 
-public class Bestelling {
-	private int id;
-	private int klant_id;
-	private ArrayList<Artikel> artikelen;
+	private int bestelling_id;
+	protected Artikel artikel;
+	ArrayList<Artikel> artikelen;
 	
-	public Bestelling(int klant_id, ArrayList<Artikel> artikelen){
-		this.klant_id = klant_id;
-		this.artikelen = artikelen;
+	public Bestelling(){
+		artikelen = new ArrayList<>();
 	}
 	
-	public Bestelling(int klant_id){
-		this.klant_id = klant_id;
-		this.artikelen = new ArrayList<>();
+	public int getBestelling_id() {
+		return bestelling_id;
+	}
+	public void setBestelling_id(int bestelling_id) {
+		this.bestelling_id = bestelling_id;
 	}
 	
-	public void voegArtikelToe(Artikel artikel){
-		if (this.artikelen.size() < 3)
-			this.artikelen.add(artikel);
-		else
-			System.out.println("De artikellijst is vol\nArtikel toevoeging is mislukt");
+	public int getArtikel_id() {
+		return artikel.getArtikel_id();
 	}
 	
-	public void verwijderArtikel(Artikel artikel){
-		if (this.artikelen.contains(artikel))
-			this.artikelen.remove(artikel);
-		else
-			System.out.println("Artikel staat niet in de lijst\nArtikel verwijdering is mislukt");
+	public String getArtikel_naam(){
+		return artikel.getArtikel_naam();
 	}
 	
-	public int getKlant_id(){
-		return this.klant_id;
+	public int getArtikel_aantal(){
+		return artikel.getArtikel_aantal();
 	}
 	
-	public Klant getKlant(){
-		return Klant.get(this.klant_id);
+	public double getArtikel_prijs(){
+		return artikel.getArtikel_prijs();
 	}
 	
-	public Artikel haalArtikel(int artikel_id){
-		Artikel artikel = null;
-		
-		for (Artikel a: this.artikelen){
-			if (a.getId() == artikel_id)
-				artikel = a;
+	public void voegArtikelToeAanBestelling(Artikel artikel){
+		artikelen.add(artikel);
+	}
+	
+	public void printBestelling(){
+		for (Artikel artikel: artikelen){
+			System.out.print(artikel.toString());
+			System.out.println();
 		}
-		
-		return artikel;
 	}
 	
-	public int getId(){
-		return this.id;
-	}
-	
-	public void setId(int id){
-		this.id = id;
-	}
-	
-	public ArrayList<Artikel> getArtikelen(){
-		return this.artikelen;
-	}
-	
-	@Override
-	public String toString(){
-		String artikellijst = "";
-		for (Artikel a: this.artikelen)
-			artikellijst += a.toString() + "\n";
-
-		return "Bestellingnummer: " + this.id + " Klantnummer: " + this.klant_id + "\n" + artikellijst;
-	}
-
-
 }
