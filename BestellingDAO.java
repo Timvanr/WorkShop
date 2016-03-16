@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +19,7 @@ public class BestellingDAO {
 	final static String URL = "jdbc:mysql://localhost:3306/workshop?rewriteBatchedStatements=true&autoReconnect=true&useSSL=false";
 	
 	
-	public static void voegBestellingToe(Klant klant, Bestelling bestelling) throws SQLException {
+	public void voegBestellingToe(Klant klant, Bestelling bestelling) throws SQLException {
 		String sql = "";
 		String values = "";
 		Connection connection = DatabaseConnection.getConnection();
@@ -37,7 +38,7 @@ public class BestellingDAO {
 			voegToe.setInt(2 + i * 4, bestelling.artikelen.get(i).getId());
 			voegToe.setString(3 + i * 4, bestelling.artikelen.get(i).getNaam());
 			voegToe.setInt(4 + i * 4, bestelling.artikelen.get(i).getAantal());
-			voegToe.setDouble(5 + i * 4, bestelling.artikelen.get(i).getPrijs());
+			voegToe.setBigDecimal(5 + i * 4, bestelling.artikelen.get(i).getPrijs());
 		}	
 		voegToe.executeUpdate();
 		
@@ -52,7 +53,7 @@ public class BestellingDAO {
 	}
 
 	
-	public static void readFromBestellingId(int bestelling_id) throws SQLException{
+	public void readFromBestellingId(int bestelling_id) throws SQLException{
 		RowSet rowSet = new JdbcRowSetImpl();
 		String query = "Select * from klant INNER JOIN bestelling ON klant.klant_id=bestelling.klant_id where bestelling_id=?;";
 		ResultSetMetaData rsMD = null;
@@ -95,7 +96,7 @@ public class BestellingDAO {
 			
 	}
 	
-	public static void updateBestelling(Bestelling bestelling) throws IOException, SQLException{
+	public void updateBestelling(Bestelling bestelling) throws IOException, SQLException{
 		
 		Connection connection = null;
 		PreparedStatement updateBestelling= null;
@@ -108,12 +109,13 @@ public class BestellingDAO {
 			String updateBestellingQuery = String.format("UPDATE bestelling SET artikel%d_naam=?, artikel%d_prijs=?, artikel%d_aantal=?, artikel%d_id=? WHERE bestelling_id=?" , i, i, i, i);
 				
 		try {
+			BigDecimal artikelPrijs = new BigDecimal(0);
 			System.out.println("enter new artikel naam");
 			String artikelNaam = br.readLine();
 			bestelling.artikelen.get(i).setNaam(artikelNaam);
 			System.out.println("enter new prijs");
 			String artikelPrijsStr = br.readLine();
-			double artikelPrijs = Double.parseDouble(artikelPrijsStr);
+			artikelPrijs = artikelPrijs.add(new BigDecimal(artikelPrijsStr));
 			bestelling.artikelen.get(i).setPrijs(artikelPrijs);
 			System.out.println("enter new aantal");
 			String artikelAantalStr = br.readLine();
@@ -128,7 +130,7 @@ public class BestellingDAO {
 		
 			updateBestelling = connection.prepareStatement(updateBestellingQuery);
 			updateBestelling.setString(1, artikelNaam);
-			updateBestelling.setDouble(2, artikelPrijs);
+			updateBestelling.setBigDecimal(2, artikelPrijs);
 			updateBestelling.setInt(3, artikelAantal);
 			updateBestelling.setInt(4, artikelId);
 			updateBestelling.setInt(5, bestellingId);
@@ -148,7 +150,7 @@ public class BestellingDAO {
 			connection.close();
 		
 	}
-	public static void deleteBestellingFromId(int bestelling_id) throws SQLException{
+	public void deleteBestellingFromId(int bestelling_id) throws SQLException{
 		Connection connection = null;
 		PreparedStatement deleteFromId = null;
 		String query = "Delete FROM `bestelling` WHERE bestelling_id=?;";

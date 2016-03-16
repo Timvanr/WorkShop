@@ -21,7 +21,7 @@ public class KlantDAO {
 	final static String pw = "FrIkandel";
 	final static String URL = "jdbc:mysql://localhost:3306/workshop?rewriteBatchedStatements=true&autoReconnect=true&useSSL=false";
 	
-	public static void createKlant(Klant klant) {
+	public void createKlant(Klant klant) {
 
 		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email, straatnaam, postcode, toevoeging, huisnummer, woonplaats) values (?,?,?,?,?,?,?,?,?);";
 		
@@ -75,7 +75,8 @@ public class KlantDAO {
 					rs.next();
 					klant.setId(rs.getInt(1));
 				}
-				BestellingDAO.voegBestellingToe(klant, klant.bestelling);
+				BestellingDAO bDao = new BestellingDAO();
+				bDao.voegBestellingToe(klant, klant.bestelling);
 			}
 			else if (klant.heeftAdres() == true && klant.heeftBestelling() == true){
 				insertKlantNaam.setString(1, klant.getVoornaam());
@@ -93,7 +94,8 @@ public class KlantDAO {
 					rs.next();
 					klant.setId(rs.getInt(1));
 				}
-				BestellingDAO.voegBestellingToe(klant, klant.bestelling);
+				BestellingDAO bDao = new BestellingDAO();
+				bDao.voegBestellingToe(klant, klant.bestelling);
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -111,7 +113,7 @@ public class KlantDAO {
 
 	}
 
-	public static Klant readKlantWithId(int klant_id) throws SQLException {
+	public Klant readKlantWithId(int klant_id) throws SQLException {
 		String query = "SELECT * FROM klant WHERE klant_id =?";
 
 		Klant klant = null;
@@ -145,7 +147,7 @@ public class KlantDAO {
 		return klant;
 	}
 
-	public static Klant readKlantWithFirstName(String voornaam) throws SQLException {
+	public Klant readKlantWithFirstName(String voornaam) throws SQLException {
 		String query = "Select * from klant where voornaam='" + voornaam + "'";
 
 		Klant klant = null;
@@ -190,7 +192,7 @@ public class KlantDAO {
 
 	}
 
-	public static Klant readKlantWithFirstLastName(String voornaam, String tussenvoegsel, String achternaam)
+	public Klant readKlantWithFirstLastName(String voornaam, String tussenvoegsel, String achternaam)
 			throws SQLException {
 		String query2 = "Select * from klant where voornaam='" + voornaam + "' AND tussenvoegsel='" + tussenvoegsel
 				+ "' AND achternaam='" + achternaam + "'";
@@ -237,7 +239,7 @@ public class KlantDAO {
 		return klant;
 	}
 
-	public static void readKlantWithAddress(String straatnaam, int huisnummer, String toevoeging, String postcode, String woonplaats) throws SQLException{
+	public void readKlantWithAddress(String straatnaam, int huisnummer, String toevoeging, String postcode, String woonplaats) throws SQLException{
 		
 		RowSet rowSet = new JdbcRowSetImpl();
 		String query = "Select * from `klant` where straatnaam=? AND huisnummer=? AND toevoeging=? AND postcode=? AND woonplaats=?";
@@ -284,7 +286,7 @@ public class KlantDAO {
 		
 		}
 	
-	public static void readKlantWithStraatnaam(String straatnaam) throws SQLException{
+	public void readKlantWithStraatnaam(String straatnaam) throws SQLException{
 		
 		String query = "Select * from `klant` where straatnaam='" + straatnaam + "'";
 		RowSet rowSet = null;
@@ -328,7 +330,7 @@ public class KlantDAO {
 		}
 	}
 	
-public static void readKlantWithPostCodeHuisnummer(String postcode, int huisnummer) throws SQLException{
+public void readKlantWithPostCodeHuisnummer(String postcode, int huisnummer) throws SQLException{
 		
 		String query = "Select * from `klant` where postcode=? AND huisnummer=?";
 		RowSet rowSet = new JdbcRowSetImpl();
@@ -374,7 +376,7 @@ public static void readKlantWithPostCodeHuisnummer(String postcode, int huisnumm
 		}
 	}
 	
-public static ArrayList<Klant> readAll() throws SQLException{
+public ArrayList<Klant> readAll() throws SQLException{
 	ArrayList<Klant> klantList = new ArrayList<>();
 	RowSet rowSet = new JdbcRowSetImpl();
 	String query = "Select * from `klant`";
@@ -413,7 +415,7 @@ public static ArrayList<Klant> readAll() throws SQLException{
 	return klantList;
 }
 	
-	public static void UpdateKlantNaam(int klant_id) throws IOException, SQLException{
+	public void UpdateKlantNaam(int klant_id) throws IOException, SQLException{
 		String updateKlantNaamquery = "UPDATE klant SET voornaam=?, achternaam=?, tussenvoegsel=?, email=? WHERE klant_id=?;";
 		Connection connection = null;
 		PreparedStatement updateKlantNaam = null;
@@ -468,7 +470,7 @@ public static ArrayList<Klant> readAll() throws SQLException{
 		}
 	}
 		
-		public static void UpdateKlantAddress(int klant_id) throws IOException, SQLException{
+		public void UpdateKlantAddress(int klant_id) throws IOException, SQLException{
 			String updateAdresQuery = "UPDATE klant SET straatnaam=?, huisnummer=?, toevoeging=?, postcode=?, woonplaats=? WHERE klant_id=?;";
 			Connection connection = null;
 			PreparedStatement updateAdres = null;
@@ -518,13 +520,13 @@ public static ArrayList<Klant> readAll() throws SQLException{
 		
 	}
 		
-	public static void updateKlantNaamAddress(int klant_id) throws SQLException, IOException{
+	public void updateKlantNaamAddress(int klant_id) throws SQLException, IOException{
 		UpdateKlantNaam(klant_id);
 		UpdateKlantAddress(klant_id);
 	}
 
 
-	public static void deleteAllFromKlantId(int klant_id) throws SQLException{
+	public void deleteAllFromKlantId(int klant_id) throws SQLException{
 		Connection connection = null;
 		PreparedStatement deleteFromId = null;
 		String query = "Delete FROM `klant`, `bestelling` USING `klant`, `bestelling` WHERE klant.klant_id=bestelling.klant_id AND klant.klant_id=?;";
@@ -546,7 +548,7 @@ public static ArrayList<Klant> readAll() throws SQLException{
 		}
 	}
 
-	public static void deleteAllFromKlantNaam(String voornaam, String achternaam, String tussenvoegsel) throws SQLException{
+	public void deleteAllFromKlantNaam(String voornaam, String achternaam, String tussenvoegsel) throws SQLException{
 		Connection connection = null;
 		PreparedStatement deleteAllFromNaam = null;
 		String query = "Delete FROM klant, bestelling USING klant, bestelling WHERE klant.klant_id=bestelling.klant_id AND klant.voornaam=? AND klant.achternaam=? AND klant.tussenvoegsel=?;";
