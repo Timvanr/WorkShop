@@ -151,171 +151,22 @@ public class KeuzeMenu {
 		int keuze = input.nextInt();
 		switch (keuze){
 		case 1:
-			createKlant();
+			klantDAO.createKlant();;
 			break;
 		case 2:
-			createKlantAdres();
+			klantDAO.createKlantNaamEnAdres();
 			break;
 		case 3:
-			createKlantAdresBestelling();
+			klantDAO.createKlantEnAdresEnBestelling();
 			break;
 		case 4:
-			createKlantBestelling();
+			klantDAO.createKlantEnBestelling();
 			break;
 		default:
 			System.out.println("Ongeldige keuze!");
 			createKlantMenu();
 			break;
 		}
-	}
-
-	private void createKlant() {
-		//Klant gegevens
-		System.out.println("Vul de gevraagde gegevens correct in: ");
-		System.out.print("Voornaam: ");
-		String voornaam = input.next();
-		System.out.print("Tussenvoegsel: ");
-		String tussenvoegsel = input.next();
-		System.out.print("Achternaam: ");
-		String achternaam = input.next();
-		System.out.print("Emailadres: ");
-		String email = input.next();
-
-		klant.setVoornaam(voornaam);
-		klant.setTussenvoegsel(tussenvoegsel);
-		klant.setAchternaam(achternaam);
-		klant.setEmail(email);
-
-		klantDAO.createKlant(klant);
-		System.out.println(klant.toString() + " is aangemaakt");
-	}
-	
-	private void createKlantAdres() {
-		//Klant gegevens:
-		System.out.print("Voornaam: ");
-		String voornaam = input.next();
-		System.out.print("Tussenvoegsel: ");
-		String tussenvoegsel = input.next();
-		System.out.print("Achternaam: ");
-		String achternaam = input.next();
-		System.out.print("Emailadres: ");
-		String email = input.next();
-		//Adres gegevens: 
-		System.out.print("Straatnaam: ");
-		String straatnaam = input.next();
-		System.out.print("Postcode: ");
-		String postcode = input.next();
-		System.out.print("Toevoeging: ");
-		String toevoeging = input.next();
-		System.out.print("Huisnummer: ");
-		int huisnummer = input.nextInt();
-		System.out.print("Woonplaats: ");
-		String woonplaats = input.next();
-
-		klant.setVoornaam(voornaam);
-		klant.setTussenvoegsel(tussenvoegsel);
-		klant.setAchternaam(achternaam);
-		klant.setEmail(email);
-		klant.adres.setStraatnaam(straatnaam);
-		klant.adres.setPostcode(postcode);
-		klant.adres.setToevoeging(toevoeging);
-		klant.adres.setHuisnummer(huisnummer);
-		klant.adres.setWoonplaats(woonplaats);
-
-
-		klantDAO.createKlant(klant);
-		System.out.println(klant.toString() + klant.adres.toString() 
-		+ " is aangemaakt");
-	}
-
-	private void createKlantAdresBestelling() {
-		//Klant gegevens:
-		System.out.print("Voornaam: ");
-		String voornaam = input.next();
-		System.out.print("Tussenvoegsel: ");
-		String tussenvoegsel = input.next();
-		System.out.print("Achternaam: ");
-		String achternaam = input.next();
-		System.out.print("Emailadres: ");
-		String email = input.next();
-		//Adres gegevens: 
-		System.out.print("Straatnaam: ");
-		String straatnaam = input.next();
-		System.out.print("Postcode: ");
-		String postcode = input.next();
-		System.out.print("Toevoeging: ");
-		String toevoeging = input.next();
-		System.out.print("Huisnummer: ");
-		int huisnummer = input.nextInt();
-		System.out.print("Woonplaats: ");
-		String woonplaats = input.next();
-
-		klant.setVoornaam(voornaam);
-		klant.setTussenvoegsel(tussenvoegsel);
-		klant.setAchternaam(achternaam);
-		klant.setEmail(email);
-		klant.adres.setStraatnaam(straatnaam);
-		klant.adres.setPostcode(postcode);
-		klant.adres.setToevoeging(toevoeging);
-		klant.adres.setHuisnummer(huisnummer);
-		klant.adres.setWoonplaats(woonplaats);
-
-		//Bestelling gegevens
-		int keuze = 1;
-		while (keuze == 1)  {
-			System.out.println("Welke artikel wilt u toevoegen: ");
-			System.out.println("Artikel id:");
-			int id = input.nextInt();
-			System.out.print("Artikel naam: ");
-			String artikelnaam = input.next();
-			System.out.print("Hoeveel wilt u van dit artkel: ");
-			int aantal = input.nextInt();
-			System.out.print("Wat is de prijs van dit artikel: ");
-			double prijs = input.nextDouble();
-
-			Artikel artikelAdd = new Artikel(id, artikelnaam, prijs, aantal);
-			klant.bestelling.voegArtikelToeAanBestelling(artikelAdd);
-			System.out.print("Wilt u meer artikelen toevoegen (kies 1 voor ja en 2 voor nee)? ");
-			keuze = input.nextInt();
-		}
-		klantDAO.createKlant(klant);
-	}
-
-	private void createKlantBestelling() {
-		//Klant gegevens: 
-		System.out.print("Voornaam: ");
-		String voornaam = input.next();
-		System.out.print("Tussenvoegsel: ");
-		String tussenvoegsel = input.next();
-		System.out.print("Achternaam: ");
-		String achternaam = input.next();
-		System.out.print("Emailadres: ");
-		String email = input.next();
-
-		klant.setVoornaam(voornaam);
-		klant.setTussenvoegsel(tussenvoegsel);
-		klant.setAchternaam(achternaam);
-		klant.setEmail(email);
-
-		//Bestelling gegevens
-		int keuze = 1;
-		while (keuze == 1)  {
-			System.out.println("Welke artikel wilt u toevoegen: ");
-			System.out.println("Artikel id:");
-			int id = input.nextInt();
-			System.out.print("Artikel naam: ");
-			String artikelnaam = input.next();
-			System.out.print("Hoeveel wilt u van dit artkel: ");
-			int aantal = input.nextInt();
-			System.out.print("Wat is de prijs van dit artikel: ");
-			double prijs = input.nextDouble();
-
-			Artikel artikelAdd = new Artikel(id, artikelnaam, prijs, aantal);
-			klant.bestelling.voegArtikelToeAanBestelling(artikelAdd);
-			System.out.print("Wilt u meer artikelen toevoegen (kies 1 voor ja en 2 voor nee)? ");
-			keuze = input.nextInt();
-		}
-		klantDAO.createKlant(klant);
 	}
 	
 	private void readKlantMenu() {
