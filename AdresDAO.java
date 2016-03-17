@@ -6,14 +6,13 @@ public interface AdresDAO {
 	//static connection getConnection(String user, String password) throws SQLException; evt inloggen met DBnaam?
 	void createAdres(Adres adres) throws SQLException;
 	Adres readAdres(int id) throws SQLException;//optioneel met toString()
-	void updateAdres(Adres adres) throws SQLException;
 	void deleteAdres(int id) throws SQLException;
-	Adres[] readAll() throws SQLException;//of set of arraylist?
+	Hashset<Adres> readAll() throws SQLException;//of set of arraylist?
 	Adres searchById(int id) throws SQLException;
-	Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer, String toevoeging) throws SQLException;//moet ook werken als toevoeging null is
-	Adres[] searchByStraat(String straat) throws SQLException;
-	Adres[] searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging) throws SQLException;//kan bijvoorbeeld searchByStraat() callen
-	Klant[] getKlant(int id) throws SQLException;
+	int searchByPostcodeAndHuisnummer(String postcode, int huisnummer, String toevoeging) throws SQLException;//moet ook werken als toevoeging null is
+	Hashset<Adres> searchByStraat(String straat) throws SQLException;
+	Hashset<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging) throws SQLException;//kan bijvoorbeeld searchByStraat() callen
+	Hashset<Adres> getKlant(int id) throws SQLException;
 	void close() throws SQLException;	
 }
 /*
