@@ -2,12 +2,15 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.sql.Connection;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import javax.sql.RowSet;
 import com.sun.rowset.JdbcRowSetImpl;
 import java.sql.PreparedStatement;
@@ -20,96 +23,389 @@ public class KlantDAO {
 	final static String USERNAME = "sandermegens";
 	final static String pw = "FrIkandel";
 	final static String URL = "jdbc:mysql://localhost:3306/workshop?rewriteBatchedStatements=true&autoReconnect=true&useSSL=false";
-	
-	public static void createKlant(Klant klant) {
+	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+	Scanner scInput = new Scanner(System.in);
 
-		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email, straatnaam, postcode, toevoeging, huisnummer, woonplaats) values (?,?,?,?,?,?,?,?,?);";
-		
-		PreparedStatement insertKlantNaam = null;
-		Connection connection = null;
-		ResultSet rs = null;
-		
-		try {
-			connection = DatabaseConnection.getConnection();
-			insertKlantNaam = connection.prepareStatement(insertKlantNaamString, Statement.RETURN_GENERATED_KEYS);
-						
-			if (klant.heeftAdres() == false && klant.heeftBestelling() == false) {
-				insertKlantNaam.setString(1, klant.getVoornaam());
-				insertKlantNaam.setString(2, klant.getTussenvoegsel());
-				insertKlantNaam.setString(3, klant.getAchternaam());
-				insertKlantNaam.setString(4, klant.getEmail());
-				insertKlantNaam.executeUpdate();
-				rs = insertKlantNaam.getGeneratedKeys();
-				if (rs.isBeforeFirst()){
-					rs.next();
-					klant.setId(rs.getInt(1));
-				}
-				
-				
-			} else if (klant.heeftAdres() == true && klant.heeftBestelling() == false) {
-				insertKlantNaam.setString(1, klant.getVoornaam());
-				insertKlantNaam.setString(2, klant.getTussenvoegsel());
-				insertKlantNaam.setString(3, klant.getAchternaam());
-				insertKlantNaam.setString(4, klant.getEmail());
-				insertKlantNaam.setString(5, klant.adres.getStraatnaam());
-				insertKlantNaam.setString(6, klant.adres.getPostcode());
-				insertKlantNaam.setString(7, klant.adres.getToevoeging());
-				insertKlantNaam.setInt(8, klant.adres.getHuisnummer());
-				insertKlantNaam.setString(9, klant.adres.getWoonplaats());
-				insertKlantNaam.executeUpdate();
-				rs = insertKlantNaam.getGeneratedKeys();
-				if (rs.isBeforeFirst()){
-					rs.next();
-					klant.setId(rs.getInt(1));
-				}
-				
-			}
-			else if (klant.heeftAdres() == false && klant.heeftBestelling() == true){
-				insertKlantNaam.setString(1, klant.getVoornaam());
-				insertKlantNaam.setString(2, klant.getTussenvoegsel());
-				insertKlantNaam.setString(3, klant.getAchternaam());
-				insertKlantNaam.setString(4, klant.getEmail());
-				insertKlantNaam.executeUpdate();
-				rs = insertKlantNaam.getGeneratedKeys();
-				if (rs.isBeforeFirst()){
-					rs.next();
-					klant.setId(rs.getInt(1));
-				}
-				BestellingDAO.voegBestellingToe(klant, klant.bestelling);
-			}
-			else if (klant.heeftAdres() == true && klant.heeftBestelling() == true){
-				insertKlantNaam.setString(1, klant.getVoornaam());
-				insertKlantNaam.setString(2, klant.getTussenvoegsel());
-				insertKlantNaam.setString(3, klant.getAchternaam());
-				insertKlantNaam.setString(4, klant.getEmail());
-				insertKlantNaam.setString(5, klant.adres.getStraatnaam());
-				insertKlantNaam.setString(6, klant.adres.getPostcode());
-				insertKlantNaam.setString(7, klant.adres.getToevoeging());
-				insertKlantNaam.setInt(8, klant.adres.getHuisnummer());
-				insertKlantNaam.setString(9, klant.adres.getWoonplaats());
-				insertKlantNaam.executeUpdate();
-				rs = insertKlantNaam.getGeneratedKeys();
-				if (rs.isBeforeFirst()){
-					rs.next();
-					klant.setId(rs.getInt(1));
-				}
-				BestellingDAO.voegBestellingToe(klant, klant.bestelling);
-			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			try {
-				System.out.println();
-				connection.close();
-				insertKlantNaam.close();
-				rs.close();
-			
-			} catch (SQLException ex1) {
-				ex1.printStackTrace();
+	public void createKlant() throws IOException, SQLException {
+
+		int klantId = 0;
+		System.out.println("Vul de gevraagde gegevens correct in: ");
+		System.out.print("Voornaam: ");
+		String voornaam = input.readLine();
+		System.out.print("Tussenvoegsel: ");
+		String tussenvoegsel = input.readLine();
+		System.out.print("Achternaam: ");
+		String achternaam = input.readLine();
+
+		boolean invalidInput = true;
+		EmailValidator emailVal = EmailValidator.getInstance();
+		System.out.print("Emailadres: ");
+		String email = null;
+		while (invalidInput) {
+			email = input.readLine();
+			if (emailVal.isValid(email)) {
+				invalidInput = false;
+			} else {
+				System.out
+						.println("E-mailadres voldoet niet aan de eisen voor een geldig E-mailadres, probeer opnieuw");
 			}
 		}
 
+		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email) values (?,?,?,?);";
+
+		PreparedStatement insertKlantNaam = null;
+		ResultSet rs = null;
+
+		try (Connection connection = DatabaseConnection.getConnection()) {
+			insertKlantNaam = connection.prepareStatement(insertKlantNaamString, Statement.RETURN_GENERATED_KEYS);
+
+			insertKlantNaam.setString(1, voornaam);
+			insertKlantNaam.setString(2, tussenvoegsel);
+			insertKlantNaam.setString(3, achternaam);
+			insertKlantNaam.setString(4, email);
+			insertKlantNaam.executeUpdate();
+			rs = insertKlantNaam.getGeneratedKeys();
+			if (rs.isBeforeFirst()) {
+				rs.next();
+				klantId = rs.getInt(1);
+				System.out.println("Klant met klantnummer " + klantId + " is succesvol aangemaakt");
+			}
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			rs.close();
+			insertKlantNaam.close();
+		}
+
 	}
+
+	public void createKlantNaamEnAdres() throws IOException, SQLException {
+
+		int klantId = 0;
+		int adresId = 0;
+		System.out.println("Vul de gevraagde gegevens correct in: ");
+		System.out.print("Voornaam: ");
+		String voornaam = input.readLine();
+		System.out.print("Tussenvoegsel: ");
+		String tussenvoegsel = input.readLine();
+		System.out.print("Achternaam: ");
+		String achternaam = input.readLine();
+
+		boolean invalidInput = true;
+		EmailValidator emailVal = EmailValidator.getInstance();
+		System.out.print("Emailadres: ");
+		String email = null;
+		while (invalidInput) {
+			email = scInput.next();
+			if (emailVal.isValid(email)) {
+				invalidInput = false;
+				break;
+			} else
+				System.out
+						.println("E-mailadres voldoet niet aan de eisen voor een geldig E-mailadres, probeer opnieuw");
+		}
+		System.out.print("Straatnaam: ");
+		String straatnaam = input.readLine();
+		System.out.print("Huisnummer: ");
+		String huisnummerstr = input.readLine();
+		int huisnummer = Integer.parseInt(huisnummerstr);
+		System.out.print("Toevoeging: ");
+		String toevoeging = input.readLine();
+		System.out.print("Postcode: ");
+		String postcode = input.readLine();
+		System.out.print("Woonplaats: ");
+		String woonplaats = input.readLine();
+
+		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email) values (?,?,?,?);";
+		String insertAdresString = "INSERT INTO ADRES (straatnaam, huisnummer, toevoeging, postcode, woonplaats, klant_id) VALUES (?,?,?,?,?,?);";
+		PreparedStatement insertKlantNaam = null;
+		PreparedStatement insertAdres = null;
+		ResultSet rs = null;
+		ResultSet rsAdres = null;
+
+		try (Connection connection = DatabaseConnection.getConnection()) {
+			connection.setAutoCommit(false);
+			insertKlantNaam = connection.prepareStatement(insertKlantNaamString, Statement.RETURN_GENERATED_KEYS);
+
+			insertKlantNaam.setString(1, voornaam);
+			insertKlantNaam.setString(2, tussenvoegsel);
+			insertKlantNaam.setString(3, achternaam);
+			insertKlantNaam.setString(4, email);
+			insertKlantNaam.executeUpdate();
+			rs = insertKlantNaam.getGeneratedKeys();
+			if (rs.isBeforeFirst()) {
+				rs.next();
+				klantId = rs.getInt(1);
+			}
+			insertAdres = connection.prepareStatement(insertAdresString, Statement.RETURN_GENERATED_KEYS);
+			insertAdres.setString(1, straatnaam);
+			insertAdres.setInt(2, huisnummer);
+			insertAdres.setString(3, toevoeging);
+			insertAdres.setString(4, postcode);
+			insertAdres.setString(5, woonplaats);
+			insertAdres.setInt(6, klantId);
+			insertAdres.executeUpdate();
+			rsAdres = insertAdres.getGeneratedKeys();
+			if (rsAdres.isBeforeFirst()) {
+				rsAdres.next();
+				adresId = rsAdres.getInt(1);
+			}
+			connection.commit();
+			System.out
+					.println("Klant met klantnummer " + klantId + " en adres-id " + adresId + " succesvol aangemaakt");
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			rs.close();
+			rsAdres.close();
+			insertKlantNaam.close();
+			insertAdres.close();
+		}
+	}
+
+	public void createKlantEnAdresEnBestelling() throws IOException, SQLException {
+		int klantId = 0;
+		int adresId = 0;
+		int bestellingId = 0;
+		Bestelling bestelling = new Bestelling();
+		System.out.println("Vul de gevraagde gegevens correct in: ");
+		System.out.print("Voornaam: ");
+		String voornaam = input.readLine();
+		System.out.print("Tussenvoegsel: ");
+		String tussenvoegsel = input.readLine();
+		System.out.print("Achternaam: ");
+		String achternaam = input.readLine();
+
+		boolean invalidInput = true;
+		EmailValidator emailVal = EmailValidator.getInstance();
+		System.out.print("Emailadres: ");
+		String email = null;
+		while (invalidInput) {
+			email = scInput.next();
+			if (emailVal.isValid(email)) {
+				invalidInput = false;
+				break;
+			} else
+				System.out
+						.println("E-mailadres voldoet niet aan de eisen voor een geldig E-mailadres, probeer opnieuw");
+		}
+		System.out.print("Straatnaam: ");
+		String straatnaam = input.readLine();
+		System.out.print("Huisnummer: ");
+		String huisnummerstr = input.readLine();
+		int huisnummer = Integer.parseInt(huisnummerstr);
+		System.out.print("Toevoeging: ");
+		String toevoeging = input.readLine();
+		System.out.print("Postcode: ");
+		String postcode = input.readLine();
+		System.out.print("Woonplaats: ");
+		String woonplaats = input.readLine();
+		
+		int keuze = 1;
+		while (keuze == 1)  {
+			System.out.println("Welke artikel wilt u toevoegen: ");
+			System.out.println("Artikel id:");
+			int id = scInput.nextInt();
+			System.out.print("Artikel naam: ");
+			String artikelnaam = scInput.next();
+			System.out.print("Hoeveel wilt u van dit artkel: ");
+			int aantal = scInput.nextInt();
+			System.out.print("Wat is de prijs van dit artikel: ");
+			BigDecimal prijs = scInput.nextBigDecimal();
+
+			Artikel artikelAdd = new Artikel(id, artikelnaam, prijs, aantal);
+			bestelling.artikelen.add(artikelAdd);
+			System.out.print("Wilt u meer artikelen toevoegen (kies 1 voor ja en 2 voor nee)? ");
+			keuze = scInput.nextInt();
+		}
+
+		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email) values (?,?,?,?);";
+		String insertAdresString = "INSERT INTO ADRES (straatnaam, huisnummer, toevoeging, postcode, woonplaats, klant_id) VALUES (?,?,?,?,?,?);";
+
+		PreparedStatement insertKlantNaam = null;
+		PreparedStatement insertAdres = null;
+		PreparedStatement voegToe = null;
+		ResultSet rs = null;
+		ResultSet rsAdres = null;
+		ResultSet rsBestelling = null;
+
+		try (Connection connection = DatabaseConnection.getConnection()) {
+			connection.setAutoCommit(false);
+			insertKlantNaam = connection.prepareStatement(insertKlantNaamString, Statement.RETURN_GENERATED_KEYS);
+
+			insertKlantNaam.setString(1, voornaam);
+			insertKlantNaam.setString(2, tussenvoegsel);
+			insertKlantNaam.setString(3, achternaam);
+			insertKlantNaam.setString(4, email);
+			insertKlantNaam.executeUpdate();
+			rs = insertKlantNaam.getGeneratedKeys();
+			if (rs.isBeforeFirst()) {
+				rs.next();
+				klantId = rs.getInt(1);
+			}
+			insertAdres = connection.prepareStatement(insertAdresString, Statement.RETURN_GENERATED_KEYS);
+			insertAdres.setString(1, straatnaam);
+			insertAdres.setInt(2, huisnummer);
+			insertAdres.setString(3, toevoeging);
+			insertAdres.setString(4, postcode);
+			insertAdres.setString(5, woonplaats);
+			insertAdres.setInt(6, klantId);
+			insertAdres.executeUpdate();
+			rsAdres = insertAdres.getGeneratedKeys();
+			if (rsAdres.isBeforeFirst()) {
+				rsAdres.next();
+				adresId = rsAdres.getInt(1);
+			}
+
+			String sql = "";
+			String values = "";
+
+			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
+				sql += String.format(", artikel%d_id, artikel%d_naam, artikel%d_aantal, artikel%d_prijs", i + 1, i + 1,
+						i + 1, i + 1);
+				values += ", ?, ?, ?, ?";
+			}
+
+			voegToe = connection.prepareStatement(
+					String.format("INSERT INTO Bestelling (klant_id%s) VALUES (?%s)", sql, values),
+					Statement.RETURN_GENERATED_KEYS);
+			voegToe.setInt(1, klantId);
+			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
+				voegToe.setInt(2 + i * 4, bestelling.artikelen.get(i).getId());
+				voegToe.setString(3 + i * 4, bestelling.artikelen.get(i).getNaam());
+				voegToe.setInt(4 + i * 4, bestelling.artikelen.get(i).getAantal());
+				voegToe.setBigDecimal(5 + i * 4, bestelling.artikelen.get(i).getPrijs());
+			}
+			voegToe.executeUpdate();
+
+			rsBestelling = voegToe.getGeneratedKeys();
+			if (rsBestelling.isBeforeFirst()) {
+				rsBestelling.next();
+				bestellingId = rsBestelling.getInt(1);
+			}
+			connection.commit();
+			System.out.println(
+					"Klant met klantnummer " + klantId + ", adres-id " + adresId + " en bestelnummer" + bestellingId + " succesvol toegevoegd");
+			connection.commit();
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			rs.close();
+			rsAdres.close();
+			rsBestelling.close();
+			insertKlantNaam.close();
+			insertAdres.close();
+			voegToe.close();
+		}
+
+	}
+
+	public void createKlantEnBestelling() throws IOException, SQLException {
+		Bestelling bestelling = new Bestelling();
+		int klantId = 0;
+		int bestellingId = 0;
+		System.out.println("Vul de gevraagde gegevens correct in: ");
+		System.out.print("Voornaam: ");
+		String voornaam = input.readLine();
+		System.out.print("Tussenvoegsel: ");
+		String tussenvoegsel = input.readLine();
+		System.out.print("Achternaam: ");
+		String achternaam = input.readLine();
+
+		boolean invalidInput = true;
+		EmailValidator emailVal = EmailValidator.getInstance();
+		System.out.print("Emailadres: ");
+		String email = null;
+		while (invalidInput) {
+			email = scInput.next();
+			if (emailVal.isValid(email)) {
+				invalidInput = false;
+			} else
+				System.out
+						.println("E-mailadres voldoet niet aan de eisen voor een geldig E-mailadres, probeer opnieuw");
+		}
+		int keuze = 1;
+		while (keuze == 1)  {
+			System.out.println("Welke artikel wilt u toevoegen: ");
+			System.out.println("Artikel id:");
+			int id = scInput.nextInt();
+			System.out.print("Artikel naam: ");
+			String artikelnaam = scInput.next();
+			System.out.print("Hoeveel wilt u van dit artkel: ");
+			int aantal = scInput.nextInt();
+			System.out.print("Wat is de prijs van dit artikel: ");
+			BigDecimal prijs = scInput.nextBigDecimal();
+
+			Artikel artikelAdd = new Artikel(id, artikelnaam, prijs, aantal);
+			bestelling.artikelen.add(artikelAdd);
+			System.out.print("Wilt u meer artikelen toevoegen (kies 1 voor ja en 2 voor nee)? ");
+			keuze = scInput.nextInt();
+		}
+
+		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email) values (?,?,?,?);";
+		PreparedStatement insertKlantNaam = null;
+		PreparedStatement voegToe = null;
+		ResultSet rs = null;
+		ResultSet rsBestelling = null;
+
+		try (Connection connection = DatabaseConnection.getConnection()) {
+			connection.setAutoCommit(false);
+			insertKlantNaam = connection.prepareStatement(insertKlantNaamString, Statement.RETURN_GENERATED_KEYS);
+
+			insertKlantNaam.setString(1, voornaam);
+			insertKlantNaam.setString(2, tussenvoegsel);
+			insertKlantNaam.setString(3, achternaam);
+			insertKlantNaam.setString(4, email);
+			insertKlantNaam.executeUpdate();
+			rs = insertKlantNaam.getGeneratedKeys();
+			if (rs.isBeforeFirst()) {
+				rs.next();
+				klantId = rs.getInt(1);
+			}
+			String sql = "";
+			String values = "";
+
+			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
+				sql += String.format(", artikel%d_id, artikel%d_naam, artikel%d_aantal, artikel%d_prijs", i + 1, i + 1,
+						i + 1, i + 1);
+				values += ", ?, ?, ?, ?";
+			}
+
+			voegToe = connection.prepareStatement(
+					String.format("INSERT INTO Bestelling (klant_id%s) VALUES (?%s)", sql, values), Statement.RETURN_GENERATED_KEYS);
+			
+			voegToe.setInt(1, klantId);
+			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
+				voegToe.setInt(2 + i * 4, bestelling.artikelen.get(i).getId());
+				voegToe.setString(3 + i * 4, bestelling.artikelen.get(i).getNaam());
+				voegToe.setInt(4 + i * 4, bestelling.artikelen.get(i).getAantal());
+				voegToe.setBigDecimal(5 + i * 4, bestelling.artikelen.get(i).getPrijs());
+			}
+			voegToe.executeUpdate();
+
+			rsBestelling = voegToe.getGeneratedKeys();
+			if (rsBestelling.isBeforeFirst()) {
+				rsBestelling.next();
+				bestellingId = rsBestelling.getInt(1);
+			}
+			connection.commit();
+		
+
+		System.out.println("Klant met klantnummer " + klantId + " en bestelnummer " + bestellingId + " succesvol aangemaakt");
+	}
+	catch (SQLException ex){
+
+		ex.printStackTrace();
+	}
+	 finally {
+		rs.close();
+		rsBestelling.close();
+		insertKlantNaam.close();
+		voegToe.close();
+	}
+}
 
 	public static Klant readKlantWithId(int klant_id) throws SQLException {
 		String query = "SELECT * FROM klant WHERE klant_id =?";
