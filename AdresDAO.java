@@ -19,7 +19,7 @@ public interface AdresDAO {
 Gerbrich vind dat iedere methode moet beginnen met getConnection() en moet eindigen met connection.close().
 Is wel zo safe en volgens mij ook nodig als meerdere mensen tegelijk de database in moeten kunnen
 
-Volgens mij is het niet nodig om een aparte klasse te maken voor de connectie
+Foutje: searchById is tzelfde als readAdres.. not DRY
 
 Zullen we de Git editor gebruiken om deze file aan te passen?
 
