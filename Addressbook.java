@@ -5,35 +5,26 @@ public class Addressbook {
 	
 	public Addressbook() {
 		// Ensure the connection is initialized
-		Addressbook.getConnection();
-	}
-	//test connection
-	public static boolean isNewConnectionNeeded() throws SQLException{
-		boolean isNewConnectionNeeded = false;
-		
-		if (connection == null){
-			isNewConnectionNeeded = true;
-		}else if (connection.isClosed()){
-			isNewConnectionNeeded = true;
+		try {
+			getConnection();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-				
-		return isNewConnectionNeeded;
 	}
 	
-	public static Connection getConnection(){
-		try{
-			Class.forName("com.mysql.jdbc.Driver");
-						
-			if (isNewConnectionNeeded()){
+	
+	public static Connection getConnection() throws SQLException{
+		if (connection == null || connection.isClosed())
+			try{
+				Class.forName("com.mysql.jdbc.Driver");
 				System.out.print("Driver loaded... ");
 				connection = DriverManager.getConnection("jdbc:mysql://localhost/Adresboek", "root", "komt_ie");
 				System.out.println("Database connected!");
+			
+			}catch (ClassNotFoundException e){
+				e.printStackTrace();
 			}
-		}catch (SQLException e){
-			e.printStackTrace();
-		}catch (ClassNotFoundException e){
-			e.printStackTrace();
-		}
 		return connection;
 	}
 	
@@ -41,29 +32,55 @@ public class Addressbook {
 		connection.close();
 		System.out.println("Connection closed!");
 	}
+	
+	public void createTable() throws SQLException{
+		getConnection();
+		
+		Statement createTable = connection.createStatement();
+		createTable.execute("CREATE TABLE Klant (" +
+				"klant_id INT AUTO_INCREMENT PRIMARY KEY, " +
+				"voornaam VARCHAR(45), " +
+				"tussenvoegsel VARCHAR(8), " +
+				"achternaam VARCHAR(45), " +
+				"adres_id INT, " +
+				"email VARCHAR(180)" +
+				")");
+		close();
+		
+		System.out.println("Table Klant created!");
+	}
 		
 	public void voegKlantToe(Klant klant) throws SQLException{
 		getConnection();
 		
 		PreparedStatement voegKlantToe = connection.prepareStatement
-				("INSERT INTO Klant (voornaam, tussenvoegsel, achternaam, straat, huisnummer, toevoeging, postcode, woonplaats, email)\n" +
-				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				("INSERT INTO Klant (voornaam, tussenvoegsel, achternaam, email) " +
+				"VALUES (?, ?, ?, ?)");
 		
 		voegKlantToe.setString(1, klant.getVoornaam());
 		voegKlantToe.setString(2, klant.getTussenvoegsel());
 		voegKlantToe.setString(3, klant.getAchternaam());
-		voegKlantToe.setString(4, klant.getStraatnaam());
-		voegKlantToe.setInt(5, klant.getHuisnummer());
-		voegKlantToe.setString(6, klant.getToevoeging());
-		voegKlantToe.setString(7, klant.getPostcode());
-		voegKlantToe.setString(8, klant.getWoonplaats());
-		voegKlantToe.setString(9, klant.getEmail());
+		voegKlantToe.setString(4, klant.getEmail());
 		voegKlantToe.executeUpdate();
 				
 		System.out.println(klant.toString());
 		System.out.println("is toegevoegd");
 		System.out.println();
 		
+		close();
+	}
+	
+	public void addAdres_id(int klant_id, int adres_id) throws SQLException{
+		getConnection();
+		
+		PreparedStatement addAdres_id = connection.prepareStatement("UPDATE Klant SET adres_id = ? WHERE klant_id = ?");
+		addAdres_id.setInt(1, adres_id);
+		addAdres_id.setInt(2, klant_id);
+		addAdres_id.executeUpdate();
+		
+		System.out.println("Adresnummer is toegevoegd");
+		
+		close();
 	}
 	
 	public static Klant haalKlant(int klant_id) throws SQLException{
@@ -78,27 +95,28 @@ public class Addressbook {
 		if (gegevens.next()){
 			Naam naam = new Naam(gegevens.getString(1), gegevens.getString(2), gegevens.getString(3));
 		
-			Adres adres = new Adres(gegevens.getString(4), gegevens.getInt(5), gegevens.getString(6), gegevens.getString(7), gegevens.getString(8));
+			int adres_id = gegevens.getInt(4);
 		
-			String email = gegevens.getString(9);
+			String email = gegevens.getString(5);
 			
-			Klant klant = new Klant(naam, adres, email);
+			Klant klant = new Klant(naam, adres_id, email);
 			
 			return klant;
 		}else{
 			System.out.println("Deze klant is niet bekend in de database!");
 		}
 		System.out.println();
+				
 		return null;
 	}
-	
+	/*
 	public void printGegevens(int klant_id) throws SQLException{
 		Klant klant = haalKlant(klant_id);
 		
 		System.out.println("De volgende klantgegevens zijn bij ons bekend:");
 		klant.toString();
 	}
-	
+	*/
 	public void updateNaam (int klant_id, Naam naam) throws SQLException{
 		getConnection();
 		
@@ -114,7 +132,7 @@ public class Addressbook {
 		System.out.println("Naam is veranderd!");
 		System.out.println();
 	}
-	
+	/*
 	public void updateAdres (int klant_id, Adres adres) throws SQLException{
 		getConnection();
 		
@@ -132,7 +150,7 @@ public class Addressbook {
 		System.out.println("Adres is veranderd!");
 		System.out.println();
 	}
-	
+	*/
 	public void updateEmail(int klant_id, String email) throws SQLException{
 		getConnection();
 		
@@ -143,10 +161,12 @@ public class Addressbook {
 		updateEmail.setInt(2, klant_id);
 		updateEmail.executeUpdate();
 		
+		close();
+		
 		System.out.println("E-mailadres is veranderd!");
 		System.out.println();
 	}
-	
+	/*
 	public void lijstVanKlanten() throws SQLException{
 		getConnection();
 		
@@ -163,7 +183,7 @@ public class Addressbook {
 		}
 		System.out.println();
 	}
-	
+	*/
 	public void verwijderKlant(int klant_id) throws SQLException{
 		getConnection();
 		
