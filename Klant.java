@@ -11,8 +11,7 @@ public class Klant {
 	EmailValidator emailVal = EmailValidator.getInstance();
 	
 	public Klant(){
-		bestelling = new Bestelling();
-		adres = new Adres();
+		
 	}
 	
 	public int getId(){
