@@ -61,7 +61,7 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public Adres readAdres(int adres_id) throws SQLException {
-	getConnection();
+		getConnection();
 		String query = "SELECT * FROM adres WHERE adres_id =?";
 
 		Adres adres = null;
@@ -98,8 +98,39 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public Set<Adres> readAll() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		getConnection();
+		Set<Adres> adresLijst = new LinkedHashSet<>();
+		RowSet rowSet = new JdbcRowSetImpl();
+		String query = "Select * from 'adres'";
+		
+		try {
+			
+			rowSet.setUrl(URL);
+			rowSet.setPassword(pw);
+			rowSet.setUsername(USERNAME);
+			rowSet.setCommand(query);
+			
+			rowSet.execute();
+			
+			while(rowSet.next()){
+				Adres adres = new Adres();
+				adres.setId(rowSet.getInt(1));
+				adres.setStraatnaam(rowSet.getString(2));
+				adres.setHuisnummer(rowSet.getInt(3));
+				adres.setPostcode(rowSet.getString(4));
+				adres.setWoonplaats(rowSet.getString(5));
+				adres.setToevoeging(rowSet.getString(6));
+	
+				adresLijst.add(adres);			
+			}
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
+		finally {
+			rowSet.close();
+		}
+		return adresLijst;
 	}
 
 	@Override
