@@ -153,9 +153,41 @@ public class Adreslijst implements AdresDAO {
 	}
 
 	@Override
-	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer,	String toevoeging) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer, String toevoeging) throws SQLException {
+
+			Adres adres = new Adres();
+			RowSet rowSet = new JdbcRowSetImpl();
+			String query = "Select * from `adres` where postcode=? AND huisnummer=? AND toevoeging=?;";
+
+			try {
+				rowSet.setUrl(URL);
+				rowSet.setPassword(PASSWORD);
+				rowSet.setUsername(USERNAME);
+				rowSet.setCommand(query);
+				rowSet.setString(1, postcode);
+				rowSet.setInt(2, huisnummer);
+				rowSet.setString(3, toevoeging);
+
+				rowSet.execute();
+
+				if (!rowSet.next()) {
+					System.out.println("no entries found with this address");
+				} else {
+					adres.setAdresId(rowSet.getInt(1);
+					adres.setStraatnaam(rowSet.getString(3));
+					adres.setHuisnummer(rowSet.getInt(4));
+					adres.setToevoeging(rowSet.getString(5));
+					adres.setPostcode(rowSet.getString(6));
+					adres.setWoonplaats(rowSet.getString(7));
+											
+					}
+													
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			} finally {
+				rowSet.close();
+			}
+			return adres;
 	}
 
 	@Override
@@ -194,10 +226,37 @@ public class Adreslijst implements AdresDAO {
 	}
 
 	@Override
-	public Klant[] getKlant(int id) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public HashSet<Klant> getKlant(int adres_id) throws SQLException{
+			HashSet<Klant> klantSet = new HashSet<>();
+			RowSet rowSet = new JdbcRowSetImpl();
+			String query = "Select * from `klant` where adres_id=?;";
+
+			try {
+
+				rowSet.setUrl(URL);
+				rowSet.setPassword(PASSWORD);
+				rowSet.setUsername(USERNAME);
+				rowSet.setCommand(query);
+				rowSet.setInt(1, adres_id);
+				rowSet.execute();
+
+				while (rowSet.next()) {
+					Klant klant = new Klant();
+					klant.setId(rowSet.getInt(1));
+					klant.setVoornaam(rowSet.getString(2));
+					klant.setAchternaam(rowSet.getString(3));
+					klant.setTussenvoegsel(rowSet.getString(4));
+					klant.setEmail(rowSet.getString(5));
+					
+					klantSet.add(klant);
+				}
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			} finally {
+				rowSet.close();
+			}
+			return klantSet;
+		}
 
 	@Override
 	public void close() throws SQLException {
