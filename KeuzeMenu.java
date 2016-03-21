@@ -5,20 +5,20 @@ import java.util.Scanner;
 public class KeuzeMenu {
 	Scanner input;
 	Klant klant;
-	KlantDAO klantDAO;
+	Klantbestand klantBestand;
 	Bestelling bestelling;
 	Artikel artikel;
-	BestellingDAO bestellingDAO;
+	Bestellijst bestelLijst;
 
 	static final KeuzeMenu keuzeMenu = new KeuzeMenu();
 
 	public KeuzeMenu(){
 		input = new Scanner(System.in);
 		klant = new Klant();
-		klantDAO = new KlantDAO();
+		klantBestand = new Klantbestand();
 		bestelling = new Bestelling();
 		artikel = new Artikel();
-		bestellingDAO = new BestellingDAO();
+		bestelLijst = new Bestellijst();
 	}
 
 	public static void main(String[] args){
@@ -138,7 +138,7 @@ public class KeuzeMenu {
 		}
 	}
 
-		private void createKlantMenu() {
+		private void createKlantMenu() throws SQLException, IOException {
 			System.out.println("SELECTEER EEN CREATE METHODE");
 			System.out.println("");
 			System.out.println("1. Create klant");
@@ -150,16 +150,16 @@ public class KeuzeMenu {
 			int keuze = input.nextInt();
 			switch (keuze){
 			case 1:
-				klantDAO.createKlant();;
+				klantBestand.createKlant();;
 				break;
 			case 2:
-				klantDAO.createKlantNaamEnAdres();
+				klantBestand.createKlantEnAdres();
 				break;
 			case 3:
-				klantDAO.createKlantEnAdresEnBestelling();
+				klantBestand.createKlantEnAdresEnBestelling();
 				break;
 			case 4:
-				klantDAO.createKlantEnBestelling();
+				klantBestand.createKlantEnBestelling();
 				break;
 			default:
 				System.out.println("Ongeldige keuze!");
@@ -167,8 +167,6 @@ public class KeuzeMenu {
 				break;
 			}
 		}
-	
-	}
 	
 	private void updateKlantMenu(){
 		System.out.println("SELECTEER EEN UPDATE METHODE");
@@ -200,7 +198,7 @@ public class KeuzeMenu {
 		System.out.print("Geef uw klant ID: ");
 		int id = input.nextInt();
 		try {
-			klantDAO.UpdateKlantNaam(id);
+			klantBestand.UpdateKlantNaam(id);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {		
@@ -212,7 +210,7 @@ public class KeuzeMenu {
 		System.out.print("Geef uw klant ID: ");
 		int id = input.nextInt();
 		try {
-			klantDAO.UpdateKlantAddress(id);
+			klantBestand.UpdateKlantAddress(id); // moet Adreslijst worden
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -224,7 +222,8 @@ public class KeuzeMenu {
 		System.out.print("Geef uw klant ID: ");
 		int id = input.nextInt();
 		try {
-			klantDAO.updateKlantNaamAddress(id);
+			klantBestand.UpdateKlantNaam(id);
+			adreslijst.UpdateAdres(); // of zoiets nog even kijken wat dit wordt...
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -265,7 +264,7 @@ public class KeuzeMenu {
 		String achternaam = input.next();
 
 		try {
-			klantDAO.deleteAllFromKlantNaam(voornaam, achternaam, tussenvoegsel);
+			klantBestand.deleteAllFromKlantNaam(voornaam, achternaam, tussenvoegsel);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -275,7 +274,7 @@ public class KeuzeMenu {
 		System.out.print("Geef uw klant ID (alle uw gegevens worden verwijderd): ");
 		int id = input.nextInt();
 		try {
-			klantDAO.deleteAllFromKlantId(id);
+			klantBestand.deleteAllFromKlantId(id);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -283,7 +282,7 @@ public class KeuzeMenu {
 
 	private void exit() {
 		// flush.screen(); //moet de juist code nog vinden om beeldscherm leeg te krijgen
-		System.out.println("Uw bewerking is beeinding.");
+		System.out.println("Uw bewerking is beeindigd.");
 
 	}
 }
