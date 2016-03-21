@@ -69,19 +69,19 @@ public class Adreslijst implements AdresDAO {
 		String query = "SELECT * FROM adres WHERE adres_id =?";
 
 		Adres adres = null;
-		RowSet rowSet = new JdbcRowSetImpl();
+		RowSet rowSet = new JdbcRowSetImpl(connection);
 
 		try {
-			rowSet.setUrl(URL);
-			rowSet.setPassword(PASSWORD);
-			rowSet.setUsername(USERNAME);
 			rowSet.setCommand(query);
 			rowSet.setInt(1, adres_id);
 			rowSet.execute();
 
 			ResultSetMetaData rsMD = rowSet.getMetaData();
 
-			// deze weergave is niet noodzakelijk maar vond ik wel netjes dus overgenomenv van Sander
+			if (!rowSet.isBeforeFirst()) {
+				System.out.println("no entries found with this address");
+			}
+			else{
 			for (int i = 1; i <= rsMD.getColumnCount(); i++) {
 				System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
 			}
@@ -90,6 +90,7 @@ public class Adreslijst implements AdresDAO {
 				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
 					System.out.printf("%-12s\t", rowSet.getObject(i));
 				}
+			}
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
