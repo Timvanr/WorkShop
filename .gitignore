@@ -11,3 +11,7 @@
 /DatabaseConnection.class
 /Klant.class
 /KlantDAO.class
+/AdresDAO.class
+/Adreslijst.class
+/Naam.class
+/Klantbestand.class

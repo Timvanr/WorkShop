@@ -3,24 +3,29 @@ import java.sql.SQLException;
 
 public class Klant {
 	private int klant_id;
-	private Naam naam;
+	private String voornaam;
+	private String tussenvoegsel;
+	private String achternaam;
+	Adres adres;
 	private int adres_id;
 	private String email;
 			
 	public Klant(){
-		this(new Naam(), 0, "Sorry geen e-mail");
+		
 	}
 	
-	public Klant(Naam naam, int adres_id, String email){
-		this.naam = naam;
-		this.adres_id = adres_id;
+	public Klant(String voornaam, String tussenvoegsel, String achternaam, String email){
+		this.voornaam = voornaam;
+		this.achternaam = achternaam;
+		this.tussenvoegsel = tussenvoegsel;
 		this.email = email;
 		
 	}
 	
 	public static Klant get(int id){
+		Klantbestand klantb = new Klantbestand();
 		try {
-			return Addressbook.haalKlant(id);
+			return klantb.readKlantWithId(id);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -48,27 +53,27 @@ public class Klant {
 	}
 
 	public String getVoornaam() {
-		return this.naam.getVoornaam();
+		return this.voornaam;
 	}
 
 	public void setVoornaam(String voornaam) {
-		this.naam.setVoornaam(voornaam);
+		this.voornaam = voornaam;
 	}
 	
 	public String getTussenvoegsel() {
-		return this.naam.getTussenvoegsel();
+		return this.tussenvoegsel;
 	}
 
 	public void setTussenvoegsel(String tussenvoegsel) {
-		this.naam.setTussenvoegsel(tussenvoegsel);
+		this.tussenvoegsel = tussenvoegsel;
 	}
 	
 	public String getAchternaam() {
-		return this.naam.getAchternaam();
+		return this.achternaam;
 	}
 
 	public void setAchternaam(String achternaam) {
-		this.naam.setAchternaam(achternaam);
+		this.achternaam = achternaam;
 	}
 	
 	public int getAdres_id(){
@@ -89,6 +94,6 @@ public class Klant {
 	
 	@Override
 	public String toString(){
-		return this.naam.toString() + "\n" + getAdres().toString() + "\n" + this.email;
+		return this.voornaam + " " + this.tussenvoegsel + " " + this.achternaam + "\n" + getAdres().toString() + "\n" + this.email;
 	}
 }
