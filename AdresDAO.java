@@ -8,10 +8,10 @@ public interface AdresDAO {
 	Adres readAdres(int id) throws SQLException;//Tim//optioneel met toString()
 	void deleteAdres(int id) throws SQLException;//Tim
 	Set<Adres> readAll() throws SQLException;//Tim//of set of arraylist?
-	int searchByPostcodeAndHuisnummer(String postcode, int huisnummer, String toevoeging) throws SQLException;//Sander//moet ook werken als toevoeging null is
+	Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer, String toevoeging) throws SQLException;//Sander//moet ook werken als toevoeging null is
 	Set<Adres> searchByStraat(String straat) throws SQLException;//Maurice
 	Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging) throws SQLException;//Maurice//kan bijvoorbeeld searchByStraat() callen
-	Set<Adres> getKlant(int id) throws SQLException;//Sander
+	Set<Klant> getKlant(int id) throws SQLException;//Sander
 	void close() throws SQLException;//Maurice	
 }
 /*
