@@ -60,9 +60,40 @@ public class Adreslijst implements AdresDAO {
 	}
 
 	@Override
-	public Adres readAdres(int id) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public Adres readAdres(int adres_id) throws SQLException {
+	getConnection();
+		String query = "SELECT * FROM adres WHERE adres_id =?";
+
+		Adres adres = null;
+		RowSet rowSet = new JdbcRowSetImpl();
+
+		try {
+			rowSet.setUrl(URL);
+			rowSet.setPassword(pw);
+			rowSet.setUsername(USERNAME);
+			rowSet.setCommand(query);
+			rowSet.setInt(1, adres_id);
+			rowSet.execute();
+
+			ResultSetMetaData rsMD = rowSet.getMetaData();
+
+			// deze weergave is niet noodzakelijk maar vond ik wel netjes dus overgenomenv van Sander
+			for (int i = 1; i <= rsMD.getColumnCount(); i++) {
+				System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
+			}
+			System.out.println(); 
+			while (rowSet.next()) {
+				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
+					System.out.printf("%-12s\t", rowSet.getObject(i));
+				}
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			rowSet.close();
+		}
+
+		return adres;
 	}
 
 	@Override
