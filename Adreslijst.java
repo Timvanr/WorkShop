@@ -55,32 +55,27 @@ public class Adreslijst implements AdresDAO {
 	
 	@Override
 	public void createAdres(int klant_id, Adres adres) throws SQLException {
-		getConnection();
-		
-		PreparedStatement createAdres = connection.prepareStatement
-				("INSERT INTO Adres (straatnaam, huisnummer, toevoeging, postcode, woonplaats) " +
-				"VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-		createAdres.setString(1, adres.getStraatnaam());
-		createAdres.setInt(2, adres.getHuisnummer());
-		createAdres.setString(3, adres.getToevoeging());
-		createAdres.setString(4, adres.getPostcode());
-		createAdres.setString(5, adres.getWoonplaats());
-		createAdres.executeUpdate();
-		
-		Klant klant = Addressbook.haalKlant(klant_id);
-		ResultSet adresId = createAdres.getGeneratedKeys();
-		
-		if (adresId.isBeforeFirst()){
-			adresId.next();
-			klant.setAdres_id(adresId.getInt(1));
+
+		String insertAdresString = "INSERT INTO ADRES (straatnaam, huisnummer, toevoeging, postcode, woonplaats, klant_id) VALUES (?,?,?,?,?,?);";
+		PreparedStatement insertAdres = null;
+
+		try (Connection connection = DatabaseConnection.getConnection()) {
+
+			insertAdres = connection.prepareStatement(insertAdresString);
+			insertAdres.setString(1, adres.getStraatnaam());
+			insertAdres.setInt(2, adres.getHuisnummer());
+			insertAdres.setString(3, adres.getToevoeging());
+			insertAdres.setString(4, adres.getPostcode());
+			insertAdres.setString(5, adres.getWoonplaats());
+			insertAdres.setInt(6, klant_id);
+			insertAdres.executeUpdate();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			insertAdres.close();
 		}
-		
-		Addressbook adresboek = new Addressbook();
-		adresboek.addAdres_id(klant_id, klant.getAdres_id());
-				
-		close();
-		System.out.println("Adres is toegevoegd!");
 	}
+
 
 	@Override
 	public Adres readAdres(int id) throws SQLException {

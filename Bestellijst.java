@@ -71,64 +71,39 @@ public class Bestellijst implements BestellingenDAO {
 		
 		System.out.println("table Bestellingen created!");
 	}
-	// DIT NOG EVEN NAKIJKEN KLOPT NU NOG NIET... MOET WORDEN KLANT_ID EN BESTELLING
-	public void voegBestellingToe(Klant klant, Bestelling bestelling) throws SQLException {
-		String sql = "";
-		String values = "";
-		Connection connection = DatabaseConnection.getConnection();
-		
-		for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++){
-			sql += String.format(", artikel%d_id, artikel%d_naam, artikel%d_aantal, artikel%d_prijs", i + 1, i + 1, i + 1, i + 1);
-			values += ", ?, ?, ?, ?";
-		}
-				
-		PreparedStatement voegToe = connection.prepareStatement(
-				String.format("INSERT INTO Bestelling (klant_id%s) VALUES (?%s)", sql, values), Statement.RETURN_GENERATED_KEYS);
-		
-		voegToe.setInt(1, klant.getId());
-		
-		for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++){
-			voegToe.setInt(2 + i * 4, bestelling.artikelen.get(i).getId());
-			voegToe.setString(3 + i * 4, bestelling.artikelen.get(i).getNaam());
-			voegToe.setInt(4 + i * 4, bestelling.artikelen.get(i).getAantal());
-			voegToe.setBigDecimal(5 + i * 4, bestelling.artikelen.get(i).getPrijs());
-		}	
-		voegToe.executeUpdate();
-		
-		ResultSet rs = voegToe.getGeneratedKeys();
-		
-		if (rs.isBeforeFirst()){
-			rs.next();
-			bestelling.setBestelling_id(rs.getInt(1));
-		}
+	// 
+		public void voegBestellingToe(int klant_id, Bestelling bestelling) throws SQLException {
+			String sql = "";
+			String values = "";
+			Connection connection = DatabaseConnection.getConnection();
 			
-		System.out.println("Bestelling added!");
-	}
-
-	public static Bestelling haalBestelling(int id) throws SQLException {
-		getConnection();
-		Bestelling bestelling = new Bestelling();
-		String haalBestelling = "SELECT artikel_id, artikel_naam, artikel_prijs, artikel_aantal FROM Bestelling WHERE bestelling_id = ?";
-		
-		RowSet rowSet = new JdbcRowSetImpl();
-		rowSet.setUrl(URL);
-		rowSet.setPassword(PASSWORD);
-		rowSet.setUsername(USERNAME);
-		rowSet.setCommand(haalBestelling);
-		rowSet.setInt(1, id);
-		
-		rowSet.execute();	
-		
-		while (rowSet.next()){
-			
-			for (int i = 0; i < 3; i++){
-					bestelling.voegArtikelToeAanBestelling(new Artikel(rowSet.getInt(i * 4 + 1), rowSet.getString(i * 4 + 2), rowSet.getBigDecimal(i * 4 + 3), rowSet.getInt(i * 4 + 4)));
+			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++){
+				sql += String.format(", artikel%d_id, artikel%d_naam, artikel%d_aantal, artikel%d_prijs", i + 1, i + 1, i + 1, i + 1);
+				values += ", ?, ?, ?, ?";
 			}
+					
+			PreparedStatement voegToe = connection.prepareStatement(
+					String.format("INSERT INTO Bestelling (klant_id%s) VALUES (?%s)", sql, values), Statement.RETURN_GENERATED_KEYS);
+			
+			voegToe.setInt(1, klant_id);
+			
+			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++){
+				voegToe.setInt(2 + i * 4, bestelling.artikelen.get(i).getId());
+				voegToe.setString(3 + i * 4, bestelling.artikelen.get(i).getNaam());
+				voegToe.setInt(4 + i * 4, bestelling.artikelen.get(i).getAantal());
+				voegToe.setBigDecimal(5 + i * 4, bestelling.artikelen.get(i).getPrijs());
+			}	
+			voegToe.executeUpdate();
+			
+			ResultSet rs = voegToe.getGeneratedKeys();
+			
+			if (rs.isBeforeFirst()){
+				rs.next();
+				bestelling.setBestelling_id(rs.getInt(1));
+			}
+				
+			System.out.println("Bestelling added!");
 		}
-		rowSet.close();
-		
-		return bestelling;
-	}
 	
 	public void haalKlantEnBestelling(int bestelling_id) throws SQLException{
 		RowSet rowSet = new JdbcRowSetImpl();
