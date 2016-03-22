@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
@@ -8,7 +9,7 @@ import com.sun.rowset.*;
 import java.util.ArrayList;
 
 import javax.sql.RowSet;
-import javax.sql.rowset.JdbcRowSet;
+
 
 
 public class Bestellijst implements BestellingenDAO {
@@ -71,8 +72,8 @@ public class Bestellijst implements BestellingenDAO {
 		
 		System.out.println("table Bestellingen created!");
 	}
-	// DIT NOG EVEN NAKIJKEN KLOPT NU NOG NIET... MOET WORDEN KLANT_ID EN BESTELLING
-	public void voegBestellingToe(Klant klant, Bestelling bestelling) throws SQLException {
+	
+	public void voegBestellingToe(int klant_id, Bestelling bestelling) throws SQLException {
 		String sql = "";
 		String values = "";
 		Connection connection = DatabaseConnection.getConnection();
@@ -85,7 +86,7 @@ public class Bestellijst implements BestellingenDAO {
 		PreparedStatement voegToe = connection.prepareStatement(
 				String.format("INSERT INTO Bestelling (klant_id%s) VALUES (?%s)", sql, values), Statement.RETURN_GENERATED_KEYS);
 		
-		voegToe.setInt(1, klant.getId());
+		voegToe.setInt(1, klant_id);
 		
 		for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++){
 			voegToe.setInt(2 + i * 4, bestelling.artikelen.get(i).getId());

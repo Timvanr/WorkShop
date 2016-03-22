@@ -58,9 +58,26 @@ public class Adreslijst implements AdresDAO {
 	}
 	
 	@Override
-	public void createAdres(Adres adres) throws SQLException {
-		// TODO Auto-generated method stub
-		
+	public void createAdres(int klant_id, Adres adres) throws SQLException {
+
+		String insertAdresString = "INSERT INTO ADRES (straatnaam, huisnummer, toevoeging, postcode, woonplaats, klant_id) VALUES (?,?,?,?,?,?);";
+		PreparedStatement insertAdres = null;
+
+		try (Connection connection = DatabaseConnection.getConnection()) {
+
+			insertAdres = connection.prepareStatement(insertAdresString);
+			insertAdres.setString(1, adres.getStraatnaam());
+			insertAdres.setInt(2, adres.getHuisnummer());
+			insertAdres.setString(3, adres.getToevoeging());
+			insertAdres.setString(4, adres.getPostcode());
+			insertAdres.setString(5, adres.getWoonplaats());
+			insertAdres.setInt(6, klant_id);
+			insertAdres.executeUpdate();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			insertAdres.close();
+		}
 	}
 
 	@Override
@@ -268,6 +285,5 @@ public class Adreslijst implements AdresDAO {
 		System.out.println("Connection closed!");
 		
 	}
-	
 
 }
