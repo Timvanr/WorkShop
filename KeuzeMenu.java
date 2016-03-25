@@ -60,7 +60,7 @@ public class KeuzeMenu {
 			startHoofd();
 		} catch (SQLException e) {
 			System.out.println("");
-			System.out.println("Username or password incorrect");
+			System.out.println("Username or password fout");
 			System.out.println("");
 			System.out.println("Try again!");
 			startInlog();
@@ -210,7 +210,15 @@ public class KeuzeMenu {
 				klantBestand.createKlantEnAdresEnBestelling(klant, adres, bestelling);
 				break;
 			case 4:
-				// klantBestand.createKlantEnBestelling();
+				klant = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
+				bestelling = new Bestelling();
+				System.out.println("Hoeveel artikelen wilt u toevoegen: ");
+				int aantal2 = scInput.nextInt();
+				for (int i = 0; i < aantal2; i++){
+					artikel = new Artikel(arikelIdPrompt(), artikelNaamPrompt(), artikelPrijsPrompt(), artikelAantalPrompt());
+					bestelling.voegArtikelToeAanBestelling(artikel);
+				}
+				klantBestand.createKlantEnBestelling(klant, bestelling);
 				break;
 			case 5:
 				System.out.println("Terug naar het hoofdmenu...");
@@ -236,15 +244,28 @@ public class KeuzeMenu {
 			int keuze = scInput.nextInt();
 			switch (keuze){
 			case 1:
+				int klant_id = id_Prompt();
+				klantBestand.readKlantWithId(klant_id);
 				break;
 			case 2:
+				int klant_id1 = id_Prompt();
+				int adresID = adresLijst.searchAdresIdwithKlantId(klant_id1);
+				adresLijst.readAdres(adresID);
 				break;
 			case 3:
+				int klant_id2 = id_Prompt();
+				bestelLijst.haalBestelling(klant_id2);
 				break;
 			case 4:
+				int klant_id3 = id_Prompt();
+				klantBestand.readKlantWithId(klant_id3);
+				int adresID2 = adresLijst.searchAdresIdwithKlantId(klant_id3);
+				adresLijst.readAdres(adresID2);
+				bestelLijst.haalBestelling(adresID2);
 				break;
 			case 5:
-				break;
+				System.out.println("Terug naar het hoofdmenu...");
+				startHoofd();
 			default:
 				System.out.println("Ongeldige keuze!");
 				startHoofd();
@@ -282,31 +303,23 @@ public class KeuzeMenu {
 		}
 	}
 
-	private void updateKlantnaam(){
-		System.out.print("Geef uw klant ID: ");
-		int id = scInput.nextInt();
-		try {
-			klantBestand.UpdateKlantNaam(id);
-		} catch (SQLException e) {		
-			e.printStackTrace();
-		}
+	private void updateKlantnaam() throws SQLException, IOException{
+		int id = id_Prompt();
+		klantBestand.UpdateKlantNaam(id);
 	}
 	
-	private void updateKlantadres(){
-		System.out.print("Geef uw klant ID: ");
-		int id = scInput.nextInt();
-		System.out.println("");
+	private void updateKlantadres() throws SQLException, IOException{
+		int id = id_Prompt();
+		adres = new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
+		adresLijst.createAdres(id, adres);
+		
 	}
 	
-	private void updateKlantnaamadres() {
-		System.out.print("Geef uw klant ID: ");
-		int id = scInput.nextInt();
-		try {
-			klantBestand.UpdateKlantNaam(id);
-			// adresLijst.UpdateAdres(); // of zoiets nog even kijken wat dit wordt...
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	private void updateKlantnaamadres() throws SQLException, IOException{
+		int id = id_Prompt();
+		klantBestand.UpdateKlantNaam(id);
+		adres = new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
+		adresLijst.createAdres(id, adres);
 	}
 
 	private void deleteKlantMenu() throws IOException {
@@ -355,10 +368,10 @@ public class KeuzeMenu {
 	}
 
 	private void exit() {
-		// flush.screen(); //moet de juist code nog vinden om beeldscherm leeg te krijgen
-		System.out.println("Uw bewerking is beeindigd.");
-
-	}
+		System.out.println("Uw bewerking is beeindigd.");	
+		System.exit(1);
+		}
+	
 	
 	private int id_Prompt() throws IOException {
 		System.out.println("Geef uw klant ID: ");
