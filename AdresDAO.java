@@ -12,7 +12,9 @@ public interface AdresDAO {
 	Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer, String toevoeging) throws SQLException;//Sander//moet ook werken als toevoeging null is
 	Set<Adres> searchByStraat(String straat) throws SQLException;//Maurice
 	Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging) throws SQLException;//Maurice//kan bijvoorbeeld searchByStraat() callen
-	Set<Klant> getKlant(int id) throws SQLException;//Sander
+	Set<Klant> getKlantWithAdresId(int id) throws SQLException;//Sander
+	Set<Klant> getKlantWithStraatnaam(String straatnaam) throws SQLException;
+	Set<Klant> getKlantWithPCandHuisnr(String postcode, int huisnummer) throws SQLException;
 	void close() throws SQLException;//Maurice
 }
 /*

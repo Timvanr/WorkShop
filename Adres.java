@@ -8,29 +8,29 @@ public class Adres {
 	private String woonplaats;
 	
 	public Adres(){
-		this("Onbekend", 0, null, "Onbekend", "Onbekend");
+		
 	}
 	
-	public Adres(String straat, int nummer, String toevoeging, String postcode, String plaats){
+	public Adres(String straat, int huisnummer, String toevoeging, String postcode, String plaats){
 		this.straatnaam = straat;
-		this.huisnummer = nummer;
+		this.huisnummer = huisnummer;
 		this.toevoeging = toevoeging;
 		this.postcode = postcode;
 		this.woonplaats = plaats;
 	}
 	
-	public Adres(int adres_id, String straat, int nummer, String toevoeging, String postcode, String plaats){
+	public Adres(int adres_id, String straat, int huisnummer, String toevoeging, String postcode, String plaats){
 		this.adres_id = adres_id;
 		this.straatnaam = straat;
-		this.huisnummer = nummer;
+		this.huisnummer = huisnummer;
 		this.toevoeging = null;
 		this.postcode = postcode;
 		this.woonplaats = plaats;
 	}
 
-	public Adres(String straat, int nummer, String postcode, String plaats){
+	public Adres(String straat, int huisnummer, String postcode, String plaats){
 		this.straatnaam = straat;
-		this.huisnummer = nummer;
+		this.huisnummer = huisnummer;
 		this.toevoeging = null;
 		this.postcode = postcode;
 		this.woonplaats = plaats;

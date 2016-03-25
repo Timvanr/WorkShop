@@ -257,14 +257,17 @@ public class Adreslijst implements AdresDAO {
 		
 		return adressen;
 	}
-
 	@Override
-	public Set<Klant> getKlant(int adres_id) throws SQLException {
+	public Set<Klant> getKlantWithAdresId(int adres_id) throws SQLException {
 		getConnection();
 		
-		Set<Klant> klantSet = new LinkedHashSet<>();
+		LinkedHashSet<Klant> klantSet = new LinkedHashSet<>();
 		RowSet rowSet = new JdbcRowSetImpl(connection);
-		String query = "Select * from `Klant` where adres_id=? order by achternaam asc;";
+		String query = "Select * from `Klant` "
+				+ "INNER JOIN klant_has_adres ON klant.klant_id=klant_has_adres.klant_id"
+				+ " INNER JOIN adres ON klant_has_adres.adres_id=adres.bestelling_id "
+				+ "where adres.adres_id=? "
+				+ "order by achternaam asc;";
 		/*
 		try {
 
@@ -295,7 +298,95 @@ public class Adreslijst implements AdresDAO {
 		//}
 		return klantSet;
 	}
+	
+	@Override
+	public Set<Klant> getKlantWithStraatnaam(String straatnaam) throws SQLException {
+		getConnection();
+		
+		LinkedHashSet<Klant> klantSet = new LinkedHashSet<>();
+		RowSet rowSet = new JdbcRowSetImpl(connection);
+		String query = "Select * from `Klant` "
+				+ "INNER JOIN klant_has_adres ON klant.klant_id=klant_has_adres.klant_id"
+				+ " INNER JOIN adres ON klant_has_adres.adres_id=adres.adres_id "
+				+ "where adres.straatnaam=? "
+				+ "order by achternaam asc;";
+		
+			rowSet.setCommand(query);
+			rowSet.setString(1, straatnaam);
+			rowSet.execute();
 
+			while (rowSet.next()) {
+				Klant klant = new Klant();
+				klant.setId(rowSet.getInt(1));
+				klant.setVoornaam(rowSet.getString(2));
+				klant.setAchternaam(rowSet.getString(3));
+				klant.setTussenvoegsel(rowSet.getString(4));
+				klant.setEmail(rowSet.getString(5));
+				
+				klantSet.add(klant);
+			}
+			/*
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+		*/
+			rowSet.close();
+		//}
+		return klantSet;
+	}
+	
+	@Override
+	public Set<Klant> getKlantWithPCandHuisnr(String postcode, int huisnummer) throws SQLException{
+			getConnection();	
+			String query = "Select * from `klant` "
+					+ "INNER JOIN klant_has_adres ON klant.klant_id=klant_has_adres.klant_id"
+					+ "INNER JOIN adres ON klant_has_adres.adres_id=adres.adres_id"
+					+ "where postcode=? AND huisnummer=?"
+					+ "order by achternaam asc";
+			RowSet rowSet = new JdbcRowSetImpl(connection);
+			LinkedHashSet<Klant> klantSet = new LinkedHashSet<>();
+			try{
+				/*
+				rowSet.setUrl(URL);
+				rowSet.setUsername(USERNAME);
+				rowSet.setPassword(pw);*/
+				rowSet.setCommand(query);
+				rowSet.setString(1, postcode);
+				rowSet.setInt(2, huisnummer);
+				rowSet.execute();
+				
+				if (!rowSet.isBeforeFirst()){
+					System.out.println("no records were found with: " + postcode + " and huisnummer " + huisnummer);
+					return klantSet;
+				}
+				
+				else {
+					ResultSetMetaData rsMD = rowSet.getMetaData();
+					for (int i = 1; i <= rsMD.getColumnCount(); i++){
+						System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
+					}
+					System.out.println();
+					while (rowSet.next()){
+						Klant klant = new Klant();
+						klant.setId(rowSet.getInt(1));
+						klant.setVoornaam(rowSet.getString(2));
+						klant.setAchternaam(rowSet.getString(3));
+						klant.setTussenvoegsel(rowSet.getString(4));
+						klant.setEmail(rowSet.getString(5));
+						
+						klantSet.add(klant);
+						}
+					}
+			}
+			catch (SQLException ex){
+				ex.printStackTrace();
+			}
+			finally {
+				rowSet.close();
+			}
+			return klantSet;
+		}
+	
 	@Override
 	public void deleteAdres(int id) throws SQLException {
 		getConnection();
