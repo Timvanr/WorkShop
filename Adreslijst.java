@@ -56,24 +56,39 @@ public class Adreslijst implements AdresDAO {
 	@Override
 	public void createAdres(int klant_id, Adres adres) throws SQLException {
 
-		String insertAdresString = "INSERT INTO ADRES (straatnaam, huisnummer, toevoeging, postcode, woonplaats, klant_id) VALUES (?,?,?,?,?,?);";
+		String insertAdresString = "INSERT INTO ADRES (straatnaam, huisnummer, toevoeging, postcode, woonplaats) VALUES (?,?,?,?,?);";
+		String setAdresIdforKlant = "UPDATE klant SET adres_id = ? WHERE klant_id = ?";
 		PreparedStatement insertAdres = null;
-
+		PreparedStatement insertAdresID = null;
+		ResultSet rs = null;
+		int adresId = 0;
+		
 		try (Connection connection = DatabaseConnection.getConnection()) {
 
-			insertAdres = connection.prepareStatement(insertAdresString);
+			insertAdres = connection.prepareStatement(insertAdresString, Statement.RETURN_GENERATED_KEYS);
 			insertAdres.setString(1, adres.getStraatnaam());
 			insertAdres.setInt(2, adres.getHuisnummer());
 			insertAdres.setString(3, adres.getToevoeging());
 			insertAdres.setString(4, adres.getPostcode());
 			insertAdres.setString(5, adres.getWoonplaats());
-			insertAdres.setInt(6, klant_id);
 			insertAdres.executeUpdate();
+			rs = insertAdres.getGeneratedKeys();
+			if (rs.isBeforeFirst()) {
+				rs.next();
+				adresId = rs.getInt(1);
+				insertAdresID = connection.prepareStatement(setAdresIdforKlant);
+				insertAdresID.setInt(1, adresId);
+				insertAdresID.setInt(2, klant_id);
+				insertAdresID.executeUpdate();
+				
+				
+			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
 			insertAdres.close();
 		}
+		
 	}
 
 
