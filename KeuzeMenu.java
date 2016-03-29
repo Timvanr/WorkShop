@@ -249,8 +249,7 @@ public class KeuzeMenu {
 				break;
 			case 2:
 				int klant_id1 = id_Prompt();
-				int adresID = adresLijst.searchAdresIdwithKlantId(klant_id1);
-				adresLijst.readAdres(adresID);
+				adresLijst.readAdres(klant_id1);
 				break;
 			case 3:
 				int klant_id2 = id_Prompt();
@@ -259,9 +258,7 @@ public class KeuzeMenu {
 			case 4:
 				int klant_id3 = id_Prompt();
 				klantBestand.readKlantWithId(klant_id3);
-				int adresID2 = adresLijst.searchAdresIdwithKlantId(klant_id3);
-				adresLijst.readAdres(adresID2);
-				bestelLijst.haalBestelling(adresID2);
+				adresLijst.readAdres(klant_id3);
 				break;
 			case 5:
 				System.out.println("Terug naar het hoofdmenu...");
