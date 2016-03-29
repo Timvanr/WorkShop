@@ -68,40 +68,49 @@ public class Adreslijst implements AdresDAO {
 	}
 
 	@Override
-	public Adres readAdres(int id) {
-				
+	public void readAdres(int klantid) throws SQLException {
+		getConnection();
+		String adresID = "SELECT adres_id FROM klant_has_adres WHERE klant_id =" + klantid;
 		String query = "SELECT * FROM Adres WHERE adres_id =?";
-		Adres adres = null;
-		
+		int adresid = 0;
+
 		try {
-			Connection connection = DatabaseConnection.getPooledConnection();
 			RowSet rowSet = new JdbcRowSetImpl(connection);
-	
-			rowSet.setCommand(query);
-			rowSet.setInt(1, id);
+			rowSet.setCommand(adresID);
 			rowSet.execute();
-	
-			ResultSetMetaData rsMD = rowSet.getMetaData();
-	
-			for (int i = 1; i <= rsMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
-			}
-			System.out.println(); 
-			while (rowSet.next()) {
-				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rowSet.getObject(i));
+
+			while(rowSet.next())
+				adresid = rowSet.getInt(1);
+
+			try {	
+
+				RowSet rowSet2 = new JdbcRowSetImpl(connection);
+				rowSet2.setCommand(query);
+				rowSet2.setInt(1, adresid);
+				rowSet2.execute();
+
+				ResultSetMetaData rsMD = rowSet2.getMetaData();
+
+				for (int i = 1; i <= rsMD.getColumnCount(); i++) {
+					System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
 				}
+				System.out.println(); 
+				while (rowSet2.next()) {
+					for (int i = 1; i <= rowSet2.getMetaData().getColumnCount(); i++) {
+						System.out.printf("%-12s\t", rowSet2.getObject(i));
+					}
+				}				
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-			
-			rowSet.close();
-			
-		} catch (SQLException e) {
+			finally {
+				rowSet.close();
+			}
+		}catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			
+		}finally {
+			close();			
 		}
-		
-		return adres;
 	}
 	
 	@Override
