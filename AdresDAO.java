@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.Set;
 
 
@@ -14,8 +15,7 @@ public interface AdresDAO {
 	Set<Adres> searchByWoonplaats(String plaats);
 	Set<Adres> searchByStraat(String straat, String plaats);
 	Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging, String plaats);//kan bijvoorbeeld searchByStraat() callen
-	Set<Klant> getKlant(int adres_id);
-	void close();	
+	Set<Klant> getKlant(int adres_id);	
 }
 /*
 Gerbrich vind dat iedere methode moet beginnen met getConnection() en moet eindigen met connection.close().
