@@ -156,27 +156,29 @@ public class Bestellijst implements BestellingenDAO {
 	@Override
 	public void updateBestelling(Bestelling bestelling) throws SQLException{
 		getConnection();
-		
-		ArrayList<Artikel> artikelen = bestelling.getArtikelen();
-		
-		String sqlupdate = "UPDATE Bestelling SET ";
-		for (int i = 0; i < Math.min(3, artikelen.size()); i++){
-			sqlupdate += String.format
-					("artikel%d_id = ?, artikel%d_naam = ?, artikel%d_aantal = ?, artikel%d_prijs = ? ", i +1, i +1, i +1, i +1);
+		String updateIdsString = "UPDATE bestelling_has_artikel SET artikel_id "
+				+ "WHERE bestelling_id="+ bestelling.getBestelling_id();
+		PreparedStatement insertId = connection.prepareStatement(updateIdsString);
+				
+		String sqlUpdate = "UPDATE Bestelling SET ";
+		for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++){
+			sqlUpdate += String.format("artikel%d_id = ?, artikel%d_aantal = ?,", i +1, i +1);
 		}
-		sqlupdate += "WHERE bestelling_id = " + bestelling.getId();
+		sqlUpdate += "WHERE bestelling_id = " + bestelling.getBestelling_id();
 		
-		PreparedStatement update = connection.prepareStatement(sqlupdate);
+		PreparedStatement update = connection.prepareStatement(sqlUpdate);
 		
-		for (int i = 0; i < Math.min(3, artikelen.size()); i++){
-			update.setInt(1 + i * 4, artikelen.get(i).getId());
-			update.setString(2 + i * 4, artikelen.get(i).getNaam());
-			update.setInt(3 + i * 4, artikelen.get(i).getAantal());
-			update.setDouble(4 + i * 4, artikelen.get(i).getPrijs());
+		for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++){
+			update.setInt(1 + i * 2, bestelling.artikelen.get(i).getId());
+			update.setInt(2 + i * 2, bestelling.artikelen.get(i).getAantal());
 		}
-		update.execute();
+		update.executeUpdate();
 		
-		System.out.println("Bestelling " + bestelling.getId() + " is veranderd!");
+		for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++){
+			insertId.setInt(1, bestelling.artikelen.get(i).getId());
+			insertId.executeUpdate();
+		}		
+		System.out.println("Bestelling " + bestelling.getBestelling_id() + " is veranderd!");
 	}
 	
 	@Override
