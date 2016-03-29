@@ -9,5 +9,8 @@
 	<classpathentry kind="lib" path="commons-validator-1.5.0-tests.jar"/>
 	<classpathentry kind="lib" path="commons-validator-1.5.0.jar"/>
 	<classpathentry kind="lib" path="mysql-connector-java-5.1.38-bin.jar"/>
+	<classpathentry kind="lib" path="c3p0-0.9.5.2.jar"/>
+	<classpathentry kind="lib" path="HikariCP-2.4.4.jar"/>
+	<classpathentry kind="lib" path="c3p0-oracle-thin-extras-0.9.5.2.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
