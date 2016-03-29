@@ -10,141 +10,149 @@ public class Adreslijst implements AdresDAO {
 	private static Connection connection;
 	
 	public Adreslijst(){
-		try {
-			getConnection();
+		getConnection();
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 	
-	public static Connection getConnection() throws SQLException {
-		if (connection == null || connection.isClosed()){
-			try {
+	public static Connection getConnection(){
+		try {
+			if (connection == null || connection.isClosed()){
 				Class.forName("com.mysql.jdbc.Driver");
 				System.out.print("Driver loaded... ");
 			
 				connection = DriverManager.getConnection("jdbc:mysql://localhost/Adresboek", "root", "komt_ie");
 				System.out.println("Database connected!");
-				
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			}
-		}
 				
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+						
 		return connection;
 	}
 	
-	public void createTable() throws SQLException{
+	public void createTable(){
 		getConnection();
 		
-		Statement createTable = connection.createStatement();
-		createTable.execute("CREATE TABLE Adres (" +
-				"adres_id INT AUTO_INCREMENT PRIMARY KEY, " +
-				"straatnaam VARCHAR(45), " +
-				"huisnummer INT, " +
-				"toevoeging VARCHAR(6), " +
-				"postcode VARCHAR(6), " +
-				"woonplaats VARCHAR(45), " +
-				"CONSTRAINT uniek UNIQUE (postcode, huisnummer, toevoeging)" +
-				")");
+		try {
+			Statement createTable = connection.createStatement();
+			createTable.execute("CREATE TABLE Adres (" +
+					"adres_id INT AUTO_INCREMENT PRIMARY KEY, " +
+					"straatnaam VARCHAR(45), " +
+					"huisnummer INT, " +
+					"toevoeging VARCHAR(6), " +
+					"postcode VARCHAR(6), " +
+					"woonplaats VARCHAR(45), " +
+					"CONSTRAINT uniek UNIQUE (postcode, huisnummer, toevoeging)" +
+					")");
 		
-		close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
 		System.out.println("Table Adres created!");
 	}
 	
 	@Override
-	public void createAdres(int klant_id, Adres adres) throws SQLException {
-
-		String insertAdresString = "INSERT INTO ADRES (straatnaam, huisnummer, toevoeging, postcode, woonplaats) VALUES (?,?,?,?,?);";
-		String setAdresIdforKlant = "UPDATE klant SET adres_id = ? WHERE klant_id = ?";
-		PreparedStatement insertAdres = null;
-		PreparedStatement insertAdresID = null;
-		ResultSet rs = null;
-		int adresId = 0;
+	public void createAdres(int klant_id, Adres adres) {
+		getConnection();
 		
-		try (Connection connection = DatabaseConnection.getConnection()) {
-
-			insertAdres = connection.prepareStatement(insertAdresString, Statement.RETURN_GENERATED_KEYS);
-			insertAdres.setString(1, adres.getStraatnaam());
-			insertAdres.setInt(2, adres.getHuisnummer());
-			insertAdres.setString(3, adres.getToevoeging());
-			insertAdres.setString(4, adres.getPostcode());
-			insertAdres.setString(5, adres.getWoonplaats());
-			insertAdres.executeUpdate();
-			rs = insertAdres.getGeneratedKeys();
-			if (rs.isBeforeFirst()) {
-				rs.next();
-				adresId = rs.getInt(1);
-				insertAdresID = connection.prepareStatement(setAdresIdforKlant);
-				insertAdresID.setInt(1, adresId);
-				insertAdresID.setInt(2, klant_id);
-				insertAdresID.executeUpdate();
-				
-				
+		try {
+			PreparedStatement createAdres = connection.prepareStatement
+					("INSERT INTO Adres (straatnaam, huisnummer, toevoeging, postcode, woonplaats) " +
+					"VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+			createAdres.setString(1, adres.getStraatnaam());
+			createAdres.setInt(2, adres.getHuisnummer());
+			createAdres.setString(3, adres.getToevoeging());
+			createAdres.setString(4, adres.getPostcode());
+			createAdres.setString(5, adres.getWoonplaats());
+			createAdres.executeUpdate();
+			
+			Klant klant = Addressbook.haalKlant(klant_id);
+			ResultSet adresId = createAdres.getGeneratedKeys();
+			
+			if (adresId.isBeforeFirst()){
+				adresId.next();
+				klant.setAdres_id(adresId.getInt(1));
 			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			insertAdres.close();
-		}
 		
+			Addressbook adresboek = new Addressbook();
+			adresboek.addAdres_id(klant_id, klant.getAdres_id());
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		System.out.println("Adres is toegevoegd!");
 	}
 
-
 	@Override
-	public Adres readAdres(int id) throws SQLException {
+	public Adres readAdres(int id) {
 		getConnection();
 		
 		String query = "SELECT * FROM Adres WHERE adres_id =?";
 		Adres adres = null;
-		RowSet rowSet = new JdbcRowSetImpl(connection);
-
-		rowSet.setCommand(query);
-		rowSet.setInt(1, id);
-		rowSet.execute();
-
-		ResultSetMetaData rsMD = rowSet.getMetaData();
-
-		// deze weergave is niet noodzakelijk maar vond ik wel netjes dus overgenomenv van Sander
-		for (int i = 1; i <= rsMD.getColumnCount(); i++) {
-			System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
-		}
-		System.out.println(); 
-		while (rowSet.next()) {
-			for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rowSet.getObject(i));
-			}
-		}
 		
-		rowSet.close();
-		close();
+		try {
+			RowSet rowSet = new JdbcRowSetImpl(connection);
+	
+			rowSet.setCommand(query);
+			rowSet.setInt(1, id);
+			rowSet.execute();
+	
+			ResultSetMetaData rsMD = rowSet.getMetaData();
+	
+			// deze weergave is niet noodzakelijk maar vond ik wel netjes dus overgenomenv van Sander
+			for (int i = 1; i <= rsMD.getColumnCount(); i++) {
+				System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
+			}
+			System.out.println(); 
+			while (rowSet.next()) {
+				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
+					System.out.printf("%-12s\t", rowSet.getObject(i));
+				}
+			}
+			
+			rowSet.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
 		
 		return adres;
 	}
 	
 	@Override
-	public void updateAdres(int klant_id, Adres adres) throws SQLException{//Wat doe ik hier nou weer?!?
-		
+	public void updateAdres(int klant_id, Adres adres){//Wat doe ik hier nou weer?!?
 		createAdres(klant_id, adres);
 		
 		Addressbook adresboek = new Addressbook();
-		adresboek.addAdres_id(klant_id, Addressbook.haalKlant(klant_id).getAdres_id());//werkt dit? misschien addAdres_id static maken??
-		
-		close();
+		try {
+			adresboek.addAdres_id(klant_id, Addressbook.haalKlant(klant_id).getAdres_id());//werkt dit? misschien addAdres_id static maken??
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {		
+			close();
+		}
 		System.out.println("Adresgegevens gewijzigd");
 	}
 
 	@Override
-	public Set<Adres> readAll() throws SQLException {
+	public Set<Adres> readAll() {
 		getConnection();
 
 		Set<Adres> adresLijst = new LinkedHashSet<>();
+		
+		try {
 		RowSet rowSet = new JdbcRowSetImpl(connection);
 		String query = "Select * from Adres ORDER BY woonplaats ASC, straatnaam ASC";
-		/*
-		try {
-			
+			/*		
 			rowSet.setUrl(URL);
 			rowSet.setPassword(PASSWORD);
 			rowSet.setUsername(USERNAME);
@@ -164,49 +172,53 @@ public class Adreslijst implements AdresDAO {
 				
 				adresLijst.add(adres);			
 			}
-		/*
-		}
-		catch (SQLException ex){
-			ex.printStackTrace();
-		}
-		finally {
-		*/
 			rowSet.close();
-		//}
-		close();
+			
+		}catch (SQLException ex){
+			ex.printStackTrace();
+		}finally {
+			close();
+		}
+		
 		return adresLijst;
 	}
 
 	@Override
-	public Adres searchById(int id) throws SQLException {
+	public Adres searchById(int id) {
 		getConnection();
 		
-		PreparedStatement searchById = connection.prepareStatement
-				("SELECT * FROM Adres WHERE adres_id = ?");
-		searchById.setInt(1, id);
-		ResultSet adresInfo = searchById.executeQuery();
-		
 		Adres adres = null;
-		if (adresInfo.next()){
-			adres = new Adres(adresInfo.getString(2), adresInfo.getInt(3), adresInfo.getString(4), adresInfo.getString(5), adresInfo.getString(6));
-		}else{
-			System.out.println("Adres niet gevonden!");
+		try {
+			PreparedStatement searchById = connection.prepareStatement
+					("SELECT * FROM Adres WHERE adres_id = ?");
+			searchById.setInt(1, id);
+			ResultSet adresInfo = searchById.executeQuery();
+			
+			if (adresInfo.next()){
+				adres = new Adres(adresInfo.getString(2), adresInfo.getInt(3), adresInfo.getString(4), adresInfo.getString(5), adresInfo.getString(6));
+			}else{
+				System.out.println("Adres niet gevonden!");
+			}
+			
+		}catch (SQLException ex){
+			ex.printStackTrace();
+		}finally {
+			close();
 		}
-		
-		close();
 		
 		return adres;
 	}
 
 	@Override
-	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer,	String toevoeging) throws SQLException {
+	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer,	String toevoeging) {
 		getConnection();
 		
 		Adres adres = new Adres();
+		
+		try {
 		RowSet rowSet = new JdbcRowSetImpl(connection);
 		String query = "Select * from `Adres` where postcode=? AND huisnummer=? AND toevoeging=?;";
 		/*
-		try {
 			rowSet.setUrl(URL);
 			rowSet.setPassword(PASSWORD);
 			rowSet.setUsername(USERNAME);
@@ -221,7 +233,7 @@ public class Adreslijst implements AdresDAO {
 			if (!rowSet.next()) {
 				System.out.println("no entries found with this address");
 			} else {
-				adres.setId(rowSet.getInt(1);
+				adres.setId(rowSet.getInt(1));
 				adres.setStraatnaam(rowSet.getString(3));
 				adres.setHuisnummer(rowSet.getInt(4));
 				adres.setToevoeging(rowSet.getString(5));
@@ -229,41 +241,73 @@ public class Adreslijst implements AdresDAO {
 				adres.setWoonplaats(rowSet.getString(7));
 										
 			}
-		/*										
+			rowSet.close();
+			
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-		*/
-			rowSet.close();
-		//}
-		return adres;
+			close();
 		}
-
+		
+		return adres;
+	}
+	
 	@Override
-	public Set<Adres> searchByStraat(String straat) throws SQLException {
+	public Set<Adres> searchByWoonplaats(String plaats){
 		getConnection();
 		
-		RowSet adresData = new JdbcRowSetImpl(connection);
-		adresData.setCommand("SELECT * FROM Adres WHERE straatnaam = ? ORDER BY woonplaats ASC");
-		adresData.setString(1, straat);
-		adresData.execute();
-		
 		Set<Adres> adressen = new LinkedHashSet();
-		while (adresData.next()){
-			adressen.add(new Adres(adresData.getInt(1), adresData.getString(2), adresData.getInt(3), adresData.getString(4), adresData.getString(5), adresData.getString(6)));
+		try {
+			RowSet adresData = new JdbcRowSetImpl(connection);
+			adresData.setCommand("SELECT * FROM Adres WHERE woonplaats = ? ORDER BY straatnaam ASC");
+			adresData.setString(1, plaats);
+			adresData.execute();
+			
+			while (adresData.next()){
+				adressen.add(new Adres(adresData.getInt(1), adresData.getString(2), adresData.getInt(3), adresData.getString(4), adresData.getString(5), adresData.getString(6)));
+			}
+			adresData.close();
+		
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			close();
 		}
-		adresData.close();
-		close();
 		
 		return adressen;
 	}
 
 	@Override
-	public Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging) throws SQLException {
-				
+	public Set<Adres> searchByStraat(String straat, String plaats) {
+		getConnection();
+		
+		Set<Adres> adressen = new LinkedHashSet();
+		try {
+			RowSet adresData = new JdbcRowSetImpl(connection);
+			adresData.setCommand("SELECT * FROM Adres WHERE straatnaam = ? AND woonplaats = ?");
+			adresData.setString(1, straat);
+			adresData.setString(2, plaats);
+			adresData.execute();
+			
+			while (adresData.next()){
+				adressen.add(new Adres(adresData.getInt(1), adresData.getString(2), adresData.getInt(3), adresData.getString(4), adresData.getString(5), adresData.getString(6)));
+			}
+			adresData.close();
+		
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			close();
+		}
+		
+		return adressen;
+	}
+
+	@Override
+	public Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging, String plaats) {
 		Set<Adres> adressen = new LinkedHashSet();
 		
-		for (Adres a: searchByStraat(straat)){
+		for (Adres a: searchByStraat(straat, plaats)){
 			if (a.getHuisnummer() == huisnummer){
 				if (a.getToevoeging() == toevoeging || a.getToevoeging() == null)
 					adressen.add(a);
@@ -272,20 +316,16 @@ public class Adreslijst implements AdresDAO {
 		
 		return adressen;
 	}
+
 	@Override
-	public Set<Klant> getKlantWithAdresId(int adres_id) throws SQLException {
+	public Set<Klant> getKlant(int adres_id) {
 		getConnection();
 		
-		LinkedHashSet<Klant> klantSet = new LinkedHashSet<>();
-		RowSet rowSet = new JdbcRowSetImpl(connection);
-		String query = "Select * from `Klant` "
-				+ "INNER JOIN klant_has_adres ON klant.klant_id=klant_has_adres.klant_id"
-				+ " INNER JOIN adres ON klant_has_adres.adres_id=adres.bestelling_id "
-				+ "where adres.adres_id=? "
-				+ "order by achternaam asc;";
-		/*
+		Set<Klant> klantSet = new LinkedHashSet<>();
 		try {
-
+			RowSet rowSet = new JdbcRowSetImpl(connection);
+			String query = "Select * from `Klant` where adres_id=? order by achternaam asc;";
+			/*
 			rowSet.setUrl(URL);
 			rowSet.setPassword(PASSWORD);
 			rowSet.setUsername(USERNAME);
@@ -296,7 +336,7 @@ public class Adreslijst implements AdresDAO {
 
 			while (rowSet.next()) {
 				Klant klant = new Klant();
-				klant.setId(rowSet.getInt(1));
+				klant.setKlant_id(rowSet.getInt(1));
 				klant.setVoornaam(rowSet.getString(2));
 				klant.setAchternaam(rowSet.getString(3));
 				klant.setTussenvoegsel(rowSet.getString(4));
@@ -304,120 +344,43 @@ public class Adreslijst implements AdresDAO {
 				
 				klantSet.add(klant);
 			}
-			/*
+			rowSet.close();
+			
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-		*/
-			rowSet.close();
-		//}
-		return klantSet;
-	}
-	
-	@Override
-	public Set<Klant> getKlantWithStraatnaam(String straatnaam) throws SQLException {
-		getConnection();
-		
-		LinkedHashSet<Klant> klantSet = new LinkedHashSet<>();
-		RowSet rowSet = new JdbcRowSetImpl(connection);
-		String query = "Select * from `Klant` "
-				+ "INNER JOIN klant_has_adres ON klant.klant_id=klant_has_adres.klant_id"
-				+ " INNER JOIN adres ON klant_has_adres.adres_id=adres.adres_id "
-				+ "where adres.straatnaam=? "
-				+ "order by achternaam asc;";
-		
-			rowSet.setCommand(query);
-			rowSet.setString(1, straatnaam);
-			rowSet.execute();
-
-			while (rowSet.next()) {
-				Klant klant = new Klant();
-				klant.setId(rowSet.getInt(1));
-				klant.setVoornaam(rowSet.getString(2));
-				klant.setAchternaam(rowSet.getString(3));
-				klant.setTussenvoegsel(rowSet.getString(4));
-				klant.setEmail(rowSet.getString(5));
-				
-				klantSet.add(klant);
-			}
-			/*
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-		*/
-			rowSet.close();
-		//}
-		return klantSet;
-	}
-	
-	@Override
-	public Set<Klant> getKlantWithPCandHuisnr(String postcode, int huisnummer) throws SQLException{
-			getConnection();	
-			String query = "Select * from `klant` "
-					+ "INNER JOIN klant_has_adres ON klant.klant_id=klant_has_adres.klant_id"
-					+ "INNER JOIN adres ON klant_has_adres.adres_id=adres.adres_id"
-					+ "where postcode=? AND huisnummer=?"
-					+ "order by achternaam asc";
-			RowSet rowSet = new JdbcRowSetImpl(connection);
-			LinkedHashSet<Klant> klantSet = new LinkedHashSet<>();
-			try{
-				/*
-				rowSet.setUrl(URL);
-				rowSet.setUsername(USERNAME);
-				rowSet.setPassword(pw);*/
-				rowSet.setCommand(query);
-				rowSet.setString(1, postcode);
-				rowSet.setInt(2, huisnummer);
-				rowSet.execute();
-				
-				if (!rowSet.isBeforeFirst()){
-					System.out.println("no records were found with: " + postcode + " and huisnummer " + huisnummer);
-					return klantSet;
-				}
-				
-				else {
-					ResultSetMetaData rsMD = rowSet.getMetaData();
-					for (int i = 1; i <= rsMD.getColumnCount(); i++){
-						System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
-					}
-					System.out.println();
-					while (rowSet.next()){
-						Klant klant = new Klant();
-						klant.setId(rowSet.getInt(1));
-						klant.setVoornaam(rowSet.getString(2));
-						klant.setAchternaam(rowSet.getString(3));
-						klant.setTussenvoegsel(rowSet.getString(4));
-						klant.setEmail(rowSet.getString(5));
-						
-						klantSet.add(klant);
-						}
-					}
-			}
-			catch (SQLException ex){
-				ex.printStackTrace();
-			}
-			finally {
-				rowSet.close();
-			}
-			return klantSet;
+			close();
 		}
-	
+		return klantSet;
+	}
+
 	@Override
-	public void deleteAdres(int id) throws SQLException {
-		getConnection();
+	public void deleteAdres(int id) {
+		try {
+			getConnection();
 		
-		PreparedStatement deleteAdres = connection.prepareStatement
-				("DELETE * FROM Adres WHERE adres_id = ?");
-		deleteAdres.setInt(1, id);
-		deleteAdres.executeUpdate();
+			PreparedStatement deleteAdres = connection.prepareStatement
+					("DELETE * FROM Adres WHERE adres_id = ?");
+			deleteAdres.setInt(1, id);
+			deleteAdres.executeUpdate();
 		
-		close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			close();
+		}
 		System.out.println("Adres is verwijderd!");
 	}
 	
 	@Override
-	public void close() throws SQLException {
-		connection.close();
+	public void close() {
+		try {
+			connection.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		System.out.println("Connection closed!");
 		
 	}
