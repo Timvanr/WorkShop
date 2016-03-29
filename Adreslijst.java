@@ -57,37 +57,37 @@ public class Adreslijst implements AdresDAO {
 	}
 	
 	@Override
-	public void createAdres(int klant_id, Adres adres) {
-		getConnection();
-		
-		try {
-			PreparedStatement createAdres = connection.prepareStatement
-					("INSERT INTO Adres (straatnaam, huisnummer, toevoeging, postcode, woonplaats) " +
-					"VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-			createAdres.setString(1, adres.getStraatnaam());
-			createAdres.setInt(2, adres.getHuisnummer());
-			createAdres.setString(3, adres.getToevoeging());
-			createAdres.setString(4, adres.getPostcode());
-			createAdres.setString(5, adres.getWoonplaats());
-			createAdres.executeUpdate();
+	public void createAdres(int klant_id, Adres adres) throws SQLException {
+
+		String insertAdresString = "INSERT INTO ADRES (straatnaam, huisnummer, toevoeging, postcode, woonplaats) VALUES (?,?,?,?,?);";
+		String insertKlantHasAdresString = "INSERT INTO klant_has_adres (klant_id, adres_id) values (?,?);";
+		PreparedStatement insertAdres = null;
+		PreparedStatement insertKlantHasAdres = null;
+		ResultSet rs = null;
+		try (Connection connection = DatabaseConnection.getConnection()) {
+
+			insertAdres = connection.prepareStatement(insertAdresString, Statement.RETURN_GENERATED_KEYS);
+			insertKlantHasAdres = connection.prepareStatement(insertKlantHasAdresString);
+			insertAdres.setString(1, adres.getStraatnaam());
+			insertAdres.setInt(2, adres.getHuisnummer());
+			insertAdres.setString(3, adres.getToevoeging());
+			insertAdres.setString(4, adres.getPostcode());
+			insertAdres.setString(5, adres.getWoonplaats());
+			insertAdres.executeUpdate();
 			
-			Klant klant = Addressbook.haalKlant(klant_id);
-			ResultSet adresId = createAdres.getGeneratedKeys();
-			
-			if (adresId.isBeforeFirst()){
-				adresId.next();
-				klant.setAdres_id(adresId.getInt(1));
+			rs = insertAdres.getGeneratedKeys();
+			if (rs.isBeforeFirst()) {
+				rs.next();
+				insertKlantHasAdres.setInt(1, klant_id);
+				insertKlantHasAdres.setInt(2, rs.getInt(1));
+				insertKlantHasAdres.executeUpdate();
 			}
-		
-			Addressbook adresboek = new Addressbook();
-			adresboek.addAdres_id(klant_id, klant.getAdres_id());
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
 		} finally {
-			close();
+			insertAdres.close();
+			insertKlantHasAdres.close();
 		}
-		System.out.println("Adres is toegevoegd!");
 	}
 
 	@Override
