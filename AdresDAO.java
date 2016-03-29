@@ -6,7 +6,7 @@ public interface AdresDAO {
 	
 	//static connection getConnection(String user, String password) throws SQLException; evt inloggen met DBnaam?
 	void createAdres(int klant_id, Adres adres);
-	Adres readAdres(int id);//optioneel met toString()
+	void readAdres(int klantid);
 	Set<Adres> readAll();//of set of arraylist?
 	void updateAdres(int klant_id, Adres adres);
 	void deleteAdres(int id);
