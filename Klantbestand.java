@@ -18,44 +18,14 @@ public class Klantbestand implements KlantDAO{
 	
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Scanner scInput = new Scanner(System.in);
-	private final static String URL = "jdbc:mysql://localhost/Adresboek";
-	private final static String USERNAME = "root";
-	private final static String PASSWORD = "komt_ie";
-	
-	private static Connection connection;
 	
 	public Klantbestand() {
-		// Ensure the connection is initialized
-		try {
-			getConnection();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	
 	}
 	
-	
-	public static Connection getConnection() throws SQLException{
-		if (connection == null || connection.isClosed())
-			try{
-				Class.forName("com.mysql.jdbc.Driver");
-				System.out.print("Driver loaded... ");
-				connection = DriverManager.getConnection("jdbc:mysql://localhost/Adresboek", "root", "komt_ie");
-				System.out.println("Database connected!");
-			
-			}catch (ClassNotFoundException e){
-				e.printStackTrace();
-			}
-		return connection;
-	}
-	
-	public void close() throws SQLException{
-		connection.close();
-		System.out.println("Connection closed!");
-	}
 	
 	public void createTable() throws SQLException{
-		getConnection();
+		Connection connection = DatabaseConnection.getPooledConnection();
 		
 		Statement createTable = connection.createStatement();
 		createTable.execute("CREATE TABLE Klant (" +
@@ -66,7 +36,7 @@ public class Klantbestand implements KlantDAO{
 				"adres_id INT, " +
 				"email VARCHAR(180)" +
 				")");
-		close();
+		
 		
 		System.out.println("Table Klant created!");
 	}
@@ -74,12 +44,11 @@ public class Klantbestand implements KlantDAO{
 	public int createKlant(Klant klant) throws SQLException {
 
 		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email) values (?,?,?,?);";
-
 		PreparedStatement insertKlantNaam = null;
 		ResultSet rs = null;
 		int klantId = 0;
 		try {
-			getConnection();
+			Connection connection = DatabaseConnection.getPooledConnection();
 			insertKlantNaam = connection.prepareStatement(insertKlantNaamString, Statement.RETURN_GENERATED_KEYS);
 			insertKlantNaam.setString(1, klant.getVoornaam());
 			insertKlantNaam.setString(2, klant.getTussenvoegsel());
@@ -92,11 +61,12 @@ public class Klantbestand implements KlantDAO{
 				klantId = rs.getInt(1);
 				System.out.println("Klant met klantnummer " + klantId + " is succesvol aangemaakt");
 			}
+			
 
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-			close();
+			insertKlantNaam.close();
 		}
 		return klantId;
 
@@ -129,10 +99,9 @@ public class Klantbestand implements KlantDAO{
 
 		Klant klant = null;
 				
-		try (RowSet rowSet = new JdbcRowSetImpl()){
-			rowSet.setUrl(URL);
-			rowSet.setPassword(PASSWORD);
-			rowSet.setUsername(USERNAME);
+		try{
+			Connection connection = DatabaseConnection.getPooledConnection();
+			RowSet rowSet = new JdbcRowSetImpl(connection);
 			rowSet.setCommand(query);
 			rowSet.setInt(1, klant_id);
 			rowSet.execute();
@@ -148,6 +117,7 @@ public class Klantbestand implements KlantDAO{
 					System.out.printf("%-12s\t", rowSet.getObject(i));
 				}
 			}
+			rowSet.close();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
@@ -162,10 +132,8 @@ public class Klantbestand implements KlantDAO{
 		RowSet rowSet = null;
 
 		try {
-			rowSet = new JdbcRowSetImpl();
-			rowSet.setUrl(URL);
-			rowSet.setPassword(PASSWORD);
-			rowSet.setUsername(USERNAME);
+			Connection connection = DatabaseConnection.getPooledConnection();
+			rowSet = new JdbcRowSetImpl(connection);
 			rowSet.setCommand(query);
 
 			rowSet.execute();
@@ -209,10 +177,8 @@ public class Klantbestand implements KlantDAO{
 		RowSet rowSet2 = null;
 
 		try {
-			rowSet2 = new JdbcRowSetImpl();
-			rowSet2.setUrl(URL);
-			rowSet2.setPassword(PASSWORD);
-			rowSet2.setUsername(USERNAME);
+			Connection connection = DatabaseConnection.getPooledConnection();
+			rowSet2 = new JdbcRowSetImpl(connection);
 			rowSet2.setCommand(query2);
 
 			rowSet2.execute();
@@ -268,7 +234,7 @@ public class Klantbestand implements KlantDAO{
 			ex.printStackTrace();
 		}
 		try{
-			getConnection();
+			Connection connection = DatabaseConnection.getPooledConnection();
 			updateKlantNaam = connection.prepareStatement(updateKlantNaamquery);
 			updateKlantNaam.setString(1, newVoornaam);
 			updateKlantNaam.setString(2, newAchternaam);
@@ -282,12 +248,12 @@ public class Klantbestand implements KlantDAO{
 		}
 		finally {
 			updateKlantNaam.close();
-			close();
+			
 		}
 	}
 	
 	public void updateEmail(int klant_id) throws SQLException{
-		getConnection();
+		Connection connection = DatabaseConnection.getPooledConnection();
 		EmailValidator emailVal = EmailValidator.getInstance();
 		PreparedStatement updateEmail = connection.prepareStatement
 				("UPDATE Klant SET email = ? WHERE klant_id = ?");
@@ -319,7 +285,7 @@ public class Klantbestand implements KlantDAO{
 		catch (SQLException ex){
 			ex.printStackTrace();
 		}
-		close();
+		updateEmail.close();
 		
 		System.out.println("E-mailadres is veranderd!");
 		System.out.println();
@@ -330,11 +296,9 @@ public class Klantbestand implements KlantDAO{
 		
 		String query = "Select * from `klant`";
 		
-		try (RowSet rowSet = new JdbcRowSetImpl()){
-			
-			rowSet.setUrl(URL);
-			rowSet.setPassword(PASSWORD);
-			rowSet.setUsername(USERNAME);
+		try{ 
+			Connection connection = DatabaseConnection.getPooledConnection();
+			RowSet rowSet = new JdbcRowSetImpl(connection);
 			rowSet.setCommand(query);
 			
 			rowSet.execute();
@@ -352,7 +316,8 @@ public class Klantbestand implements KlantDAO{
 				klant.adres.setToevoeging(rowSet.getString(8));
 				klant.adres.setWoonplaats(rowSet.getString(10));
 				
-				klantList.add(klant);			
+				klantList.add(klant);	
+				rowSet.close();
 			}
 		}
 		catch (SQLException ex){
@@ -361,12 +326,11 @@ public class Klantbestand implements KlantDAO{
 		return klantList;
 	}
 	public void deleteAllFromKlantId(int klant_id) throws SQLException{
-		getConnection();
 		PreparedStatement deleteFromId = null;
 		String query = "Delete FROM `klant`, `bestelling` USING `klant`, `bestelling` WHERE klant.klant_id=bestelling.klant_id AND klant.klant_id=?;";
 		
 		try{
-			getConnection();
+			Connection connection = DatabaseConnection.getPooledConnection();
 			deleteFromId = connection.prepareStatement(query);
 			deleteFromId.setInt(1, klant_id);
 			
@@ -377,18 +341,17 @@ public class Klantbestand implements KlantDAO{
 			ex.printStackTrace();
 		}
 		finally{
-			close();
+			
 			deleteFromId.close();
 		}
 	}
 	
 	public void deleteAllFromKlantNaam(String voornaam, String achternaam, String tussenvoegsel) throws SQLException{
-		getConnection();
 		PreparedStatement deleteAllFromNaam = null;
 		String query = "Delete FROM klant, bestelling USING klant, bestelling WHERE klant.klant_id=bestelling.klant_id AND klant.voornaam=? AND klant.achternaam=? AND klant.tussenvoegsel=?;";
 		
 		try{
-			getConnection();
+			Connection connection = DatabaseConnection.getPooledConnection();
 			deleteAllFromNaam = connection.prepareStatement(query);
 			deleteAllFromNaam.setString(1, voornaam);
 			deleteAllFromNaam.setString(2, achternaam);
@@ -401,7 +364,7 @@ public class Klantbestand implements KlantDAO{
 			ex.printStackTrace();
 		}
 		finally{
-			close();
+			
 			deleteAllFromNaam.close();
 		}
 	}

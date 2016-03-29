@@ -36,6 +36,14 @@ public class Adres {
 		this.woonplaats = plaats;
 	}
 	
+	public int getId(){
+		return adres_id;
+	}
+	
+	public void setId(int adres_id){
+		this.adres_id = adres_id;
+	}
+	
 	public String getStraatnaam() {
 		return straatnaam;
 	}
