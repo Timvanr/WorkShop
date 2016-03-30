@@ -15,21 +15,14 @@ public class KeuzeMenu {
 	Artikel artikel;
 	Bestellijst bestelLijst;
 	Adreslijst adresLijst;
+	static String URL;
+	static String PW;
+	static String USERNAME;
+	static int connectieKeuze;
 
 	private static Connection connection;
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Scanner scInput = new Scanner(System.in);
-	
-	public static Connection getConnection(String user, String pass) throws SQLException {
-		if (connection == null || connection.isClosed()){
-			try {
-				Class.forName("com.mysql.jdbc.Driver");			
-				connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/workshop?rewriteBatchedStatements=true&autoReconnect=true&useSSL=false", user, pass);				
-			} catch (ClassNotFoundException e) {
-			}
-		}	
-		return connection;
-	}
 	
 	static final KeuzeMenu keuzeMenu = new KeuzeMenu();
 
@@ -51,12 +44,30 @@ public class KeuzeMenu {
 	public void startInlog() throws IOException{
 		System.out.println("Inlog scherm: ");
 		System.out.println("");
-		System.out.print("Gebruikersnaam: ");
+		/*System.out.print("Gebruikersnaam: ");
 		String userName = scInput.next();
 		System.out.print("Wachtwoord: ");
 		String passWord = scInput.next();
+		*/
 		try {
-			getConnection(userName, passWord);
+			System.out.println("Wie bent u? \n1. Tim \n2. Maurice \n3. Sander \n ");
+			int user = scInput.nextInt();
+			switch (user) {
+			case 1:	URL = "jdbc:mysql://localhost:3306/workshop";
+					PW = "tiger";
+					USERNAME = "scott";
+					break;
+			case 2: URL = "jdbc:mysql://localhost:3306/adresboek";
+					PW = "komt_ie";
+					USERNAME = "root";
+					break;
+			case 3: URL = "jdbc:mysql://localhost:3306/workshop";
+					PW = "FrIkandel";
+					USERNAME = "sandermegens";
+					break;
+			}
+			kiesConnectie();
+			//getConnection(userName, passWord);
 			startHoofd();
 		} catch (SQLException e) {
 			System.out.println("");
@@ -368,8 +379,38 @@ public class KeuzeMenu {
 		System.out.println("Uw bewerking is beeindigd.");	
 		System.exit(1);
 		}
-	
-	
+	private void kiesConnectie(){
+		boolean invalidInput = true;
+		boolean invalidInput2 = true;
+		while (invalidInput){
+		System.out.println("Wilt u een connectietype kiezen? \n 1. Ja \n 2. Nee \n");
+		int userInput = scInput.nextInt();
+		
+		if (userInput == 1){
+			invalidInput = false;
+			while (invalidInput2){
+				System.out.println("Wilt u connectie via HikariCP of via c3p0? \n 1. HikariCP \n 2. c3p0 \n");
+				userInput = scInput.nextInt();
+				if (userInput == 1){
+					invalidInput2 = false;
+					connectieKeuze = 1;
+				}
+				else if (userInput == 2){
+					invalidInput2 = false;
+					connectieKeuze = 2;
+				}
+				else 
+					System.out.println("Verkeerde opgave, probeer opnieuw");
+				}
+			}
+			else if (userInput == 2){
+				invalidInput = false;	
+				connectieKeuze = 1;
+			}
+			else
+				System.out.println("Verkeerde opgave probeer opnieuw");
+		}
+	}
 	private int id_Prompt() throws IOException {
 		System.out.println("Geef uw klant ID: ");
 		String IDstr = input.readLine();

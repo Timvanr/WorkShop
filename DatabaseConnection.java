@@ -13,58 +13,18 @@ public class DatabaseConnection {
 	static String USERNAME;
 	
 public static Connection getPooledConnection(){
-		
-		Scanner input = new Scanner(System.in);
-		System.out.println("Wie bent u? \n1. Tim \n2. Maurice \n3. Sander \n ");
-		int user = input.nextInt();
-		switch (user) {
-		case 1:	URL = "jdbc:mysql://localhost:3306/workshop";
-				PW = "tiger";
-				USERNAME = "scott";
-				break;
-		case 2: URL = "jdbc:mysql://localhost:3306/adresboek";
-				PW = "komt_ie";
-				USERNAME = "root";
-				break;
-		case 3: URL = "jdbc:mysql://localhost:3306/workshop";
-				PW = "FrIkandel";
-				USERNAME = "sandermegens";
-				break;
-		}
-		
-		Connection connection = null;
-		
-		boolean invalidInput = true;
-		boolean invalidInput2 = true;
-		while (invalidInput){
-		System.out.println("Wilt u een connectietype kiezen? \n 1. Ja \n 2. Nee \n");
-		int userInput = input.nextInt();
-		if (userInput == 1){
-			invalidInput = false;
-			while (invalidInput2){
-				System.out.println("Wilt u connectie via HikariCP of via c3p0? \n 1. HikariCP \n 2. c3p0 \n");
-				userInput = input.nextInt();
-			if (userInput == 1){
-				invalidInput2 = false;
-				return getHikariConnection();
-			}
-			else if (userInput == 2){
-				invalidInput2 = false;
-				return getC3p0Connection();
-			}
-			else 
-				System.out.println("Verkeerde opgave, probeer opnieuw");
-			}
-		}
-		else if (userInput == 2){
-			invalidInput = false;	
+	
+	Connection connection = null;
+			
+	if (KeuzeMenu.connectieKeuze == 1){
 			return getHikariConnection();
-		}
-		else
-			System.out.println("Verkeerde opgave probeer opnieuw");	
-		}
-		input.close();
-		return connection;
+	}
+	else if (KeuzeMenu.connectieKeuze == 2){
+			return getC3p0Connection();
+	}
+			
+	return connection;
+	
 	}
 	
 	public static Connection getHikariConnection() {
@@ -73,9 +33,9 @@ public static Connection getPooledConnection(){
 		config.setMinimumIdle(1);
 		config.setMaximumPoolSize(3);
 		config.setInitializationFailFast(true);
-		config.setJdbcUrl(URL);
-		config.setUsername(USERNAME);
-		config.setPassword(PW);
+		config.setJdbcUrl(KeuzeMenu.URL);
+		config.setUsername(KeuzeMenu.USERNAME);
+		config.setPassword(KeuzeMenu.PW);
 		config.addDataSourceProperty("useSSL", "false");
 		config.addDataSourceProperty("cachePrepStmts", "true");
 		config.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -100,9 +60,9 @@ public static Connection getPooledConnection(){
 		
 		try{
 		cpds.setDriverClass( "com.mysql.jdbc.Driver" );
-		cpds.setJdbcUrl(URL+"?useSSL=false"); 
-		cpds.setUser(USERNAME); 
-		cpds.setPassword(PW);
+		cpds.setJdbcUrl(KeuzeMenu.URL+"?useSSL=false"); 
+		cpds.setUser(KeuzeMenu.USERNAME); 
+		cpds.setPassword(KeuzeMenu.PW);
 		cpds.setMinPoolSize(1); 
 		cpds.setAcquireIncrement(1); 
 		cpds.setMaxPoolSize(3);
