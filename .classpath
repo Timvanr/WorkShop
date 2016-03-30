@@ -12,5 +12,8 @@
 	<classpathentry kind="lib" path="c3p0-0.9.5.2.jar"/>
 	<classpathentry kind="lib" path="HikariCP-2.4.4.jar"/>
 	<classpathentry kind="lib" path="c3p0-oracle-thin-extras-0.9.5.2.jar"/>
+	<classpathentry kind="lib" path="slf4j-api-1.7.19.jar"/>
+	<classpathentry kind="lib" path="slf4j-simple-1.7.19.jar"/>
+	<classpathentry kind="lib" path="mchange-commons-java-0.2.11.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

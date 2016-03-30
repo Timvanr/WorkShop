@@ -111,36 +111,47 @@ public class Bestellijst implements BestellingenDAO {
 		}
 	}
 
-	public static Bestelling haalBestelling(int id) throws SQLException {
-		Connection connection = DatabaseConnection.getPooledConnection();
+	public Bestelling haalBestelling(int bestelling_id) throws SQLException {
 		RowSet rowSet = null;
+		Connection connection = null;
+		RowSet rowSet2 = null;
+		String haalBestellingString = "SELECT artikel_id FROM Bestelling_has_artikel WHERE bestelling_id = ?";
+		Bestelling bestelling = new Bestelling();
+		ArtikelLijst aLijst = new ArtikelLijst();
+		
 		try {
-			PreparedStatement haalBestelling = connection.prepareStatement
+			connection = DatabaseConnection.getPooledConnection();
+			rowSet2 = new JdbcRowSetImpl(connection);			
+			rowSet = new JdbcRowSetImpl(connection);
+			rowSet.setCommand(haalBestellingString);
+			rowSet.setInt(1, bestelling_id);
+			rowSet.execute();
 
-			("SELECT * FROM Bestelling WHERE bestelling_id = ?");
-			haalBestelling.setInt(1, id);
-			ResultSet gegevens = haalBestelling.executeQuery();
-
-			rowSet = new JdbcRowSetImpl(gegevens);
-
-			Bestelling bestelling = new Bestelling(rowSet.getInt(2));
-
-			for (int i = 0; i < 3; i++) {
-				if (rowSet.getInt(3 + i * 4) > 0) {
-					bestelling.voegArtikelToe(new Artikel(rowSet.getInt(3 + i * 4), rowSet.getString(4 + i * 4),
-							rowSet.getInt(5 + i * 4), rowSet.getDouble(6 + i * 4)));
+			int i = 0;
+			while (rowSet.next()) {
+				Artikel artikel = aLijst.getArtikelWithArtikelId(rowSet.getInt(1));
+				
+				String haalAantal = String.format("SELECT artikel%d_aantal FROM bestelling WHERE bestelling_id=?", i + 1);
+				rowSet2.setCommand(haalAantal);
+				rowSet2.setInt(1, bestelling_id);
+				rowSet2.execute();
+				while (rowSet2.next()){
+					artikel.setAantal(rowSet2.getInt(1));
 				}
+				bestelling.voegArtikelToeAanBestelling(artikel);
+				i++;
 			}
+			
+			bestelling.printBestelling();
 
-			bestelling.toString();// misschien beter niet hier?!?
-
-			return bestelling;
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
 			rowSet.close();
 		}
+		return bestelling;
 	}
+
 
 	@Override
 	public ArrayList<Bestelling> haalBestellijst() throws SQLException {
@@ -233,7 +244,7 @@ public class Bestellijst implements BestellingenDAO {
 			if (rs.next()) {
 				klant_id = rs.getInt(1);
 			}
-			
+
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
