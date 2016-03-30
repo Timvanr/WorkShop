@@ -49,7 +49,7 @@ public class ArtikelLijst {
 		try{
 			getConnection();
 			createArtikel = connection.prepareStatement(createArtikelString, Statement.RETURN_GENERATED_KEYS); //HIER MOET NOG EEN UNIQUE ID EXCEPTION AFGEVANGEN WORDEN!
-			createArtikel.setString(1, artikel.getArtikel_naam());
+			createArtikel.setString(1, artikel.getNaam());
 			createArtikel.setBigDecimal(2, artikel.getPrijs());
 			createArtikel.executeUpdate();
 			
