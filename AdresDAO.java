@@ -6,7 +6,7 @@ public interface AdresDAO {
 	
 	//static connection getConnection(String user, String password) throws SQLException; evt inloggen met DBnaam?
 	void createAdres(int klant_id, Adres adres);
-	void readAdres(int klantid);
+	void readAdres(int id);
 	Set<Adres> readAll();//of set of arraylist?
 	void updateAdres(int klant_id, Adres adres);
 	void deleteAdres(int id);
@@ -15,7 +15,9 @@ public interface AdresDAO {
 	Set<Adres> searchByWoonplaats(String plaats);
 	Set<Adres> searchByStraat(String straat, String plaats);
 	Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging, String plaats);//kan bijvoorbeeld searchByStraat() callen
-	Set<Klant> getKlant(int adres_id);	
+	Set<Klant> getKlant(int adres_id);
+	Set<Adres> adressenPerKlant(int klant_id);
+	void deleteKlantAdresPair(int klant_id, int adres_id);
 }
 /*
 Gerbrich vind dat iedere methode moet beginnen met getConnection() en moet eindigen met connection.close().
