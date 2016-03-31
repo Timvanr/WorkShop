@@ -89,9 +89,9 @@ public class Adreslijst implements AdresDAO {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+			} else {
+				ex.printStackTrace();
 			}
-			
-			//ex.printStackTrace();
 		} finally {
 			try {
 				insertAdres.close();
