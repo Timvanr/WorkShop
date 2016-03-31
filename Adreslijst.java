@@ -15,20 +15,7 @@ public class Adreslijst implements AdresDAO {
 	}
 	
 	public static Connection getConnection(){
-		try {
-			if (connection == null || connection.isClosed()){
-				Class.forName("com.mysql.jdbc.Driver");
-				System.out.print("Driver loaded... ");
-			
-				connection = DriverManager.getConnection("jdbc:mysql://localhost/Adresboek", "root", "komt_ie");
-				System.out.println("Database connected!");
-			}
-				
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		Connection connection = DatabaseConnection.getPooledConnection();
 						
 		return connection;
 	}
