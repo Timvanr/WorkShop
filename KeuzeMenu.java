@@ -7,6 +7,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class KeuzeMenu {
 	Klant klant;
 	Adres adres;
@@ -14,7 +17,9 @@ public class KeuzeMenu {
 	Bestelling bestelling;
 	Artikel artikel;
 	Bestellijst bestelLijst;
-	Adreslijst adresLijst;
+	Adreslijst adresLijst;	
+	public static final Logger LOG = LoggerFactory.getLogger(KeuzeMenu.class);
+
 	static String URL;
 	static String PW;
 	static String USERNAME;

@@ -114,7 +114,7 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public void updateAdres(int klant_id, Adres adres) {// Wat doe ik hier nou
-														// weer?!?
+		/*												// weer?!?
 		createAdres(klant_id, adres);
 
 		Addressbook adresboek = new Addressbook();
@@ -130,7 +130,7 @@ public class Adreslijst implements AdresDAO {
 		} finally {
 
 		}
-		System.out.println("Adresgegevens gewijzigd");
+		System.out.println("Adresgegevens gewijzigd");*/
 	}
 
 	@Override
