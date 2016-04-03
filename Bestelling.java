@@ -1,74 +1,67 @@
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Bestelling {
-	private int id;
 	private int klant_id;
-	private ArrayList<Artikel> artikelen;
+	private int bestelling_id;
+	private HashMap<Artikel, Integer> artikelen;
 	
-	public Bestelling(int klant_id, ArrayList<Artikel> artikelen){
+	public Bestelling(int klant_id) {
 		this.klant_id = klant_id;
-		this.artikelen = artikelen;
+		this.artikelen = new HashMap<>();
+	}
+	public Bestelling(){
+		this(0);
 	}
 	
-	public Bestelling(int klant_id){
-		this.klant_id = klant_id;
-		this.artikelen = new ArrayList<>();
-	}
-	
-	public void voegArtikelToe(Artikel artikel){
-		if (this.artikelen.size() < 3)
-			this.artikelen.add(artikel);
-		else
-			System.out.println("De artikellijst is vol\nArtikel toevoeging is mislukt");
-	}
-	
-	public void verwijderArtikel(Artikel artikel){
-		if (this.artikelen.contains(artikel))
-			this.artikelen.remove(artikel);
-		else
-			System.out.println("Artikel staat niet in de lijst\nArtikel verwijdering is mislukt");
-	}
-	
-	public int getKlant_id(){
+	public int getKlant_id() { 
 		return this.klant_id;
 	}
 	
-	public Klant getKlant(){
-		return Klant.get(this.klant_id);
+	public void setKlant_id(int klant_id){
+		this.klant_id = klant_id;
 	}
 	
-	public Artikel haalArtikel(int artikel_id){
-		Artikel artikel = null;
-		
-		for (Artikel a: this.artikelen){
-			if (a.getId() == artikel_id)
-				artikel = a;
-		}
-		
-		return artikel;
+	public int getBestelling_id() {
+		return this.bestelling_id;
 	}
 	
-	public int getId(){
-		return this.id;
+	public void setBestelling_id(int bestelling_id) {
+		this.bestelling_id = bestelling_id;
 	}
 	
-	public void setId(int id){
-		this.id = id;
-	}
-	
-	public ArrayList<Artikel> getArtikelen(){
+	public HashMap<Artikel, Integer> getArtikelen(){
 		return this.artikelen;
 	}
 	
+	public void voegArtikelToeAanBestelling(Artikel artikel, Integer aantal){
+		this.artikelen.put(artikel, aantal);
+	}
+	
+	public void removeArtikel(Artikel artikel){
+		this.artikelen.remove(artikel);
+	}
+	
+	public Klant getKlant(){
+		Klantbestand klantbestand = new Klantbestand();
+		Klant klant = new Klant();
+		try {
+			klant = klantbestand.readKlantWithId(this.klant_id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return klant;
+	}
+		
 	@Override
 	public String toString(){
-		String artikellijst = "";
-		for (Artikel a: this.artikelen)
-			artikellijst += a.toString() + "\n";
-
-		return "Bestellingnummer: " + this.id + " Klantnummer: " + this.klant_id + "\n" + artikellijst;
+		String artikelLijst = "";
+		for (Map.Entry<Artikel, Integer> entry: this.artikelen.entrySet()){
+			artikelLijst += entry.getKey().toString() + " " + entry.getValue() + "\n";
+		}
+		return "Bestellingnummer: " + this.bestelling_id + " Klantnummer: " + this.klant_id + "\n" + artikelLijst;
 	}
-
-
+	
 }

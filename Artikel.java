@@ -1,50 +1,46 @@
+import java.math.BigDecimal;
+
 
 public class Artikel {
 	private int artikel_id;
 	private String artikel_naam;
-	private int artikel_aantal;
-	private double artikel_prijs;
+	private BigDecimal artikel_prijs;
 	
-	public Artikel(int id, String naam, int aantal, double prijs){
+	public Artikel(){
+		this(0, null, null);
+	}
+	
+	public Artikel(int id, String naam, BigDecimal prijs){
 		this.artikel_id = id;
 		this.artikel_naam = naam;
-		this.artikel_aantal = aantal;
 		this.artikel_prijs = prijs;
 	}
 	
-	public Artikel(){
-		this(0, null, 0, 0.0);
-	}
-
 	public int getId() {
-		return artikel_id;
+		return this.artikel_id;
 	}
-
+	public void setId(int artikel_id) {
+		this.artikel_id = artikel_id;
+	}
 	public String getNaam() {
-		return artikel_naam;
+		return this.artikel_naam;
+	}
+	public void setNaam(String artikel_naam) {
+		this.artikel_naam = artikel_naam;
+	}
+	public BigDecimal getPrijs() {
+		return this.artikel_prijs;
+	}
+	public void setPrijs(BigDecimal artikelPrijs) {
+		this.artikel_prijs = artikelPrijs;
 	}
 	
-	public int getAantal() {
-		return artikel_aantal;
-	}
-
-	public void setArtikel_aantal(int artikel_aantal) {
-		this.artikel_aantal = artikel_aantal;
-	}
-
-	public double getPrijs() {
-		return artikel_prijs;
-	}
-
-	public void setArtikel_prijs(double artikel_prijs) {
-		this.artikel_prijs = artikel_prijs;
-	}
-	
-	public Artikel getRandomArtikel(){
-		return new Artikel();
-	}
-	
+	@Override
 	public String toString(){
-		return this.artikel_id + " " + this.artikel_naam + " " + this.artikel_aantal + " " + this.artikel_prijs;
+		return "Artikel- ID: " + this.artikel_id + " Naam: " + this.artikel_naam + " Prijs: " + this.artikel_prijs;
 	}
+	
+	
+	
+	
 }
