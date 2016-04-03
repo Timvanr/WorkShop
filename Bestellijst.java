@@ -6,261 +6,209 @@ import java.util.ArrayList;
 import javax.sql.RowSet;
 import javax.sql.rowset.JdbcRowSet;
 
+
 public class Bestellijst implements BestellingenDAO {
-
-	public Bestellijst() {
-
+	private static Connection connection;
+	
+	public Bestellijst(){
+		try {
+			getConnection();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
-
+	
+	public static Connection getConnection() throws SQLException {
+		if (connection == null || connection.isClosed()){
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				System.out.print("Driver loaded... ");
+			
+				connection = DriverManager.getConnection("jdbc:mysql://localhost/Adresboek", "root", "komt_ie");
+				System.out.println("Database connected!");
+				
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+				
+		return connection;
+	}
+	
 	@Override
 	public void maakTabel() throws SQLException {
-		Connection connection = DatabaseConnection.getPooledConnection();
-
+		getConnection();
+		
 		Statement createTable = connection.createStatement();
-
-		createTable.executeUpdate(
-				"CREATE TABLE Bestelling (" + "bestelling_id INT AUTO_INCREMENT, " + "klant_id INT NOT NULL, "
-						+ "artikel1_id INT, " + "artikel1_naam VARCHAR(255), " + "artikel1_aantal INT, "
-						+ "artikel1_prijs FLOAT, " + "artikel2_id INT, " + "artikel2_naam VARCHAR(255), "
-						+ "artikel2_aantal INT, " + "artikel2_prijs FLOAT, " + "artikel3_id INT, "
-						+ "artikel3_naam VARCHAR(255), " + "artikel3_aantal INT, " + "artikel3_prijs FLOAT, "
-						+ "PRIMARY KEY (bestelling_id), " + "FOREIGN KEY (klant_id) REFERENCES Klant(klant_id))");
-
+			
+		createTable.executeUpdate("CREATE TABLE Bestelling (" +
+				"bestelling_id INT AUTO_INCREMENT, " +
+				"klant_id INT NOT NULL, " +
+				"artikel1_id INT, " +
+				"artikel1_naam VARCHAR(255), " +
+				"artikel1_aantal INT, " +
+				"artikel1_prijs FLOAT, " +
+				"artikel2_id INT, " +
+				"artikel2_naam VARCHAR(255), " +
+				"artikel2_aantal INT, " +
+				"artikel2_prijs FLOAT, " +
+				"artikel3_id INT, " +
+				"artikel3_naam VARCHAR(255), " +
+				"artikel3_aantal INT, " +
+				"artikel3_prijs FLOAT, " +
+				"PRIMARY KEY (bestelling_id), " +
+				"FOREIGN KEY (klant_id) REFERENCES Klant(klant_id))");
+		
 		System.out.println("table Bestellingen created!");
 	}
 
-	public Bestelling createBestelling(int artikel1_id, int artikel1_aantal, int artikel2_id, int artikel2_aantal,
-			int artikel3_id, int artikel3_aantal) throws SQLException {
-
-		Bestelling bestelling = new Bestelling();
-		ArtikelLijst aLijst = new ArtikelLijst();
-
-		Artikel artikel1 = aLijst.getArtikelWithArtikelId(artikel1_id);
-		Artikel artikel2 = aLijst.getArtikelWithArtikelId(artikel2_id);
-		Artikel artikel3 = aLijst.getArtikelWithArtikelId(artikel3_id);
-
-		if (artikel1 != null) {
-			artikel1.setAantal(artikel1_aantal);
-			bestelling.voegArtikelToeAanBestelling(artikel1);
-		} else {
-			return bestelling;
-		}
-
-		if (artikel2 != null) {
-			artikel2.setAantal(artikel2_aantal);
-			bestelling.voegArtikelToeAanBestelling(artikel2);
-		} else {
-			return bestelling;
-		}
-		if (artikel3 != null) {
-			artikel3.setAantal(artikel3_aantal);
-			bestelling.voegArtikelToeAanBestelling(artikel3);
-		} else {
-			return bestelling;
-		}
-
-		return bestelling;
-
-	}
-
 	@Override
-	public void voegBestellingToe(int klant_id, Bestelling bestelling) throws SQLException {
-
-		String insertIdsString = "INSERT INTO bestelling_has_artikel (bestelling_id, artikel_id) values (?,?);";
-		PreparedStatement insertIds = null;
+	public void voegBestellingToe(Bestelling bestelling) throws SQLException {
+		getConnection();
+		
+		ArrayList<Artikel> artikelen = bestelling.getArtikelen();
+		
 		String sql = "";
 		String values = "";
-		try {
-			Connection connection = DatabaseConnection.getPooledConnection();
-			insertIds = connection.prepareStatement(insertIdsString);
-			for (int i = 1; i <= Math.min(3, bestelling.artikelen.size()); i++) {
-				sql += String.format(", artikel%d_id, artikel%d_aantal", i, i);
-				values += ", ?, ?";
-			}
-
-			PreparedStatement voegToe = connection.prepareStatement(
-					String.format("INSERT INTO Bestelling (klant_id%s) VALUES (?%s)", sql, values),
-					Statement.RETURN_GENERATED_KEYS);
-
-			voegToe.setInt(1, klant_id);
-
-			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
-				voegToe.setInt(2 + i * 2, bestelling.artikelen.get(i).getId());
-				voegToe.setInt(3 + i * 2, bestelling.artikelen.get(i).getAantal());
-
-			}
-			voegToe.executeUpdate();
-
-			ResultSet rs = voegToe.getGeneratedKeys();
-			if (rs.isBeforeFirst()) {
-				rs.next();
-				for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
-					int bestelling_id = rs.getInt(1);
-					insertIds.setInt(1, bestelling_id);
-					insertIds.setInt(2, bestelling.artikelen.get(i).getId());
-					insertIds.executeUpdate();
-				}
-
-			}
-
-			System.out.println("Bestelling added!");
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			insertIds.close();
+		
+		for (int i = 1; i <= Math.min(3, artikelen.size()); i++){
+			sql += String.format(", artikel%d_id, artikel%d_naam, artikel%d_aantal, artikel%d_prijs", i, i, i, i);
+			values += ", ?, ?, ?, ?";
 		}
+				
+		PreparedStatement voegToe = connection.prepareStatement(
+				String.format("INSERT INTO Bestelling (klant_id%s) VALUES (?%s)", sql, values), Statement.RETURN_GENERATED_KEYS);
+		
+		voegToe.setInt(1, bestelling.getKlant_id());
+		
+		for (int i = 0; i < Math.min(3, artikelen.size()); i++){
+			voegToe.setInt(2 + i * 4, artikelen.get(i).getId());
+			voegToe.setString(3 + i * 4, artikelen.get(i).getNaam());
+			voegToe.setInt(4 + i * 4, artikelen.get(i).getAantal());
+			voegToe.setDouble(5 + i * 4, artikelen.get(i).getPrijs());
+		}	
+		voegToe.executeUpdate();
+		
+		ResultSet rs = voegToe.getGeneratedKeys();
+		
+		if (rs.isBeforeFirst()){
+			rs.next();
+			bestelling.setId(rs.getInt(1));
+		}
+			
+		System.out.println("Bestelling added!");
 	}
 
-	public Bestelling haalBestelling(int bestelling_id) throws SQLException {
-		RowSet rowSet = null;
-		Connection connection = null;
-		RowSet rowSet2 = null;
-		String haalBestellingString = "SELECT artikel_id FROM Bestelling_has_artikel WHERE bestelling_id = ?";
-		Bestelling bestelling = new Bestelling();
-		ArtikelLijst aLijst = new ArtikelLijst();
+	public static Bestelling haalBestelling(int id) throws SQLException {
+		getConnection();
 		
-		try {
-			connection = DatabaseConnection.getPooledConnection();
-			rowSet2 = new JdbcRowSetImpl(connection);			
-			rowSet = new JdbcRowSetImpl(connection);
-			rowSet.setCommand(haalBestellingString);
-			rowSet.setInt(1, bestelling_id);
-			rowSet.execute();
-
-			int i = 0;
-			while (rowSet.next()) {
-				Artikel artikel = aLijst.getArtikelWithArtikelId(rowSet.getInt(1));
-				
-				String haalAantal = String.format("SELECT artikel%d_aantal FROM bestelling WHERE bestelling_id=?", i + 1);
-				rowSet2.setCommand(haalAantal);
-				rowSet2.setInt(1, bestelling_id);
-				rowSet2.execute();
-				while (rowSet2.next()){
-					artikel.setAantal(rowSet2.getInt(1));
-				}
-				bestelling.voegArtikelToeAanBestelling(artikel);
-				i++;
+		PreparedStatement haalBestelling = connection.prepareStatement
+				("SELECT * FROM Bestelling WHERE bestelling_id = ?");
+		haalBestelling.setInt(1, id);
+		ResultSet gegevens = haalBestelling.executeQuery();
+		
+		JdbcRowSet rowSet = new JdbcRowSetImpl(gegevens);
+		
+		Bestelling bestelling = new Bestelling(rowSet.getInt(2));
+		
+		for (int i = 0; i < 3; i++){
+			if (rowSet.getInt(3 + i * 4) > 0){
+				bestelling.voegArtikelToe(new Artikel(rowSet.getInt(3 + i * 4), rowSet.getString(4 + i * 4), rowSet.getInt(5 + i * 4), rowSet.getDouble(6 + i * 4)));
 			}
-			
-			bestelling.printBestelling();
-
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			rowSet.close();
 		}
+		rowSet.close();
+		
+		bestelling.toString();//misschien beter niet hier?!?
+		
 		return bestelling;
 	}
-
-
+	
 	@Override
-	public ArrayList<Bestelling> haalBestellijst() throws SQLException {
-		Connection connection = DatabaseConnection.getPooledConnection();
-		RowSet rowSet = null;
-		ArrayList<Bestelling> bestellijst = null;
-		try {
-			bestellijst = new ArrayList<>();
-			rowSet = new JdbcRowSetImpl(connection);
-			rowSet.setCommand("SELECT * FROM Bestelling");
-			rowSet.execute();
-
-			while (rowSet.next()) {
-				bestellijst.add(haalBestelling(rowSet.getInt(1)));
-			}
-
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			rowSet.close();
+	public ArrayList<Bestelling> haalBestellijst() throws SQLException{
+		getConnection();
+		
+		ArrayList<Bestelling> bestellijst = new ArrayList<>();
+				
+		RowSet rowSet = new JdbcRowSetImpl(connection);
+		rowSet.setCommand("SELECT * FROM Bestelling");
+		rowSet.execute();
+		
+		while (rowSet.next()){
+			bestellijst.add(haalBestelling(rowSet.getInt(1)));
 		}
+		rowSet.close();
+		
 		return bestellijst;
 	}
-
+	
 	@Override
-	public void verwijderBestelling(int bestelling_id) throws SQLException {
-		PreparedStatement verwijder = null;
-		try {
-			Connection connection = DatabaseConnection.getPooledConnection();
-			verwijder = connection.prepareStatement(
-					"DELETE FROM Bestelling INNER JOIN bestelling_has_artikel" + "WHERE bestelling_id = ?");
-			verwijder.setInt(1, bestelling_id);
-			verwijder.executeUpdate();
-
-			System.out.println("Bestelling " + bestelling_id + " is verwijderd!");
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			verwijder.close();
-		}
+	public void verwijderBestelling(int id) throws SQLException {
+		getConnection();
+		
+		PreparedStatement verwijder = connection.prepareStatement("DELETE FROM Bestelling WHERE bestelling_id = ?");
+		verwijder.setInt(1, id);
+		verwijder.executeUpdate();
+		
+		System.out.println("Bestelling " + id + " is verwijderd!");
 	}
-
+	
 	@Override
-	public void updateBestelling(Bestelling bestelling) throws SQLException {
-		PreparedStatement insertId = null;
-		PreparedStatement update = null;
-		try {
-			Connection connection = DatabaseConnection.getPooledConnection();
-			String updateIdsString = "UPDATE bestelling_has_artikel SET artikel_id " + "WHERE bestelling_id="
-					+ bestelling.getBestelling_id();
-			insertId = connection.prepareStatement(updateIdsString);
-
-			String sqlUpdate = "UPDATE Bestelling SET ";
-			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
-				sqlUpdate += String.format("artikel%d_id = ?, artikel%d_aantal = ?,", i + 1, i + 1);
-			}
-			sqlUpdate += "WHERE bestelling_id = " + bestelling.getBestelling_id();
-
-			update = connection.prepareStatement(sqlUpdate);
-
-			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
-				update.setInt(1 + i * 2, bestelling.artikelen.get(i).getId());
-				update.setInt(2 + i * 2, bestelling.artikelen.get(i).getAantal());
-			}
-			update.executeUpdate();
-
-			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
-				insertId.setInt(1, bestelling.artikelen.get(i).getId());
-				insertId.executeUpdate();
-			}
-			System.out.println("Bestelling " + bestelling.getBestelling_id() + " is veranderd!");
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			insertId.close();
-			update.close();
+	public void updateBestelling(Bestelling bestelling) throws SQLException{
+		getConnection();
+		
+		ArrayList<Artikel> artikelen = bestelling.getArtikelen();
+		
+		String sqlupdate = "UPDATE Bestelling SET ";
+		for (int i = 0; i < Math.min(3, artikelen.size()); i++){
+			sqlupdate += String.format
+					("artikel%d_id = ?, artikel%d_naam = ?, artikel%d_aantal = ?, artikel%d_prijs = ? ", i +1, i +1, i +1, i +1);
 		}
+		sqlupdate += "WHERE bestelling_id = " + bestelling.getId();
+		
+		PreparedStatement update = connection.prepareStatement(sqlupdate);
+		
+		for (int i = 0; i < Math.min(3, artikelen.size()); i++){
+			update.setInt(1 + i * 4, artikelen.get(i).getId());
+			update.setString(2 + i * 4, artikelen.get(i).getNaam());
+			update.setInt(3 + i * 4, artikelen.get(i).getAantal());
+			update.setDouble(4 + i * 4, artikelen.get(i).getPrijs());
+		}
+		update.execute();
+		
+		System.out.println("Bestelling " + bestelling.getId() + " is veranderd!");
 	}
-
+	
 	@Override
 	public int haalKlant_id(int bestelling_id) throws SQLException {
-		PreparedStatement haalKlant_id = null;
+		getConnection();
+		
+		PreparedStatement haalKlant_id = connection.prepareStatement
+				("SELECT klant_id FROM Bestelling WHERE bestelling_id = ?");
+		haalKlant_id.setInt(1, bestelling_id);
+		ResultSet rs = haalKlant_id.executeQuery();
+		
 		int klant_id = 0;
-		try {
-			Connection connection = DatabaseConnection.getPooledConnection();
-			haalKlant_id = connection.prepareStatement("SELECT klant_id FROM Bestelling WHERE bestelling_id = ?");
-			haalKlant_id.setInt(1, bestelling_id);
-			ResultSet rs = haalKlant_id.executeQuery();
-
-			if (rs.next()) {
-				klant_id = rs.getInt(1);
-			}
-
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			haalKlant_id.close();
+		if (rs.next()){
+			klant_id += rs.getInt(1);
 		}
+		
 		return klant_id;
 	}
 
 	@Override
 	public void verwijderTabel() throws SQLException {
-		Connection connection = DatabaseConnection.getPooledConnection();
-
+		getConnection();
+		
 		Statement dropTable = connection.createStatement();
 		dropTable.executeUpdate("DROP TABLE Bestelling");
-
+		
 		System.out.println("table Bestelling dropped!");
 	}
-
+	
+	@Override
+	public void close() throws SQLException {
+		connection.close();
+		System.out.println("Connection closed!");
+	}
 }
