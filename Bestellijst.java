@@ -169,7 +169,7 @@ public class Bestellijst implements BestellingenDAO {
 			if (bestelData.next()){
 				bestelling = new Bestelling();
 				bestelling.setKlant_id(bestelData.getInt(2));
-				for (int i = 0; i < 10; i++){
+				for (int i = 0; i < 10; i++){//tien is nu max aantal artikelen... tsja
 					bestelling.voegArtikelToeAanBestelling
 							(aLijst.getArtikelWithArtikelId(bestelData.getInt(3 + i * 2)), bestelData.getInt(4 + i * 2));
 				}
