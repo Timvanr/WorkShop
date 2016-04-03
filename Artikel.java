@@ -10,6 +10,10 @@ public class Artikel {
 		this(0, null, null);
 	}
 	
+	public Artikel(String naam, BigDecimal prijs){
+		this(0, naam, prijs);
+	}
+	
 	public Artikel(int id, String naam, BigDecimal prijs){
 		this.artikel_id = id;
 		this.artikel_naam = naam;
