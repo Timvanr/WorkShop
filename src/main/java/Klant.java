@@ -35,13 +35,13 @@ public class Klant {
 	
 	public Adres getAdres(){
 		Adreslijst adressen = new Adreslijst();
-		try {
+		// try {
 			return adressen.searchById(this.adres_id);
-			
+		/*	
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return null; */
 	}
 			
 	public int getId() {
