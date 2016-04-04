@@ -155,7 +155,7 @@ public class BuildStatement {
 			boolean hasPrimaryKeyField = false; // Dit is gebruikt omdat nagegaan moet worden of er
 												// een primary-key veld in de klasse gedefinieerd is.
 
-			for (Field field : declaredFields) { // Loop gaat na of één van de gedeclareerde velden de
+			for (Field field : declaredFields) { // Loop gaat na of Ã©Ã©n van de gedeclareerde velden de
 													// primary key annotatie bevat
 				if (field.isAnnotationPresent(Id.class)) {
 					Column column = field.getAnnotation(Column.class);
@@ -184,7 +184,7 @@ public class BuildStatement {
 								columnNameSql += field.getName() + " VARCHAR(45)"; // Voeg naam en VARCHAR(45) toe
 							} else if (field.getType().isAssignableFrom(Long.class)) {// is het veldType een long..
 								columnNameSql += field.getName() + " LONG(11)"; // Voeg naam en LONG(11) toe
-							} else if (field.getType().isPrimitive()) { // idem
+							} else if (field.getType().isAssignableFrom(int.class)) { // idem
 								columnNameSql += field.getName() + " INT(11) ";
 							} else {
 								throw new InvalidDataTypeException();
