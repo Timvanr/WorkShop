@@ -168,10 +168,12 @@ public class Bestellijst implements BestellingenDAO {
 			
 			if (bestelData.next()){
 				bestelling = new Bestelling();
-				bestelling.setKlant_id(bestelData.getInt(2));
-				for (int i = 0; i < 10; i++){//tien is nu max aantal artikelen... tsja
-					bestelling.voegArtikelToeAanBestelling
-							(aLijst.getArtikelWithArtikelId(bestelData.getInt(3 + i * 2)), bestelData.getInt(4 + i * 2));
+				bestelling.setKlant_id(bestelData.getInt(1));
+				for (int i = 0; i < 3; i++){//tien is nu max aantal artikelen... tsja
+					if (bestelData.getInt(2 + i * 2) > 0){
+						bestelling.voegArtikelToeAanBestelling
+								(aLijst.getArtikelWithArtikelId(bestelData.getInt(2 + i * 2)), bestelData.getInt(3 + i * 2));
+					}
 				}
 			} else {
 				System.out.println("Bestelling not found!");
