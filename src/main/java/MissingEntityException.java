@@ -1,3 +1,4 @@
+
 public class MissingEntityException extends Exception{
 	
 	public MissingEntityException(){

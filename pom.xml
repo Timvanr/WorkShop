@@ -4,7 +4,7 @@
   <artifactId>Workshop</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>Workshop app</name>
-  <description>RSvier opleiding worlshop app</description>
+  <description>RSvier opleiding workshop app</description>
   <dependencies>
   	<dependency>
   		<groupId>ch.qos.logback</groupId>

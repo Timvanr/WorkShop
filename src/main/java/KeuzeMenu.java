@@ -1,3 +1,4 @@
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,7 +19,7 @@ public class KeuzeMenu {
 	Artikel artikel;
 	Bestellijst bestelLijst;
 	Adreslijst adresLijst;	
-	public static final Logger LOG = LoggerFactory.getLogger(KeuzeMenu.class);
+	static Logger logger = LoggerFactory.getLogger(KeuzeMenu.class);
 
 	static String URL;
 	static String PW;
@@ -43,10 +44,12 @@ public class KeuzeMenu {
 	}
 
 	public static void main(String[] args) throws IOException{
+		
 		keuzeMenu.startInlog();
 	}
 
 	public void startInlog() throws IOException{
+		logger.info("test2 {}");
 		System.out.println("Inlog scherm: ");
 		System.out.println("");
 		/*System.out.print("Gebruikersnaam: ");
