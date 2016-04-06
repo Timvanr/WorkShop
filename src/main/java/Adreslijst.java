@@ -1,7 +1,8 @@
 
 import java.sql.*;
 import java.util.*;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.sql.RowSet;
 
 import com.sun.rowset.JdbcRowSetImpl;
@@ -9,6 +10,7 @@ import com.sun.rowset.JdbcRowSetImpl;
 
 public class Adreslijst implements AdresDAO {
 	private static Connection connection;
+	static final Logger LOG = LoggerFactory.getLogger(Adreslijst.class);
 	
 	public Adreslijst(){
 		getConnection();
@@ -56,6 +58,7 @@ public class Adreslijst implements AdresDAO {
 		
 		try {
 			insertAdres = connection.prepareStatement(insertAdresString, Statement.RETURN_GENERATED_KEYS);
+			LOG.debug(insertAdres.toString());
 			insertKlantHasAdres = connection.prepareStatement(insertKlantHasAdresString);
 			insertAdres.setString(1, adres.getStraatnaam());
 			insertAdres.setInt(2, adres.getHuisnummer());
