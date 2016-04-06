@@ -49,7 +49,7 @@ public class KeuzeMenu {
 	}
 
 	public void startInlog() throws IOException{
-		logger.info("test2 {}");
+		logger.info("test3 {}");
 		System.out.println("Inlog scherm: ");
 		System.out.println("");
 		/*System.out.print("Gebruikersnaam: ");
