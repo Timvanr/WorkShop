@@ -5,9 +5,9 @@ import java.util.Map;
 
 
 public class Bestelling {
-	private int klant_id;
-	private int bestelling_id;
-	private HashMap<Artikel, Integer> artikelen;
+	int klant_id;
+	int bestelling_id;
+	HashMap<Artikel, Integer> artikelen;
 	
 	public Bestelling(int klant_id) {
 		this.klant_id = klant_id;

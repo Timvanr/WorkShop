@@ -2,10 +2,10 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.sql.RowSet;
 
@@ -95,38 +95,44 @@ public class Klantbestand implements KlantDAO{
 				
 		}
 	
-	public Klant readKlantWithId(int klant_id) throws SQLException {
-		String query = "SELECT * FROM klant WHERE klant_id =?";
+		public Klant readKlantWithId(int klant_id) throws SQLException {
+			String query = "SELECT * FROM klant WHERE klant_id =?";
 
-		Klant klant = null;
+			Klant klant = null;
+					
+			try{
+				Connection connection = DatabaseConnection.getPooledConnection();
+				RowSet rowSet = new JdbcRowSetImpl(connection);
+				rowSet.setCommand(query);
+				rowSet.setInt(1, klant_id);
+				rowSet.execute();
 				
-		try{
-			Connection connection = DatabaseConnection.getPooledConnection();
-			RowSet rowSet = new JdbcRowSetImpl(connection);
-			rowSet.setCommand(query);
-			rowSet.setInt(1, klant_id);
-			rowSet.execute();
-			
-			ResultSetMetaData rsMD = rowSet.getMetaData();
+				//ResultSetMetaData rsMD = rowSet.getMetaData();
 
-			for (int i = 1; i <= rsMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
+				//for (int i = 1; i <= rsMD.getColumnCount(); i++) {
+					//System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
+				//}
+				//System.out.println();
+				while (rowSet.next()) {
+					klant = new Klant();
+					klant.setVoornaam(rowSet.getString("voornaam"));
+					klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
+					klant.setAchternaam(rowSet.getString("achternaam"));
+					klant.setEmail(rowSet.getString("email"));
+					//for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
+						//System.out.printf("%-12s\t", rowSet.getObject(i));
+					}
+				//}
+				rowSet.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
 			}
-			System.out.println();
-			while (rowSet.next()) {
-				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rowSet.getObject(i));
-				}
-			}
-			rowSet.close();
-		} catch (SQLException ex) {
-			ex.printStackTrace();
+
+			return klant;
 		}
-
-		return klant;
-	}
-	
-	public Klant readKlantWithFirstName(String voornaam) throws SQLException {
+	@Override
+	public Set<Klant> readKlantWithFirstName(String voornaam) throws SQLException {
+		LinkedHashSet<Klant> klantset = new LinkedHashSet<>();
 		String query = "Select * from klant where voornaam='" + voornaam + "'";
 
 		Klant klant = null;
@@ -139,33 +145,27 @@ public class Klantbestand implements KlantDAO{
 
 			rowSet.execute();
 
-			ResultSetMetaData rowSetMD = rowSet.getMetaData();
-
 			if (!rowSet.isBeforeFirst()) {
 				System.out.println("There are no records with firstname: " + voornaam);
-				return klant;
+				return klantset;
 			}
-
-			for (int i = 1; i <= rowSetMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rowSetMD.getColumnLabel(i));
-			}
-			System.out.println();
 
 			while (rowSet.next()) {
-				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rowSet.getObject(i));
-					if (i % rowSetMD.getColumnCount() == 0) {
-						System.out.println();
-					}
-				}
+				klant = new Klant();
+				klant.setVoornaam(rowSet.getString("voornaam"));
+				klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
+				klant.setAchternaam(rowSet.getString("achternaam"));
+				klant.setEmail(rowSet.getString("email"));
+				klantset.add(klant);
 			}
+			
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
 			rowSet.close();
 			System.out.println();
 		}
-		return klant;
+		return klantset;
 
 	}
 
@@ -292,8 +292,8 @@ public class Klantbestand implements KlantDAO{
 		System.out.println();
 	}
 	// WILLEN WE HIER ALLEEN EEN NAAM OF OOK EEN ADRES? ANDERS MOET DIT NOG AANGEPAST WORDEN...
-	public ArrayList<Klant> readAll() throws SQLException{
-		ArrayList<Klant> klantList = new ArrayList<>();
+	public Set<Klant> readAll() throws SQLException{
+		LinkedHashSet<Klant> klantList = new LinkedHashSet<>();
 		
 		String query = "Select * from `klant`";
 		

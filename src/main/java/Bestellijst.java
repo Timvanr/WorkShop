@@ -6,7 +6,7 @@ import java.util.*;
 
 import javax.sql.RowSet;
 import javax.sql.rowset.JdbcRowSet;
-
+// Maandag nog even naar kijken: getbestelling v.s. haalbestelling en tabel indeling.
 public class Bestellijst implements BestellingenDAO {
 	private static Connection connection;
 	
@@ -142,7 +142,7 @@ public class Bestellijst implements BestellingenDAO {
 				rowSet2.setInt(1, bestelling_id);
 				rowSet2.execute();
 				while (rowSet2.next()){
-					artikel.setAantal(rowSet2.getInt(1));
+					artikel.setAantal(rowSet2.getInt(1)); // Moeten deze en die hieronder niet samen? (voegArtikelToeAanBestelling(artikel, rowSet2.getInt(1));
 				}
 				bestelling.voegArtikelToeAanBestelling(artikel);
 				i++;
