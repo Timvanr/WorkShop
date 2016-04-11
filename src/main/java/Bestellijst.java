@@ -153,8 +153,8 @@ public class Bestellijst implements BestellingDAO {
 			bestelData.setInt(1, bestelling_id);
 			bestelData.execute();
 			
+			bestelling = new Bestelling();
 			while (bestelData.next()){
-				bestelling = new Bestelling();
 				bestelling.setKlant_id(bestelData.getInt(2));
 				if (bestelData.getInt(4) > 0){
 					bestelling.voegArtikelToeAanBestelling
