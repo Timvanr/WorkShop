@@ -1,4 +1,6 @@
 
+
+
 import java.sql.*;
 
 import com.sun.rowset.*;
@@ -7,14 +9,13 @@ import java.util.*;
 import javax.sql.RowSet;
 import javax.sql.rowset.JdbcRowSet;
 
-public class Bestellijst implements BestellingenDAO {
+public class Bestellijst implements BestellingDAO {
 	private static Connection connection;
 	
 	public Bestellijst() {
 		connection = DatabaseConnection.getPooledConnection();
 	}
 
-	@Override
 	public void maakTabel() throws SQLException {
 		connection = DatabaseConnection.getPooledConnection();
 
@@ -67,57 +68,38 @@ public class Bestellijst implements BestellingenDAO {
 */
 	@Override
 	public void voegBestellingToe(Bestelling bestelling) throws SQLException {
-
-		String insertIdsString = "INSERT INTO bestelling_has_artikel (bestelling_id, artikel_id) values (?,?);";
-		PreparedStatement insertIds = null;
-		String sql = "";
-		String values = "";
 		
 		HashMap<Artikel, Integer> artikelen = bestelling.getArtikelen();
 		try {
 			connection = DatabaseConnection.getPooledConnection();
-			insertIds = connection.prepareStatement(insertIdsString);
-			for (int i = 1; i <= artikelen.size(); i++) {
-				sql += String.format(", artikel%d_id, artikel%d_aantal", i, i);
-				values += ", ?, ?";
-			}
-
 			PreparedStatement voegToe = connection.prepareStatement(
-					String.format("INSERT INTO Bestelling (klant_id%s) VALUES (?%s)", sql, values),
-					Statement.RETURN_GENERATED_KEYS);
-
+					"INSERT INTO Bestelling (klant_id) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
 			voegToe.setInt(1, bestelling.getKlant_id());
-			
-			int i = 0;
-			for (Map.Entry<Artikel, Integer> entry: artikelen.entrySet()) {
-				voegToe.setInt(2 + i * 2, entry.getKey().getId());
-				voegToe.setInt(3 + i * 2, entry.getValue());
-				i++;
-			}
 			voegToe.executeUpdate();
-
+			
 			ResultSet rs = voegToe.getGeneratedKeys();
 			if (rs.isBeforeFirst()) {
 				rs.next();
-				bestelling.setBestelling_id(rs.getInt(1)); //toch?? deze for-loop hoeft niet toch??
-				/*
-				for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
-					int bestelling_id = rs.getInt(1);
-					insertIds.setInt(1, bestelling_id);
-					insertIds.setInt(2, bestelling.artikelen.get(i).getId());
-					insertIds.executeUpdate();
-				}
-				*/
+				bestelling.setBestelling_id(rs.getInt(1));
+			}
+			
+			for (Map.Entry<Artikel, Integer> entrySet: artikelen.entrySet()) {
+				PreparedStatement insertArtikelen = connection.prepareStatement(
+						"INSERT INTO bestelling_has_artikel (bestelling_id, artikel_id artikel_aantal) values (?,?,?)");
+				insertArtikelen.setInt(1, bestelling.getBestelling_id());
+				insertArtikelen.setInt(2, entrySet.getKey().getId());
+				insertArtikelen.setInt(3, entrySet.getValue());
+				insertArtikelen.executeUpdate();
 			}
 
 			System.out.println("Bestelling added!");
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-			insertIds.close();
+			close();
 		}
 	}
-
+	/*
 	public Bestelling haalBestelling(int bestelling_id) throws SQLException {
 		RowSet rowSet = null;
 		RowSet rowSet2 = null;
@@ -156,31 +138,31 @@ public class Bestellijst implements BestellingenDAO {
 		}
 		return bestelling;
 	}
-
+	*/
 	public Bestelling getBestelling(int bestelling_id){
 		connection = DatabaseConnection.getPooledConnection();
 		ArtikelLijst aLijst = new ArtikelLijst();
 		Bestelling bestelling = null;
 		try {
 			RowSet bestelData = new JdbcRowSetImpl(connection);
-			bestelData.setCommand("SELECT * FROM Bestelling WHERE bestelling_id = ?");
+			bestelData.setCommand(
+					"SELECT * FROM Bestelling " +
+					"INNER JOIN bestelling_has_artikel " +
+					"ON Bestelling.bestelling_id = bestelling_has_artikel.bestelling_id " +
+					"WHERE bestelling_id = ?");
 			bestelData.setInt(1, bestelling_id);
 			bestelData.execute();
 			
-			if (bestelData.next()){
+			while (bestelData.next()){
 				bestelling = new Bestelling();
-				bestelling.setKlant_id(bestelData.getInt(1));
-				for (int i = 0; i < 3; i++){
-					if (bestelData.getInt(2 + i * 2) > 0){
-						bestelling.voegArtikelToeAanBestelling
-								(aLijst.getArtikelWithArtikelId(bestelData.getInt(2 + i * 2)), bestelData.getInt(3 + i * 2));
-					}
+				bestelling.setKlant_id(bestelData.getInt(2));
+				if (bestelData.getInt(4) > 0){
+					bestelling.voegArtikelToeAanBestelling
+							(aLijst.getArtikelWithArtikelId(bestelData.getInt(4)), bestelData.getInt(5));
 				}
-			} else {
-				System.out.println("Bestelling not found!");
 			}
-			
 			bestelData.close();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -235,28 +217,35 @@ public class Bestellijst implements BestellingenDAO {
 	public void updateBestelling(Bestelling bestelling) throws SQLException {
 		PreparedStatement insertId = null;
 		PreparedStatement update = null;
+		
+		HashMap<Artikel, Integer> artikelen = bestelling.getArtikelen();
 		try {
 			connection = DatabaseConnection.getPooledConnection();
-			String updateIdsString = "UPDATE bestelling_has_artikel SET artikel_id " + "WHERE bestelling_id="
-					+ bestelling.getBestelling_id();
+			
+			String updateIdsString = "UPDATE bestelling_has_artikel " +
+					"SET artikel_id " +
+					"WHERE bestelling_id= " + bestelling.getBestelling_id();
 			insertId = connection.prepareStatement(updateIdsString);
-
+			
 			String sqlUpdate = "UPDATE Bestelling SET ";
-			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
+			for (int i = 0; i < artikelen.size(); i++) {
 				sqlUpdate += String.format("artikel%d_id = ?, artikel%d_aantal = ?,", i + 1, i + 1);
 			}
 			sqlUpdate += "WHERE bestelling_id = " + bestelling.getBestelling_id();
 
 			update = connection.prepareStatement(sqlUpdate);
-
-			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
-				update.setInt(1 + i * 2, bestelling.artikelen.get(i).getId());
-				update.setInt(2 + i * 2, bestelling.artikelen.get(i).getAantal());
+			
+			int index = 0;
+			for (Map.Entry<Artikel, Integer> entrySet: artikelen.entrySet()) {
+				update.setInt(1 + index * 2, entrySet.getKey().getId());
+				update.setInt(2 + index * 2, entrySet.getValue());
+				index++;
+				
 			}
 			update.executeUpdate();
 
-			for (int i = 0; i < Math.min(3, bestelling.artikelen.size()); i++) {
-				insertId.setInt(1, bestelling.artikelen.get(i).getId());
+			for (Map.Entry<Artikel, Integer> entrySet: artikelen.entrySet()) {
+				insertId.setInt(1, entrySet.getKey().getId());
 				insertId.executeUpdate();
 			}
 			System.out.println("Bestelling " + bestelling.getBestelling_id() + " is veranderd!");
@@ -289,8 +278,31 @@ public class Bestellijst implements BestellingenDAO {
 		}
 		return klant_id;
 	}
-
-	@Override
+	
+	public ArrayList<Bestelling> getBestellijstByKlant(int klant_id){
+		connection = DatabaseConnection.getPooledConnection();
+		
+		ArrayList<Bestelling> bestellijst = new ArrayList();
+		
+		try {
+			RowSet bestellijstByKlant = new JdbcRowSetImpl(connection);
+			bestellijstByKlant.setCommand(
+					"SELECT * FROM Bestelling " +
+					"WHERE klant_id = ?");
+			bestellijstByKlant.setInt(1, klant_id);
+			while (bestellijstByKlant.next()){
+				bestellijst.add(getBestelling(bestellijstByKlant.getInt(1)));
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return bestellijst;
+	}
+	
 	public void verwijderTabel() throws SQLException {
 		connection = DatabaseConnection.getPooledConnection();
 
