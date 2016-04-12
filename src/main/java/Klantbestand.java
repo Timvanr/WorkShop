@@ -107,22 +107,15 @@ public class Klantbestand implements KlantDAO{
 				rowSet.setInt(1, klant_id);
 				rowSet.execute();
 				
-				//ResultSetMetaData rsMD = rowSet.getMetaData();
-
-				//for (int i = 1; i <= rsMD.getColumnCount(); i++) {
-					//System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
-				//}
-				//System.out.println();
 				while (rowSet.next()) {
 					klant = new Klant();
 					klant.setVoornaam(rowSet.getString("voornaam"));
 					klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
 					klant.setAchternaam(rowSet.getString("achternaam"));
 					klant.setEmail(rowSet.getString("email"));
-					//for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
-						//System.out.printf("%-12s\t", rowSet.getObject(i));
+					
 					}
-				//}
+			
 				rowSet.close();
 			} catch (SQLException ex) {
 				ex.printStackTrace();
@@ -184,26 +177,18 @@ public class Klantbestand implements KlantDAO{
 
 			rowSet2.execute();
 
-			ResultSetMetaData rowSetMD = rowSet2.getMetaData();
-
 			if (!rowSet2.isBeforeFirst()) {
 				System.out.println("There are no records with this combination of names: " + voornaam + " "
 						+ tussenvoegsel + " " + achternaam);
 				return klant;
 			}
 
-			for (int i = 1; i <= rowSetMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rowSetMD.getColumnLabel(i));
-			}
-			System.out.println();
-
 			while (rowSet2.next()) {
-				for (int i = 1; i <= rowSet2.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rowSet2.getObject(i));
-					if (i % rowSetMD.getColumnCount() == 0) {
-						System.out.println();
-					}
-				}
+				klant = new Klant();
+				klant.setVoornaam(rowSet2.getString("voornaam"));
+				klant.setTussenvoegsel(rowSet2.getString("tussenvoegsel"));
+				klant.setAchternaam(rowSet2.getString("achternaam"));
+				klant.setEmail(rowSet2.getString("email"));				
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -218,18 +203,10 @@ public class Klantbestand implements KlantDAO{
 	public void UpdateKlantNaam(int klant_id) throws SQLException{
 		String updateKlantNaamquery = "UPDATE klant SET voornaam=?, achternaam=?, tussenvoegsel=?, WHERE klant_id=?;";
 		PreparedStatement updateKlantNaam = null;
-		String newVoornaam = null;
-		String newAchternaam = null;
-		String newTussenvoegsel = null;
-		
+		String[] newNaam = null;
+		Service service = new Service();
 		try {
-			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-			System.out.println("Nieuwe voornaam");
-			newVoornaam = input.readLine();
-			System.out.println("Nieuwe achternaam");
-			newAchternaam = input.readLine();
-			System.out.println("Nieuw tussenvoegsel");
-			newTussenvoegsel = input.readLine();
+			newNaam = service.completeNaamPrompt();
 		}
 		catch (IOException ex){
 			ex.printStackTrace();
@@ -237,9 +214,9 @@ public class Klantbestand implements KlantDAO{
 		try{
 			Connection connection = DatabaseConnection.getPooledConnection();
 			updateKlantNaam = connection.prepareStatement(updateKlantNaamquery);
-			updateKlantNaam.setString(1, newVoornaam);
-			updateKlantNaam.setString(2, newAchternaam);
-			updateKlantNaam.setString(3, newTussenvoegsel);
+			updateKlantNaam.setString(1, newNaam[0]);
+			updateKlantNaam.setString(2, newNaam[2]);
+			updateKlantNaam.setString(3, newNaam[1]);
 			updateKlantNaam.setInt(4, klant_id);
 			
 			updateKlantNaam.executeUpdate();
@@ -255,24 +232,14 @@ public class Klantbestand implements KlantDAO{
 	
 	public void updateEmail(int klant_id) throws SQLException{
 		Connection connection = DatabaseConnection.getPooledConnection();
-		EmailValidator emailVal = EmailValidator.getInstance();
+		Service service = new Service();
+		String newEmail = null;
 		PreparedStatement updateEmail = connection.prepareStatement
 				("UPDATE Klant SET email = ? WHERE klant_id = ?");
 		
 		System.out.println("Nieuw Email adres");
-		boolean invalidInput = true;
-		String newEmail = null;
 		try{
-			while(invalidInput){
-			newEmail = input.readLine();
-			if (emailVal.isValid(newEmail)){
-				invalidInput = false;
-			}
-			else {
-				System.out.println("incorrect E-mail address. Please retry");
-			}
-			}
-			
+			newEmail = service.emailPrompt();
 		}
 		catch (IOException ex){
 			ex.printStackTrace();
@@ -311,11 +278,6 @@ public class Klantbestand implements KlantDAO{
 				klant.setAchternaam(rowSet.getString(3));
 				klant.setTussenvoegsel(rowSet.getString(4));
 				klant.setEmail(rowSet.getString(5));
-				klant.adres.setStraatnaam(rowSet.getString(6));
-				klant.adres.setHuisnummer(rowSet.getInt(9));
-				klant.adres.setPostcode(rowSet.getString(7));
-				klant.adres.setToevoeging(rowSet.getString(8));
-				klant.adres.setWoonplaats(rowSet.getString(10));
 				
 				klantList.add(klant);	
 				rowSet.close();

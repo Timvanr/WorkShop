@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
 public class Service {
 
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
@@ -33,11 +35,37 @@ public class Service {
 		String achternaam = input.readLine();
 		return achternaam;
 		}
+	
+	String[] completeNaamPrompt() throws IOException{
+		String[] naamArray = new String[3];
+		naamArray[0] = voornaamPrompt();
+		naamArray[1] = tussenvoegselPrompt();
+		naamArray[2] = achternaamPrompt();
+		return naamArray;
+	}
+	
 	String emailPrompt() throws IOException {
-		System.out.print("Email: ");
-		String email = input.readLine();
-		return email;
+		EmailValidator emailVal = EmailValidator.getInstance();
+		boolean invalidInput = true;
+		String newEmail = null;
+		try{
+			while(invalidInput){
+			newEmail = input.readLine();
+			if (emailVal.isValid(newEmail)){
+				invalidInput = false;
+			}
+			else {
+				System.out.println("foutief E-mail adres. Probeer opnieuw a.u.b.");
+			}
+			}
 		}
+		catch (IOException ex){
+			ex.printStackTrace();
+		}
+		return newEmail;
+	}
+		
+		
 	int adresIdPrompt() throws IOException {
 		System.out.print("Adres ID: ");
 		String adres_idString = input.readLine();
@@ -90,13 +118,16 @@ public class Service {
 		return artikelPrijs;
 	}
 	String artikelNaamPrompt() throws IOException {
-		System.out.print("Welk artikel wilt u toevoegen: ");
+		System.out.print("Geef de naam van het artikel dat u wilt toevoegen: ");
 		String artikelNaam = input.readLine();
 		return artikelNaam;
 	}
+	
 	int arikelIdPrompt() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		System.out.println("Geef het artikelnummer van het artikel dat u wilt toevoegen: ");
+		String artikelIdString = input.readLine();
+		int artikelId = Integer.parseInt(artikelIdString);
+		return artikelId;
 	}
 		
 	void printKlant(Klant klant){
@@ -131,7 +162,7 @@ public class Service {
 		for (Map.Entry<Artikel, Integer> entry: bestelling.artikelen.entrySet()){
 				artikelLijst += entry.getKey().toString() + " " + entry.getValue() + "\n";
 			}
-			System.out.println("Bestellingnummer: " + bestelling.bestelling_id + " Klantnummer: " + bestelling.klant_id + "\n" + artikelLijst);
+			System.out.println("Bestellingnummer: " + bestelling.getBestelling_id() + " Klantnummer: " + bestelling.klant_id + "\n" + artikelLijst);
 		}
 	
 	void printBestellingen(ArrayList<Bestelling> bestellijst){

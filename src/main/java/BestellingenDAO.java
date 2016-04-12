@@ -11,5 +11,6 @@ public interface BestellingenDAO {
 	void verwijderBestelling(int id) throws SQLException ;
 	void verwijderTabel() throws SQLException ;
 	ArrayList<Bestelling> haalBestellijst() throws SQLException;
+	Bestelling getBestelling(int bestelling_id) throws SQLException;
 	
 }

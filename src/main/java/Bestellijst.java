@@ -118,7 +118,7 @@ public class Bestellijst implements BestellingenDAO {
 		}
 	}
 
-	public Bestelling haalBestelling(int bestelling_id) throws SQLException {
+	/*public Bestelling haalBestelling(int bestelling_id) throws SQLException {
 		RowSet rowSet = null;
 		RowSet rowSet2 = null;
 		String haalBestellingString = "SELECT artikel_id FROM Bestelling_has_artikel WHERE bestelling_id = ?";
@@ -156,34 +156,50 @@ public class Bestellijst implements BestellingenDAO {
 		}
 		return bestelling;
 	}
-
-	public Bestelling getBestelling(int bestelling_id){
+*/
+	@Override
+	public Bestelling getBestelling(int bestelling_id) throws SQLException{
 		connection = DatabaseConnection.getPooledConnection();
-		ArtikelLijst aLijst = new ArtikelLijst();
 		Bestelling bestelling = null;
-		try {
-			RowSet bestelData = new JdbcRowSetImpl(connection);
-			bestelData.setCommand("SELECT * FROM Bestelling WHERE bestelling_id = ?");
+		RowSet artikelData = null;
+		RowSet bestelData = null;
+		try{
+			bestelling = new Bestelling();
+			bestelData = new JdbcRowSetImpl(connection);
+			bestelData.setCommand("SELECT * FROM Bestelling INNER JOIN bestelling_has_artikel ON bestelling.bestelling_id=bestelling_has_artikel.bestelling_id WHERE bestelling.bestelling_id=?");
 			bestelData.setInt(1, bestelling_id);
 			bestelData.execute();
 			
-			if (bestelData.next()){
-				bestelling = new Bestelling();
-				bestelling.setKlant_id(bestelData.getInt(1));
-				for (int i = 0; i < 3; i++){
-					if (bestelData.getInt(2 + i * 2) > 0){
-						bestelling.voegArtikelToeAanBestelling
-								(aLijst.getArtikelWithArtikelId(bestelData.getInt(2 + i * 2)), bestelData.getInt(3 + i * 2));
+			if (bestelData.isBeforeFirst()){
+								
+			while (bestelData.next()){
+				
+			artikelData = new JdbcRowSetImpl(connection);
+			artikelData.setCommand("SELECT * FROM Artikel WHERE artikel_id = ?");
+			artikelData.setInt(1, bestelData.getInt("artikel_id"));
+			artikelData.execute();
+			
+			while (artikelData.next()){
+				bestelling.setKlant_id(bestelData.getInt("klant_id"));
+				bestelling.setBestelling_id(bestelling_id);
+				Artikel artikel = new Artikel();
+				artikel.setId(artikelData.getInt("artikel_id"));
+				artikel.setNaam(artikelData.getString("artikel_naam"));
+				artikel.setPrijs(artikelData.getBigDecimal("artikel_prijs"));
+				bestelling.voegArtikelToeAanBestelling(artikel, bestelData.getInt("artikel_aantal"));
 					}
 				}
-			} else {
-				System.out.println("Bestelling not found!");
-			}
+			} 
 			
-			bestelData.close();
-		} catch (SQLException e) {
+		else {
+			System.out.println("Bestelling not found!");
+			
+		} 
+		}catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			bestelData.close();
+			artikelData.close();
 			close();
 		}
 		
