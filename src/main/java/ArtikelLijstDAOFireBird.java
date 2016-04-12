@@ -1,4 +1,3 @@
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,72 +8,64 @@ import javax.sql.RowSet;
 import com.mysql.jdbc.Statement;
 import com.sun.rowset.JdbcRowSetImpl;
 
-public class ArtikelLijst {
+public class ArtikelLijstDAOFireBird extends ArtikelLijst {
 
-	private static Connection connection;
-	
-	public static Connection getConnection() throws SQLException {
-		if (connection == null || connection.isClosed()){
-			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				System.out.print("Driver loaded... ");
-			
-				connection = DriverManager.getConnection("jdbc:mysql://localhost/workshop", "sandermegens", "FrIkandel");
-				System.out.println("Database connected!");
-				
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-				
-		return connection;
-	}
-		
-	public ArtikelLijst(){
+	public static Connection getConnection(){
+		final String DRIVER_CLASS = "org.firebirdsql.jdbc.FBDriver";
+		final String USERNAME = "SYSDBA";
+		final String pw = "MasterKey";
+		final String URL = "jdbc:firebirdsql://localhost:3050/D:/HOST.gdb";
+		Connection connection = null;
+
 		try{
-			getConnection();
+			Class.forName(DRIVER_CLASS);
+			if (connection == null)
+				connection = DriverManager.getConnection(URL, USERNAME, pw);
+			System.out.println("connection made");
+		} catch (ClassNotFoundException ex){
+			ex.printStackTrace();
 		}
 		catch (SQLException ex){
 			ex.printStackTrace();
-		}
+		}		
+		return connection;		
 	}
-	
+
+	public ArtikelLijstDAOFireBird(){
+	}
+
 	public int createArtikel(Artikel artikel) throws SQLException{
-		
+		Connection connection = getConnection();
 		String createArtikelString = "INSERT INTO artikel (artikel_naam, artikel_prijs) values (?,?);";
 		PreparedStatement createArtikel = null;
-		ResultSet rs = null;
 		int artikel_id = 0;
 		try{
 			getConnection();
-			createArtikel = connection.prepareStatement(createArtikelString, Statement.RETURN_GENERATED_KEYS); //HIER MOET NOG EEN UNIQUE ID EXCEPTION AFGEVANGEN WORDEN!
+			createArtikel = connection.prepareStatement(createArtikelString); 
 			createArtikel.setString(1, artikel.getNaam());
 			createArtikel.setBigDecimal(2, artikel.getPrijs());
-			createArtikel.executeUpdate();
-			
-			rs = createArtikel.getGeneratedKeys();
-			if (rs.isBeforeFirst()){
-				rs.next();
-				artikel_id = rs.getInt(1);
-				System.out.println("Artikel met artikel_id " + artikel_id + " succesvol aangemaakt");
-			}
-			}
+			ResultSet resultSet = createArtikel.executeQuery();
+			while (resultSet .next()) {
+				artikel_id = resultSet.getInt("artikel_id");
+				System.out.println("Artikel met artikelid " + artikel_id + " is succesvol aangemaakt");
+			}			
+		}
 		catch (SQLException ex){
 			ex.printStackTrace();
 		}
 		finally {
-			rs.close();
 			createArtikel.close();
 		}
 		return artikel_id;
 	}
-	
+
 	public Artikel getArtikelWithArtikelId(int artikel_id) throws SQLException{
+		Connection connection = getConnection();
 		String getArtikelString = "SELECT * FROM artikel WHERE artikel_id=?;";
 		RowSet rs = null;
 		Artikel artikel = new Artikel();
 		try{
-			
+
 			getConnection();
 			rs = new JdbcRowSetImpl(connection);
 			rs.setCommand(getArtikelString);
@@ -109,15 +100,14 @@ public class ArtikelLijst {
 			System.out.println();
 			rs.close();
 		}
-		return artikel;
-		
+		return artikel;	
 	}
-	
+
 	public void deleteArtikelWithArtikelId(int artikel_id) throws SQLException{
-		getConnection();
+		Connection connection = getConnection();
 		String deleteArtikelString = "DELETE * FROM artikel WHERE artikel_id=?;";
 		PreparedStatement deleteArtikel = connection.prepareStatement(deleteArtikelString);
-		
+
 		try{
 			deleteArtikel.setInt(1, artikel_id);
 			deleteArtikel.executeUpdate();
@@ -130,7 +120,4 @@ public class ArtikelLijst {
 			deleteArtikel.close();
 		}
 	}
-	
-	
-	
 }

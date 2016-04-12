@@ -1,159 +1,115 @@
-
 import java.sql.*;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.sql.RowSet;
 import com.sun.rowset.JdbcRowSetImpl;
+import com.sun.rowset.*;
 
-
-public class Adreslijst implements AdresDAO {
-	private static Connection connection;
-	static final Logger LOG = LoggerFactory.getLogger(Adreslijst.class);
-	
-	public Adreslijst(){
-		getConnection();
-			
-	}
+public class AdresDAOFireBird implements AdresDAO {
+	Connection connection = null;
 	
 	public static Connection getConnection(){
-		Connection connection = DatabaseConnection.getPooledConnection();
-						
-		return connection;
-	}
-	
-	public void createTable(){
-		getConnection();
+		final String DRIVER_CLASS = "org.firebirdsql.jdbc.FBDriver";
+		final String USERNAME = "SYSDBA";
+		final String pw = "MasterKey";
+		final String URL = "jdbc:firebirdsql://localhost:3050/D:/HOST.gdb";
+		Connection connection = null;
 		
-		try {
-			Statement createTable = connection.createStatement();
-			createTable.execute("CREATE TABLE Adres (" +
-					"adres_id INT AUTO_INCREMENT PRIMARY KEY, " +
-					"straatnaam VARCHAR(45), " +
-					"huisnummer INT, " +
-					"toevoeging VARCHAR(6), " +
-					"postcode VARCHAR(6), " +
-					"woonplaats VARCHAR(45), " +
-					"CONSTRAINT uniek UNIQUE (postcode, huisnummer, toevoeging)" +
-					")");
-		
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			close();
+		try{
+			Class.forName(DRIVER_CLASS);
+			if (connection == null)
+				connection = DriverManager.getConnection(URL, USERNAME, pw);
+				System.out.println("connection made");
+		} catch (ClassNotFoundException ex){
+			ex.printStackTrace();
 		}
-		System.out.println("Table Adres created!");
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}		
+		return connection;		
+	}
+   	
+	public AdresDAOFireBird() {     
 	}
 	
 	@Override
 	public void createAdres(int klant_id, Adres adres){
 		getConnection();
-		
-		String insertAdresString = "INSERT INTO Adres (straatnaam, huisnummer, toevoeging, postcode, woonplaats) VALUES (?,?,?,?,?);";
+
+		String insertAdresString = "INSERT INTO Adres (straatnaam, huisnummer, toevoeging, postcode, woonplaats) VALUES (?,?,?,?,?) RETURNING adres_id ;";
 		String insertKlantHasAdresString = "INSERT INTO klant_has_adres (klant_id, adres_id) values (?,?);";
 		PreparedStatement insertAdres = null;
 		PreparedStatement insertKlantHasAdres = null;
-		ResultSet rs = null;
-		
+		int adres_id = 0;
+
 		try {
-			insertAdres = connection.prepareStatement(insertAdresString, Statement.RETURN_GENERATED_KEYS);
-			LOG.debug(insertAdres.toString());
+			insertAdres = connection.prepareStatement(insertAdresString);
 			insertKlantHasAdres = connection.prepareStatement(insertKlantHasAdresString);
 			insertAdres.setString(1, adres.getStraatnaam());
 			insertAdres.setInt(2, adres.getHuisnummer());
 			insertAdres.setString(3, adres.getToevoeging());
 			insertAdres.setString(4, adres.getPostcode());
 			insertAdres.setString(5, adres.getWoonplaats());
-			insertAdres.executeUpdate();
+			ResultSet resultSet = insertAdres.executeQuery();
 			System.out.println("Adres created!");
-			
-			rs = insertAdres.getGeneratedKeys();
-			if (rs.isBeforeFirst()) {
-				rs.next();
-				insertKlantHasAdres.setInt(1, klant_id);
-				insertKlantHasAdres.setInt(2, rs.getInt(1));
-				insertKlantHasAdres.executeUpdate();
-			}
-		
-		} catch (SQLException ex) {
-			//System.out.println(ex.getErrorCode());
-			if (ex.getErrorCode() == 1062){
-				try {
-					int existingAdres_id = searchByPostcodeAndHuisnummer
-							(adres.getPostcode(), adres.getHuisnummer(), adres.getToevoeging()).getId();
-					
-					getConnection();//connectie openen omdat die gesloten is door searchByPostcodeAndHuisnummer!
-					PreparedStatement assignExistingAdres = connection.prepareStatement(insertKlantHasAdresString);
-					assignExistingAdres.setInt(1, klant_id);
-					assignExistingAdres.setInt(2, existingAdres_id);
-					assignExistingAdres.executeUpdate();
-					System.out.println("Adres already exists; existing Adres was assigned to Klant!");
-					
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			} else {
-				ex.printStackTrace();
-			}
-		} finally {
-			try {
-				insertAdres.close();
-				insertKlantHasAdres.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			close();
-		}
-		
-	}
 
+			while (resultSet .next()) {
+				adres_id = resultSet.getInt("adres_id");
+
+				if (resultSet.isBeforeFirst()) {
+					resultSet.next();
+					insertKlantHasAdres.setInt(1, klant_id);
+					insertKlantHasAdres.setInt(2, adres_id);
+					insertKlantHasAdres.executeUpdate();
+				}
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+	} 	
+	
 	@Override
 	public Adres readAdres(int id) {
-		getConnection();
-		
-		String query = "SELECT * FROM Adres WHERE adres_id =?";
+		Connection connection = getConnection();
+		String query = "SELECT * FROM adres WHERE adres_id =?";
 		Adres adres = null;
-		
-		try {
+				
+		try{
+			
 			RowSet rowSet = new JdbcRowSetImpl(connection);
 			rowSet.setCommand(query);
 			rowSet.setInt(1, id);
 			rowSet.execute();
-	
+			
 			ResultSetMetaData rsMD = rowSet.getMetaData();
-	
+
 			for (int i = 1; i <= rsMD.getColumnCount(); i++) {
 				System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
 			}
-			System.out.println(); 
+			System.out.println();
 			while (rowSet.next()) {
 				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
 					System.out.printf("%-12s\t", rowSet.getObject(i));
 				}
 			}
-			
 			rowSet.close();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			close();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
 		}
-		
+
 		return adres;
 	}
 	
 	@Override
-	public void updateAdres(int klant_id, Adres adres){
-		
-		createAdres(klant_id, adres);
-		
+	public void updateAdres(int klant_id, Adres adres){		
+		createAdres(klant_id, adres);		
 		System.out.println("Adresgegevens gewijzigd");
 	}
 
 	@Override
 	public Set<Adres> adressenPerKlant(int klant_id){
-		getConnection();
+		Connection connection = getConnection();
 		
 		Set<Adres> adressen = new LinkedHashSet();
 		try {
@@ -175,14 +131,13 @@ public class Adreslijst implements AdresDAO {
 			e.printStackTrace();
 		} finally {
 			close();
-		}
-		
+		}		
 		return adressen;
 	}
 	
 	@Override
 	public Set<Adres> readAll() {
-		getConnection();
+		Connection connection = getConnection();
 
 		Set<Adres> adresLijst = new LinkedHashSet<>();
 		try {
@@ -215,7 +170,7 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public Adres searchById(int id) {
-		getConnection();
+		Connection connection = getConnection();
 		
 		Adres adres = null;
 		try {
@@ -241,7 +196,7 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer,	String toevoeging) {
-		getConnection();
+		Connection connection = getConnection();
 		
 		Adres adres = new Adres();
 		
@@ -284,7 +239,7 @@ public class Adreslijst implements AdresDAO {
 	
 	@Override
 	public Set<Adres> searchByWoonplaats(String plaats){
-		getConnection();
+		Connection connection = getConnection();
 		
 		Set<Adres> adressen = new LinkedHashSet();
 		try {
@@ -310,7 +265,7 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public Set<Adres> searchByStraat(String straat, String plaats) {
-		getConnection();
+		Connection connection = getConnection();
 		
 		Set<Adres> adressen = new LinkedHashSet();
 		try {
@@ -353,7 +308,7 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public Set<Klant> getKlant(int adres_id) {
-		getConnection();
+		Connection connection = getConnection();
 		
 		Set<Klant> klantSet = new LinkedHashSet<>();
 		try {
@@ -386,7 +341,7 @@ public class Adreslijst implements AdresDAO {
 	@Override
 	public void deleteAdres(int id) {
 		try {
-			getConnection();
+			Connection connection = getConnection();
 		
 			PreparedStatement deleteAdres = connection.prepareStatement
 					("DELETE * FROM Adres WHERE adres_id = ?");
@@ -403,7 +358,7 @@ public class Adreslijst implements AdresDAO {
 	
 	public void deleteKlantAdresPair(int klant_id, int adres_id){
 		try {
-			getConnection();
+			Connection connection = getConnection();
 			
 			PreparedStatement deleteKlantAdresPair = connection.prepareStatement
 					("DELETE * FROM klant_has_adres WHERE klant_id = ? AND adres_id = ?");
@@ -431,3 +386,4 @@ public class Adreslijst implements AdresDAO {
 	}
 
 }
+

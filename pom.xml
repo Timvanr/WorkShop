@@ -52,5 +52,37 @@
   		<artifactId>org.everit.osgi.bundles.javax.sql</artifactId>
   		<version>4.0.0</version>
   	</dependency>
+  	<dependency>
+  		<groupId>org.firebirdsql.jdbc</groupId>
+  		<artifactId>jaybird</artifactId>
+  		<version>2.2.5</version>
+  	</dependency>
   </dependencies>
+  <build>
+  	<plugins>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-jar-plugin</artifactId>
+  			<configuration>
+  			<archive>
+  			<manifest>
+  			<mainClass>KeuzeMenu</mainClass>
+  			</manifest>
+  			</archive>
+  			</configuration>
+  		</plugin>
+  		<plugin>
+  			<groupId>org.codehaus.mojo</groupId>
+  			<artifactId>properties-maven-plugin</artifactId>
+  			<version>1.4.0</version>
+  			<configuration>
+  			<archive>
+  			<manifest>
+  			<mainClass>KeuzeMenu</mainClass>
+  			</manifest>
+  			</archive>
+  			</configuration>
+  		</plugin>
+  	</plugins>
+  </build>
 </project>
