@@ -10,24 +10,8 @@ public class AdresDAOFireBird implements AdresDAO {
 	Connection connection = null;
 	
 	public static Connection getConnection(){
-		final String DRIVER_CLASS = "org.firebirdsql.jdbc.FBDriver";
-		final String USERNAME = "SYSDBA";
-		final String pw = "MasterKey";
-		final String URL = "jdbc:firebirdsql://localhost:3050/D:/HOST.gdb";
-		Connection connection = null;
-		
-		try{
-			Class.forName(DRIVER_CLASS);
-			if (connection == null)
-				connection = DriverManager.getConnection(URL, USERNAME, pw);
-				System.out.println("connection made");
-		} catch (ClassNotFoundException ex){
-			ex.printStackTrace();
-		}
-		catch (SQLException ex){
-			ex.printStackTrace();
-		}		
-		return connection;		
+		Connection connection = DatabaseConnection.getPooledConnection();
+		return connection;
 	}
    	
 	public AdresDAOFireBird() {     
