@@ -165,20 +165,20 @@ public class Service {
 	void printBestelling(Bestelling bestelling){
 		System.out.println("De inhoud van de bestelling:");
 		String artikelLijst = "";
-		for (Map.Entry<Artikel, Integer> entry: bestelling.artikelen.entrySet()){
+		for (Map.Entry<Artikel, Integer> entry: bestelling.getArtikelen().entrySet()){
 				artikelLijst += entry.getKey().toString() + " " + entry.getValue() + "\n";
 			}
-			System.out.println("Bestellingnummer: " + bestelling.bestelling_id + " Klantnummer: " + bestelling.klant_id + "\n" + artikelLijst);
+			System.out.println("Bestellingnummer: " + bestelling.getBestelling_id() + " Klantnummer: " + bestelling.getKlant_id() + "\n" + artikelLijst);
 		}
 	
 	void printBestellingen(ArrayList<Bestelling> bestellijst){
 		System.out.println("Dit zijn alle bekende bestellingen");
 		for (Bestelling bestelling: bestellijst){
 			String artikelLijst = "";
-			for (Map.Entry<Artikel, Integer> entry: bestelling.artikelen.entrySet()){
+			for (Map.Entry<Artikel, Integer> entry: bestelling.getArtikelen().entrySet()){
 				artikelLijst += entry.getKey().toString() + " " + entry.getValue() + "\n";
 			}
-			System.out.println("Bestellingnummer: " + bestelling.bestelling_id + " Klantnummer: " + bestelling.klant_id + "\n" + artikelLijst);
+			System.out.println("Bestellingnummer: " + bestelling.getBestelling_id() + " Klantnummer: " + bestelling.getKlant_id() + "\n" + artikelLijst);
 		}
 	}
 	
