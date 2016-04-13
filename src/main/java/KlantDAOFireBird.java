@@ -17,7 +17,7 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 		final String DRIVER_CLASS = "org.firebirdsql.jdbc.FBDriver";
 		final String USERNAME = "SYSDBA";
 		final String pw = "MasterKey";
-		final String URL = "jdbc:firebirdsql://localhost:3050/D:/HOST.gdb";
+		final String URL = "jdbc:firebirdsql://localhost:3050/D:/Workshop.gdb";
 		Connection connection = null;
 		
 		try{
