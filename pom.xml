@@ -3,8 +3,11 @@
   <groupId>com.organisatie.app</groupId>
   <artifactId>Workshop</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Workshop app</name>
-  <description>RSvier opleiding workshop app</description>
+  <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
   <dependencies>
   	<dependency>
   		<groupId>ch.qos.logback</groupId>
