@@ -2,19 +2,16 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.sql.RowSet;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
 import com.sun.rowset.JdbcRowSetImpl;
-//ReadKlantWithAddress
-//ReadKlantWithStraatnaam			Moeten deze in klant of in adres
-//ReadKlantWithPostcodeHuisnummer
 public class Klantbestand implements KlantDAO{
 	
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
@@ -95,38 +92,37 @@ public class Klantbestand implements KlantDAO{
 				
 		}
 	
-	public Klant readKlantWithId(int klant_id) throws SQLException {
-		String query = "SELECT * FROM klant WHERE klant_id =?";
+		public Klant readKlantWithId(int klant_id) throws SQLException {
+			String query = "SELECT * FROM klant WHERE klant_id =?";
 
-		Klant klant = null;
+			Klant klant = null;
+					
+			try{
+				Connection connection = DatabaseConnection.getPooledConnection();
+				RowSet rowSet = new JdbcRowSetImpl(connection);
+				rowSet.setCommand(query);
+				rowSet.setInt(1, klant_id);
+				rowSet.execute();
 				
-		try{
-			Connection connection = DatabaseConnection.getPooledConnection();
-			RowSet rowSet = new JdbcRowSetImpl(connection);
-			rowSet.setCommand(query);
-			rowSet.setInt(1, klant_id);
-			rowSet.execute();
+				while (rowSet.next()) {
+					klant = new Klant();
+					klant.setVoornaam(rowSet.getString("voornaam"));
+					klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
+					klant.setAchternaam(rowSet.getString("achternaam"));
+					klant.setEmail(rowSet.getString("email"));
+					
+					}
 			
-			ResultSetMetaData rsMD = rowSet.getMetaData();
+				rowSet.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
 
-			for (int i = 1; i <= rsMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
-			}
-			System.out.println();
-			while (rowSet.next()) {
-				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rowSet.getObject(i));
-				}
-			}
-			rowSet.close();
-		} catch (SQLException ex) {
-			ex.printStackTrace();
+			return klant;
 		}
-
-		return klant;
-	}
-	
-	public Klant readKlantWithFirstName(String voornaam) throws SQLException {
+	@Override
+	public Set<Klant> readKlantWithFirstName(String voornaam) throws SQLException {
+		LinkedHashSet<Klant> klantset = new LinkedHashSet<>();
 		String query = "Select * from klant where voornaam='" + voornaam + "'";
 
 		Klant klant = null;
@@ -139,33 +135,27 @@ public class Klantbestand implements KlantDAO{
 
 			rowSet.execute();
 
-			ResultSetMetaData rowSetMD = rowSet.getMetaData();
-
 			if (!rowSet.isBeforeFirst()) {
 				System.out.println("There are no records with firstname: " + voornaam);
-				return klant;
+				return klantset;
 			}
-
-			for (int i = 1; i <= rowSetMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rowSetMD.getColumnLabel(i));
-			}
-			System.out.println();
 
 			while (rowSet.next()) {
-				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rowSet.getObject(i));
-					if (i % rowSetMD.getColumnCount() == 0) {
-						System.out.println();
-					}
-				}
+				klant = new Klant();
+				klant.setVoornaam(rowSet.getString("voornaam"));
+				klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
+				klant.setAchternaam(rowSet.getString("achternaam"));
+				klant.setEmail(rowSet.getString("email"));
+				klantset.add(klant);
 			}
+			
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
 			rowSet.close();
 			System.out.println();
 		}
-		return klant;
+		return klantset;
 
 	}
 
@@ -184,26 +174,18 @@ public class Klantbestand implements KlantDAO{
 
 			rowSet2.execute();
 
-			ResultSetMetaData rowSetMD = rowSet2.getMetaData();
-
 			if (!rowSet2.isBeforeFirst()) {
 				System.out.println("There are no records with this combination of names: " + voornaam + " "
 						+ tussenvoegsel + " " + achternaam);
 				return klant;
 			}
 
-			for (int i = 1; i <= rowSetMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rowSetMD.getColumnLabel(i));
-			}
-			System.out.println();
-
 			while (rowSet2.next()) {
-				for (int i = 1; i <= rowSet2.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rowSet2.getObject(i));
-					if (i % rowSetMD.getColumnCount() == 0) {
-						System.out.println();
-					}
-				}
+				klant = new Klant();
+				klant.setVoornaam(rowSet2.getString("voornaam"));
+				klant.setTussenvoegsel(rowSet2.getString("tussenvoegsel"));
+				klant.setAchternaam(rowSet2.getString("achternaam"));
+				klant.setEmail(rowSet2.getString("email"));				
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -218,18 +200,10 @@ public class Klantbestand implements KlantDAO{
 	public void UpdateKlantNaam(int klant_id) throws SQLException{
 		String updateKlantNaamquery = "UPDATE klant SET voornaam=?, achternaam=?, tussenvoegsel=?, WHERE klant_id=?;";
 		PreparedStatement updateKlantNaam = null;
-		String newVoornaam = null;
-		String newAchternaam = null;
-		String newTussenvoegsel = null;
-		
+		String[] newNaam = null;
+		Service service = new Service();
 		try {
-			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-			System.out.println("Nieuwe voornaam");
-			newVoornaam = input.readLine();
-			System.out.println("Nieuwe achternaam");
-			newAchternaam = input.readLine();
-			System.out.println("Nieuw tussenvoegsel");
-			newTussenvoegsel = input.readLine();
+			newNaam = service.completeNaamPrompt();
 		}
 		catch (IOException ex){
 			ex.printStackTrace();
@@ -237,9 +211,9 @@ public class Klantbestand implements KlantDAO{
 		try{
 			Connection connection = DatabaseConnection.getPooledConnection();
 			updateKlantNaam = connection.prepareStatement(updateKlantNaamquery);
-			updateKlantNaam.setString(1, newVoornaam);
-			updateKlantNaam.setString(2, newAchternaam);
-			updateKlantNaam.setString(3, newTussenvoegsel);
+			updateKlantNaam.setString(1, newNaam[0]);
+			updateKlantNaam.setString(2, newNaam[2]);
+			updateKlantNaam.setString(3, newNaam[1]);
 			updateKlantNaam.setInt(4, klant_id);
 			
 			updateKlantNaam.executeUpdate();
@@ -255,24 +229,14 @@ public class Klantbestand implements KlantDAO{
 	
 	public void updateEmail(int klant_id) throws SQLException{
 		Connection connection = DatabaseConnection.getPooledConnection();
-		EmailValidator emailVal = EmailValidator.getInstance();
+		Service service = new Service();
+		String newEmail = null;
 		PreparedStatement updateEmail = connection.prepareStatement
 				("UPDATE Klant SET email = ? WHERE klant_id = ?");
 		
 		System.out.println("Nieuw Email adres");
-		boolean invalidInput = true;
-		String newEmail = null;
 		try{
-			while(invalidInput){
-			newEmail = input.readLine();
-			if (emailVal.isValid(newEmail)){
-				invalidInput = false;
-			}
-			else {
-				System.out.println("incorrect E-mail address. Please retry");
-			}
-			}
-			
+			newEmail = service.emailPrompt();
 		}
 		catch (IOException ex){
 			ex.printStackTrace();
@@ -292,8 +256,8 @@ public class Klantbestand implements KlantDAO{
 		System.out.println();
 	}
 	// WILLEN WE HIER ALLEEN EEN NAAM OF OOK EEN ADRES? ANDERS MOET DIT NOG AANGEPAST WORDEN...
-	public ArrayList<Klant> readAll() throws SQLException{
-		ArrayList<Klant> klantList = new ArrayList<>();
+	public Set<Klant> readAll() throws SQLException{
+		LinkedHashSet<Klant> klantList = new LinkedHashSet<>();
 		
 		String query = "Select * from `klant`";
 		
@@ -311,11 +275,6 @@ public class Klantbestand implements KlantDAO{
 				klant.setAchternaam(rowSet.getString(3));
 				klant.setTussenvoegsel(rowSet.getString(4));
 				klant.setEmail(rowSet.getString(5));
-				klant.adres.setStraatnaam(rowSet.getString(6));
-				klant.adres.setHuisnummer(rowSet.getInt(9));
-				klant.adres.setPostcode(rowSet.getString(7));
-				klant.adres.setToevoeging(rowSet.getString(8));
-				klant.adres.setWoonplaats(rowSet.getString(10));
 				
 				klantList.add(klant);	
 				rowSet.close();

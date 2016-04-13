@@ -9,18 +9,60 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class DatabaseConnection {
+	static String DriverClass;
 	static String URL;
 	static String PW;
 	static String USERNAME;
+	static int connectieKeuze;
+	
+	public static String getDriverClass() {
+		return DriverClass;
+	}
+
+	public static String getURL() {
+		return URL;
+	}
+
+	public static String getPW() {
+		return PW;
+	}
+
+	public static String getUSERNAME() {
+		return USERNAME;
+	}
+
+	public static int getConnectieKeuze() {
+		return connectieKeuze;
+	}
+
+	public static void setConnectieKeuze(int keuze){
+		connectieKeuze = keuze;
+	}
+	
+	public static void setDriverClass(String driverClass){
+		DriverClass = driverClass;
+	}
+	
+	public static void setURL(String url){
+		URL = url;
+	}
+	
+	public static void setPW(String pw){
+		PW = pw;
+	}
+	
+	public static void setUSERNAME(String userName){
+		USERNAME = userName;
+	}
 	
 public static Connection getPooledConnection(){
 	
 	Connection connection = null;
-			
-	if (KeuzeMenu.connectieKeuze == 1){
+		
+	if (getConnectieKeuze() == 1){
 			return getHikariConnection();
 	}
-	else if (KeuzeMenu.connectieKeuze == 2){
+	else if (getConnectieKeuze() == 2){
 			return getC3p0Connection();
 	}
 			
@@ -34,9 +76,10 @@ public static Connection getPooledConnection(){
 		config.setMinimumIdle(1);
 		config.setMaximumPoolSize(3);
 		config.setInitializationFailFast(true);
-		config.setJdbcUrl(KeuzeMenu.URL);
-		config.setUsername(KeuzeMenu.USERNAME);
-		config.setPassword(KeuzeMenu.PW);
+		config.setDriverClassName(DriverClass);
+		config.setJdbcUrl(URL);
+		config.setUsername(USERNAME);
+		config.setPassword(PW);
 		config.addDataSourceProperty("useSSL", "false");
 		config.addDataSourceProperty("cachePrepStmts", "true");
 		config.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -60,10 +103,10 @@ public static Connection getPooledConnection(){
 		ComboPooledDataSource cpds = new ComboPooledDataSource();
 		
 		try{
-		cpds.setDriverClass( "com.mysql.jdbc.Driver" );
-		cpds.setJdbcUrl(KeuzeMenu.URL+"?useSSL=false"); 
-		cpds.setUser(KeuzeMenu.USERNAME); 
-		cpds.setPassword(KeuzeMenu.PW);
+		cpds.setDriverClass(DriverClass);
+		cpds.setJdbcUrl(URL +"?useSSL=false"); 
+		cpds.setUser(USERNAME); 
+		cpds.setPassword(PW);
 		cpds.setMinPoolSize(1); 
 		cpds.setAcquireIncrement(1); 
 		cpds.setMaxPoolSize(3);

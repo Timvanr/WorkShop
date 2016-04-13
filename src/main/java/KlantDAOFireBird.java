@@ -14,23 +14,7 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 	
 	
 	public static Connection getConnection(){
-		final String DRIVER_CLASS = "org.firebirdsql.jdbc.FBDriver";
-		final String USERNAME = "SYSDBA";
-		final String pw = "MasterKey";
-		final String URL = "jdbc:firebirdsql://localhost:3050/D:/Workshop.gdb";
-		Connection connection = null;
-		
-		try{
-			Class.forName(DRIVER_CLASS);
-			if (connection == null)
-				connection = DriverManager.getConnection(URL, USERNAME, pw);
-				System.out.println("connection made");
-		} catch (ClassNotFoundException ex){
-			ex.printStackTrace();
-		}
-		catch (SQLException ex){
-			ex.printStackTrace();
-		}		
+		Connection connection = DatabaseConnection.getPooledConnection();
 		return connection;		
 	}
    	
@@ -42,7 +26,7 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email) "
 				+ "values (?,?,?,?) RETURNING klant_id ;";
 		PreparedStatement insertKlantNaam = null;
-		ResultSet rs = null;
+		ResultSet resultSet = null;
 		int klantId = 0;
 		
 		try {
@@ -52,7 +36,7 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 			insertKlantNaam.setString(2, klant.getTussenvoegsel());
 			insertKlantNaam.setString(3, klant.getAchternaam());
 			insertKlantNaam.setString(4, klant.getEmail());
-			ResultSet resultSet = insertKlantNaam.executeQuery();
+			resultSet = insertKlantNaam.executeQuery();
 			while (resultSet .next()) {
 				klantId = resultSet.getInt("klant_id");
 				System.out.println("Klant met klantnummer " + klantId + " is succesvol aangemaakt");
@@ -60,7 +44,7 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-
+			resultSet.close();
 		}
 		return klantId;
 	}

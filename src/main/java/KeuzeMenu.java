@@ -9,23 +9,9 @@ import org.slf4j.LoggerFactory;
 public class KeuzeMenu {
 	
 	Service service = new Service();
-	DAOFactory daoFactory = new DAOFactory();
-	
-	KlantDAO klantbestand = daoFactory.getKlantbestand(1);
-	AdresDAO adreslijst = daoFactory.getAdreslijst(1);
-	BestellingDAO bestellijst = daoFactory.getBestellijst(1);
-	AdresController adrescontrol = new AdresController(service, adreslijst);
-	KlantController klantcontrol = new KlantController(service, klantbestand);
-	BestellingController bestellingcontrol = new BestellingController(service, bestellijst);
-		
+			
 	static Logger logger = LoggerFactory.getLogger(KeuzeMenu.class);
-
-	static String URL;
-	static String PW;
-	static String USERNAME;
-	static int connectieKeuze;
-
-	private static Connection connection;
+	Connection connection = null;
 	Scanner scInput = new Scanner(System.in);
 	
 	static final KeuzeMenu keuzeMenu = new KeuzeMenu();
@@ -42,30 +28,15 @@ public class KeuzeMenu {
 		logger.info("test3 {}");
 		System.out.println("Inlog scherm: ");
 		System.out.println("");
-		/*System.out.print("Gebruikersnaam: ");
-		String userName = scInput.next();
-		System.out.print("Wachtwoord: ");
-		String passWord = scInput.next();
-		*/
-		try {
-			System.out.println("Wie bent u? \n1. Tim \n2. Maurice \n3. Sander \n ");
-			int user = scInput.nextInt();
-			switch (user) {
-			case 1:	URL = "jdbc:mysql://localhost:3306/workshop";
-					PW = "tiger";
-					USERNAME = "scott";
-					break;
-			case 2: URL = "jdbc:mysql://localhost:3306/adresboek";
-					PW = "komt_ie";
-					USERNAME = "root";
-					break;
-			case 3: URL = "jdbc:mysql://localhost:3306/workshop";
-					PW = "FrIkandel";
-					USERNAME = "sandermegens";
-					break;
-			}
-			connectieKeuze = service.kiesConnectie();
-			//getConnection(userName, passWord);
+		try{
+			DatabaseConnection.setDriverClass("com.mysql.jdbc.Driver");
+			DatabaseConnection.setURL("jdbc:mysql://localhost:3306/workshop");
+			System.out.print("Gebruikersnaam: ");
+			DatabaseConnection.setUSERNAME(scInput.next());
+			System.out.print("Wachtwoord: ");
+			DatabaseConnection.setPW(scInput.next());
+			service.kiesConnectie();
+			connection = DatabaseConnection.getPooledConnection();
 			startHoofd();
 		} catch (SQLException e) {
 			System.out.println("");
@@ -193,8 +164,8 @@ public class KeuzeMenu {
 			System.out.print("Maak een keuze: ");
 			int keuze = scInput.nextInt();
 			switch (keuze){
-			case 1:	klantcontrol.createKlant();	break;
-			case 2:	klantcontrol.createKlantenAdres(); break;
+			case 1:	service.getKlantcontrol().createKlant();	break;
+			case 2:	service.getKlantcontrol().createKlantenAdres(); break;
 			/*case 3: BESTELLING EN ARTIKELEN NOG OP ELKAAR AFStEMMEN, KLOPT VOLGENS MIJ NOG NIET.
 				klant = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
 				adres = new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
@@ -248,17 +219,17 @@ public class KeuzeMenu {
 			System.out.print("Maak een keuze: ");
 			int keuze = scInput.nextInt();
 			switch (keuze){
-				case 1:	klantcontrol.printKlantmetId();	break;
-				case 2:	klantcontrol.printKlantmetNaam(); break;
-				case 3:	klantcontrol.printKlantmetVoornaam(); break;
-				case 4:	klantcontrol.printAlleKlanten(); break;
-				case 5:	adrescontrol.printAdresMetId();	break;
-				case 6:	adrescontrol.printAdresMetKlantId(); break;
-				case 7:	adrescontrol.printAdresMetStraatnaam();	break;
-				case 8:	adrescontrol.printAdresMetPCEnHuisnummer();	break;
-				case 9:	adrescontrol.printAlleAdressen(); break;
-				case 10:bestellingcontrol.printBestellingmetId(); break;
-				case 11:bestellingcontrol.printAlleBestellingen(); break;
+				case 1:	service.getKlantcontrol().printKlantmetId();	break;
+				case 2:	service.getKlantcontrol().printKlantmetNaam(); break;
+				case 3:	service.getKlantcontrol().printKlantmetVoornaam(); break;
+				case 4:	service.getKlantcontrol().printAlleKlanten(); break;
+				case 5:	service.getAdrescontrol().printAdresMetId();	break;
+				case 6:	service.getAdrescontrol().printAdresMetKlantId(); break;
+				case 7:	service.getAdrescontrol().printAdresMetStraatnaam();	break;
+				case 8:	service.getAdrescontrol().printAdresMetPCEnHuisnummer();	break;
+				case 9:	service.getAdrescontrol().printAlleAdressen(); break;
+				case 10:service.getBestellingcontrol().printBestellingmetId(); break;
+				case 11:service.getBestellingcontrol().printAlleBestellingen(); break;
 				case 12:
 					System.out.println("Terug naar het hoofdmenu...");
 					startHoofd();
@@ -281,10 +252,10 @@ public class KeuzeMenu {
 		System.out.print("Maak een keuze: ");
 		int keuze = scInput.nextInt();
 		switch (keuze){
-		case 1:	klantcontrol.updateKlant(); break;
-		case 2:	klantcontrol.updateKlantEmail(); break;
-		case 3:	adrescontrol.updateAdres();	break;
-		case 4: bestellingcontrol.updateBestelling();
+		case 1:	service.getKlantcontrol().updateKlant(); break;
+		case 2:	service.getKlantcontrol().updateKlantEmail(); break;
+		case 3:	service.getAdrescontrol().updateAdres();	break;
+		case 4: service.getBestellingcontrol().updateBestelling();
 		case 5:
 			System.out.println("Terug naar het hoofdmenu...");
 			startHoofd();
@@ -309,9 +280,9 @@ public class KeuzeMenu {
 		System.out.print("Maak een keuze: ");
 		int keuze = scInput.nextInt();
 		switch (keuze){
-		case 1:	klantcontrol.deleteKlantmetKlantId();	break;
-		case 2:	klantcontrol.deleteKlantmetKlantNaam();	break;
-		case 3: adrescontrol.deleteAdresvanKlant(); break;
+		case 1:	service.getKlantcontrol().deleteKlantmetKlantId();	break;
+		case 2:	service.getKlantcontrol().deleteKlantmetKlantNaam();	break;
+		case 3: service.getAdrescontrol().deleteAdresvanKlant(); break;
 		//case 4: bestellingcontrol.deletebestelling
 		//case 5: bestellingcontrol.deleteartikelvanbestelling
 		default:
@@ -331,9 +302,8 @@ public class KeuzeMenu {
 		int keuze = scInput.nextInt();
 		
 		if (keuze == 1 || keuze == 2 || keuze == 3 || keuze == 4){
-		klantbestand = daoFactory.getKlantbestand(keuze);
-		adreslijst = daoFactory.getAdreslijst(keuze);
-		bestellijst = daoFactory.getBestellijst(keuze);
+			service.kiesDataOpslag(keuze);
+			startHoofd();
 		}
 		else if (keuze == 5){
 			startHoofd();
