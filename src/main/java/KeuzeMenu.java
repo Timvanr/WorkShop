@@ -1,24 +1,23 @@
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Scanner;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.math.BigDecimal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class KeuzeMenu {
-	Klant klant;
-	Adres adres;
-	Klantbestand klantBestand;
-	Bestelling bestelling;
-	Artikel artikel;
-	Bestellijst bestelLijst;
-	Adreslijst adresLijst;	
+	
+	Service service = new Service();
+	DAOFactory daoFactory = new DAOFactory();
+	
+	KlantDAO klantbestand = daoFactory.getKlantbestand(1);
+	AdresDAO adreslijst = daoFactory.getAdreslijst(1);
+	BestellingDAO bestellijst = daoFactory.getBestellijst(1);
+	AdresController adrescontrol = new AdresController(service, adreslijst);
+	KlantController klantcontrol = new KlantController(service, klantbestand);
+	BestellingController bestellingcontrol = new BestellingController(service, bestellijst);
+		
 	static Logger logger = LoggerFactory.getLogger(KeuzeMenu.class);
 
 	static String URL;
@@ -27,24 +26,15 @@ public class KeuzeMenu {
 	static int connectieKeuze;
 
 	private static Connection connection;
-	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Scanner scInput = new Scanner(System.in);
 	
 	static final KeuzeMenu keuzeMenu = new KeuzeMenu();
 
 	public KeuzeMenu(){
-		klant = new Klant();
-		adres = new Adres();
-		bestelling = new Bestelling();
-		artikel = new Artikel();
-		klantBestand = new Klantbestand();
-		bestelLijst = new Bestellijst();
-		adresLijst = new Adreslijst();
-
+		
 	}
 
 	public static void main(String[] args) throws IOException{
-		
 		keuzeMenu.startInlog();
 	}
 
@@ -74,7 +64,7 @@ public class KeuzeMenu {
 					USERNAME = "sandermegens";
 					break;
 			}
-			kiesConnectie();
+			connectieKeuze = service.kiesConnectie();
 			//getConnection(userName, passWord);
 			startHoofd();
 		} catch (SQLException e) {
@@ -92,19 +82,20 @@ public class KeuzeMenu {
 		System.out.println("");
 		System.out.println("1. CRUD-handelingen");
 		System.out.println("2. Klasse-selectie");
-		System.out.println("3. Uitloggen");
-		System.out.println("4. Stoppen");
+		System.out.println("3. Data opslag selectie");
+		System.out.println("4. Uitloggen");
+		System.out.println("5. Stoppen");
 		System.out.println("");
 		System.out.print("Maak een keuze: ");
 		int keuze = scInput.nextInt();
 		switch (keuze){
-		case 1:
-			startCrud();
+		case 1:	startCrud();
 			break;
-		case 2:
-			startClassSelectie();
+		case 2:	startClassSelectie();
 			break;
-		case 3:
+		case 3: startDataOpslagSelectie();
+			break;
+		case 4:
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -115,8 +106,7 @@ public class KeuzeMenu {
 			System.out.println("");
 			startInlog();
 			break;
-		case 4:
-			exit();
+		case 5:	exit();
 			break;
 		default:
 			System.out.println("Ongeldige keuze!");
@@ -129,26 +119,22 @@ public class KeuzeMenu {
 		System.out.println("");
 		System.out.println("CRUD-HANDELINGEN");
 		System.out.println("");
-		System.out.println("1. Create klant");
-		System.out.println("2. Read klant");
-		System.out.println("3. Update klant");
-		System.out.println("4. Delete klant");
+		System.out.println("1. Create menu");
+		System.out.println("2. Read menu");
+		System.out.println("3. Update menu");
+		System.out.println("4. Delete menu");
 		System.out.println("5: Hoofdmenu");
 		System.out.println("");
 		System.out.print("Maak een keuze:");
 		int keuze = scInput.nextInt();
 		switch (keuze){
-		case 1:
-			createKlantMenu();
+		case 1:	createMenu();
 			break;
-		case 2:
-			readKlantMenu();     
+		case 2:	readMenu();     
 			break;
-		case 3:
-			updateKlantMenu();
+		case 3:	updateMenu();
 			break;
-		case 4:
-			deleteKlantMenu();
+		case 4:	deleteMenu();
 			break;
 		case 5:
 			System.out.println("Terug naar het hoofdmenu...");
@@ -195,7 +181,7 @@ public class KeuzeMenu {
 		}
 	}
 
-		private void createKlantMenu() throws SQLException, IOException {
+		private void createMenu() throws SQLException, IOException {
 			System.out.println("SELECTEER EEN CREATE METHODE");
 			System.out.println("");
 			System.out.println("1. Create klant");
@@ -207,16 +193,9 @@ public class KeuzeMenu {
 			System.out.print("Maak een keuze: ");
 			int keuze = scInput.nextInt();
 			switch (keuze){
-			case 1:
-				klant = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
-				klantBestand.createKlant(klant);
-				break;
-			case 2:
-				klant = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
-				adres = new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
-				klantBestand.createKlantEnAdres(klant, adres);
-				break;
-			case 3:
+			case 1:	klantcontrol.createKlant();	break;
+			case 2:	klantcontrol.createKlantenAdres(); break;
+			/*case 3: BESTELLING EN ARTIKELEN NOG OP ELKAAR AFStEMMEN, KLOPT VOLGENS MIJ NOG NIET.
 				klant = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
 				adres = new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
 				bestelling = new Bestelling();
@@ -225,7 +204,7 @@ public class KeuzeMenu {
 				/*for (int i = 0; i < aantal; i++){
 					artikel = new Artikel(arikelIdPrompt(), artikelNaamPrompt(), artikelPrijsPrompt(), artikelAantalPrompt());
 					bestelling.voegArtikelToeAanBestelling(artikel);
-				}*/
+				}
 				klantBestand.createKlantEnAdresEnBestelling(klant, adres, bestelling);
 				break;
 			case 4:
@@ -237,259 +216,139 @@ public class KeuzeMenu {
 					artikel = new Artikel(arikelIdPrompt(), artikelNaamPrompt(), artikelPrijsPrompt(), artikelAantalPrompt());
 					bestelling.voegArtikelToeAanBestelling(artikel);
 				}
-				klantBestand.createKlantEnBestelling(klant, bestelling);*/
-				break;
+				klantBestand.createKlantEnBestelling(klant, bestelling);
+				break;*/
 			case 5:
 				System.out.println("Terug naar het hoofdmenu...");
 				startHoofd();
 			default:
 				System.out.println("Ongeldige keuze!");
-				createKlantMenu();
+				createMenu();
 				break;
 			}
 		}
-		
-		private void readKlantMenu() throws IOException, SQLException {
+						
+		private void readMenu() throws IOException, SQLException {
 			System.out.println("");
-			System.out.println("READ KLANT MENU: ");
+			System.out.println("SELECTEER EEN METHODE: ");
 			System.out.println("");
-			System.out.println("1. Read klant");
-			System.out.println("2. Read klant-adres");
-			System.out.println("3. Read klant-bestelling");
-			System.out.println("4. Read klant-, adres en bestelling");
-			System.out.println("5. Hoofdmenu");
+			System.out.println("1. Read Klant met klant id");
+			System.out.println("2. Read Klant met voor- en achternaam");
+			System.out.println("3. Read Klant(en) met voornaam");
+			System.out.println("4. Read alle Klanten");
+			System.out.println("5. Read Adres met adres id");
+			System.out.println("6. Read Adres met klant id");
+			System.out.println("7. Read Adres(sen) met straatnaam en woonplaats");
+			System.out.println("8. Read Adres met postcode en huisnummer");
+			System.out.println("9. Read alle Adressen");
+			System.out.println("10. Read Bestelling met bestelling id");
+			System.out.println("11. Read alle bestellingen");
+			System.out.println("12. Hoofdmenu");
 			System.out.println("");
 			System.out.print("Maak een keuze: ");
 			int keuze = scInput.nextInt();
 			switch (keuze){
-			case 1:
-				int klant_id = id_Prompt();
-				klantBestand.readKlantWithId(klant_id);
-				break;
-			case 2:
-				int klant_id1 = id_Prompt();
-				adresLijst.readAdres(klant_id1);
-				break;
-			case 3:
-				int klant_id2 = id_Prompt();
-				bestelLijst.haalBestelling(klant_id2);
-				break;
-			case 4:
-				int klant_id3 = id_Prompt();
-				klantBestand.readKlantWithId(klant_id3);
-				adresLijst.readAdres(klant_id3);
-				break;
-			case 5:
-				System.out.println("Terug naar het hoofdmenu...");
-				startHoofd();
-			default:
-				System.out.println("Ongeldige keuze!");
-				startHoofd();
-				break;
+				case 1:	klantcontrol.printKlantmetId();	break;
+				case 2:	klantcontrol.printKlantmetNaam(); break;
+				case 3:	klantcontrol.printKlantmetVoornaam(); break;
+				case 4:	klantcontrol.printAlleKlanten(); break;
+				case 5:	adrescontrol.printAdresMetId();	break;
+				case 6:	adrescontrol.printAdresMetKlantId(); break;
+				case 7:	adrescontrol.printAdresMetStraatnaam();	break;
+				case 8:	adrescontrol.printAdresMetPCEnHuisnummer();	break;
+				case 9:	adrescontrol.printAlleAdressen(); break;
+				case 10:bestellingcontrol.printBestellingmetId(); break;
+				case 11:bestellingcontrol.printAlleBestellingen(); break;
+				case 12:
+					System.out.println("Terug naar het hoofdmenu...");
+					startHoofd();
+					default:
+						System.out.println("Ongeldige keuze!");
+						startHoofd();
+						break;
 			}
 		}
 	
-	private void updateKlantMenu() throws IOException, SQLException{
+	private void updateMenu() throws IOException, SQLException{
 		System.out.println("SELECTEER EEN UPDATE METHODE");
 		System.out.println("");
-		System.out.println("1. Update klantnaam");
-		System.out.println("2. Update klantadres");
-		System.out.println("3. Create klantnaam & adres");
+		System.out.println("1. Update Klantnaam");
+		System.out.println("2. Update E-mail adres");
+		System.out.println("2. Update Adres");
+		System.out.println("3. Update Bestelling");
 		System.out.println("4. Hoofdmenu");
 		System.out.println("");
 		System.out.print("Maak een keuze: ");
 		int keuze = scInput.nextInt();
 		switch (keuze){
-		case 1:
-			updateKlantnaam();
-			break;
-		case 2:
-			updateKlantadres();
-			break;
-		case 3:
-			updateKlantnaamadres();
-			break;
-		case 4:
+		case 1:	klantcontrol.updateKlant(); break;
+		case 2:	klantcontrol.updateKlantEmail(); break;
+		case 3:	adrescontrol.updateAdres();	break;
+		case 4: bestellingcontrol.updateBestelling();
+		case 5:
 			System.out.println("Terug naar het hoofdmenu...");
 			startHoofd();
 		default:
 			System.out.println("Ongeldige keuze!");
-			updateKlantMenu();
+			updateMenu();
 			break;
 		}
 	}
 
-	private void updateKlantnaam() throws SQLException, IOException{
-		int id = id_Prompt();
-		klantBestand.UpdateKlantNaam(id);
-	}
-	
-	private void updateKlantadres() throws SQLException, IOException{
-		int id = id_Prompt();
-		adres = new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
-		adresLijst.createAdres(id, adres);
-		
-	}
-	
-	private void updateKlantnaamadres() throws SQLException, IOException{
-		int id = id_Prompt();
-		klantBestand.UpdateKlantNaam(id);
-		adres = new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
-		adresLijst.createAdres(id, adres);
-	}
-
-	private void deleteKlantMenu() throws IOException {
+	private void deleteMenu() throws IOException, SQLException {
 		System.out.println("");
 		System.out.println("SELECTEER EEN DELETE METHODE");
 		System.out.println("");
-		System.out.println("1. Delete klant met ID-nummer");
-		System.out.println("2. Delete klant met naam");
+		System.out.println("1. Delete Klant met ID-nummer");
+		System.out.println("2. Delete Klant met naam");
+		System.out.println("3. Delete Adres van Klant");
+		System.out.println("4. Delete Bestelling van Klant");
+		System.out.println("5. Delete Artikel uit Bestelling");
+		System.out.println("6. Hoofdmenu");
 		System.out.println("");
 		System.out.print("Maak een keuze: ");
 		int keuze = scInput.nextInt();
 		switch (keuze){
-		case 1:
-			deleteKlantID();
-			break;
-		case 2:
-			deleteKlantMetNaam();
-			break;
+		case 1:	klantcontrol.deleteKlantmetKlantId();	break;
+		case 2:	klantcontrol.deleteKlantmetKlantNaam();	break;
+		case 3: adrescontrol.deleteAdresvanKlant(); break;
+		//case 4: bestellingcontrol.deletebestelling
+		//case 5: bestellingcontrol.deleteartikelvanbestelling
 		default:
 			System.out.println("Ongeldige keuze!");
-			deleteKlantMenu();
+			deleteMenu();
 			break;
 		}
 	}
 
-	private void deleteKlantMetNaam() throws IOException {
-		System.out.println("Vul de gevraagde gegevens correct in (alle uw gegevens worden verwijderd): ");
-		String voornaam = voornaamPrompt();
-		String tussenvoegsel = tussenvoegselPrompt();
-		String achternaam = achternaamPrompt();
-		try {
-			klantBestand.deleteAllFromKlantNaam(voornaam, achternaam, tussenvoegsel);
-		} catch (SQLException e) {
-			e.printStackTrace();
+	private void startDataOpslagSelectie() throws IOException, SQLException{
+		System.out.println("\n SELECTEER EEN OPSLAGMETHODE \n");
+		System.out.println("1. via MySql");
+		System.out.println("2. via FireBird");
+		System.out.println("3. via JSON");
+		System.out.println("4. via XML");
+		System.out.println("5. Hoofdmenu \n");
+		int keuze = scInput.nextInt();
+		
+		if (keuze == 1 || keuze == 2 || keuze == 3 || keuze == 4){
+		klantbestand = daoFactory.getKlantbestand(keuze);
+		adreslijst = daoFactory.getAdreslijst(keuze);
+		bestellijst = daoFactory.getBestellijst(keuze);
 		}
-	}
-
-	private void deleteKlantID() throws IOException {
-		int id = id_Prompt();
-		try {
-			klantBestand.deleteAllFromKlantId(id);
-			System.out.print("Alle uw gegevens zijn verwijderd");
-		} catch (SQLException e) {
-			e.printStackTrace();
+		else if (keuze == 5){
+			startHoofd();
 		}
+		else {
+			System.out.println("Geef een getal van 1 t/m 5 op aub");
+			startDataOpslagSelectie();
+		}
+		
+		
+		
 	}
 
 	private void exit() {
 		System.out.println("Uw bewerking is beeindigd.");	
 		System.exit(1);
 		}
-	private void kiesConnectie(){
-		boolean invalidInput = true;
-		boolean invalidInput2 = true;
-		while (invalidInput){
-		System.out.println("Wilt u een connectietype kiezen? \n 1. Ja \n 2. Nee \n");
-		int userInput = scInput.nextInt();
-		
-		if (userInput == 1){
-			invalidInput = false;
-			while (invalidInput2){
-				System.out.println("Wilt u connectie via HikariCP of via c3p0? \n 1. HikariCP \n 2. c3p0 \n");
-				userInput = scInput.nextInt();
-				if (userInput == 1){
-					invalidInput2 = false;
-					connectieKeuze = 1;
-				}
-				else if (userInput == 2){
-					invalidInput2 = false;
-					connectieKeuze = 2;
-				}
-				else 
-					System.out.println("Verkeerde opgave, probeer opnieuw");
-				}
-			}
-			else if (userInput == 2){
-				invalidInput = false;	
-				connectieKeuze = 1;
-			}
-			else
-				System.out.println("Verkeerde opgave probeer opnieuw");
-		}
-	}
-	private int id_Prompt() throws IOException {
-		System.out.println("Geef uw klant ID: ");
-		String IDstr = input.readLine();
-		int id = Integer.parseInt(IDstr);
-		return id;
-	}
-	private String voornaamPrompt() throws IOException {
-		System.out.print("Voornaam: ");
-		String voornaam = input.readLine();
-		return voornaam;
-		}
-	private String tussenvoegselPrompt() throws IOException {
-		System.out.print("Tussenvoegsel: ");
-		String tussenvoegsel = input.readLine();
-		return tussenvoegsel;
-		}
-	private String achternaamPrompt() throws IOException {
-		System.out.print("Achternaam: ");
-		String achternaam = input.readLine();
-		return achternaam;
-		}
-	private String emailPrompt() throws IOException {
-		System.out.print("Email: ");
-		String email = input.readLine();
-		return email;
-		}
-	private String straatnaamPrompt() throws IOException {
-		System.out.print("Straatnaam: ");
-		String straatnaam = input.readLine();
-		return straatnaam;
-		}
-	private int huisnummerPrompt() throws IOException {
-		System.out.print("Huisnummer: ");
-		String huisnummerstr = input.readLine();
-		int huisnummer = Integer.parseInt(huisnummerstr);
-		return huisnummer;
-	}
-	private String toevoegingPrompt() throws IOException {
-		System.out.print("Toevoeging: ");
-		String toevoeging = input.readLine();
-		return toevoeging;
-		}
-	private String postcodePrompt() throws IOException {
-		System.out.print("Postcode: ");
-		String postcode = input.readLine();
-		return postcode;
-		}
-	private String woonplaatsPrompt() throws IOException {
-		System.out.print("Woonplaats: ");
-		String woonplaats = input.readLine();
-		return woonplaats;
-		}
-	private int artikelAantalPrompt() throws IOException {
-		System.out.print("Hoeveel wilt u van dit atikel: ");
-		String artikelAantalstr = input.readLine();
-		int artikelAantal = Integer.parseInt(artikelAantalstr);
-		return artikelAantal;
-	}
-	private BigDecimal artikelPrijsPrompt() throws IOException {
-		System.out.print("Wat is de prijs van dit artikel: ");
-		String artikelPrijsstr = input.readLine();
-		BigDecimal artikelPrijs = new BigDecimal(artikelPrijsstr);
-		return artikelPrijs;
-	}
-	private String artikelNaamPrompt() throws IOException {
-		System.out.print("Welk artikel wilt u toevoegen: ");
-		String artikelNaam = input.readLine();
-		return artikelNaam;
-	}
-	private int arikelIdPrompt() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }
