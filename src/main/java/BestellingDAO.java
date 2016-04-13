@@ -7,7 +7,7 @@ public interface BestellingDAO {
 	
 	//void maakTabel() throws SQLException ;
 	void voegBestellingToe(Bestelling bestelling);
-	Bestelling getBestelling(int id) throws SQLException;
+	Bestelling getBestelling(int id);
 	int haalKlant_id(int bestelling_id);
 	void updateBestelling(int bestelling_id, Bestelling bestelling);
 	void verwijderBestelling(int id);

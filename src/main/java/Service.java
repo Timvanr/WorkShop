@@ -7,25 +7,17 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import org.apache.commons.validator.routines.EmailValidator;
-
 public class Service {
 
-	DAOFactory daoFactory = new DAOFactory();
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Scanner scInput = new Scanner(System.in);
-	AdresController adrescontrol = new AdresController(this, daoFactory.getAdreslijst(1));
-	KlantController klantcontrol = new KlantController(this, daoFactory.getKlantbestand(1));
-	BestellingController bestellingcontrol = new BestellingController(this, daoFactory.getBestellijst(1));
 	
-	//Hier de prompt opdrachten
 	int id_Prompt() throws IOException {
 		System.out.println("Geef uw klant ID: ");
 		String IDstr = input.readLine();
 		int id = Integer.parseInt(IDstr);
 		return id;
 	}
-	
 	String voornaamPrompt() throws IOException {
 		System.out.print("Voornaam: ");
 		String voornaam = input.readLine();
@@ -41,41 +33,17 @@ public class Service {
 		String achternaam = input.readLine();
 		return achternaam;
 		}
-	
-	String[] completeNaamPrompt() throws IOException{
-		String[] naamArray = new String[3];
-		naamArray[0] = voornaamPrompt();
-		naamArray[1] = tussenvoegselPrompt();
-		naamArray[2] = achternaamPrompt();
-		return naamArray;
-	}
 	String emailPrompt() throws IOException {
-		EmailValidator emailVal = EmailValidator.getInstance();
-		boolean invalidInput = true;
-		String newEmail = null;
-		try{
-			while(invalidInput){
-			newEmail = input.readLine();
-			if (emailVal.isValid(newEmail)){
-				invalidInput = false;
-			}
-			else {
-				System.out.println("foutief E-mail adres. Probeer opnieuw a.u.b.");
-			}
-			}
+		System.out.print("Email: ");
+		String email = input.readLine();
+		return email;
 		}
-		catch (IOException ex){
-			ex.printStackTrace();
-		}
-		return newEmail;
-	}
 	int adresIdPrompt() throws IOException {
 		System.out.print("Adres ID: ");
 		String adres_idString = input.readLine();
 		int adres_id = Integer.parseInt(adres_idString);
 		return adres_id;
-	}
-	
+		}
 	String straatnaamPrompt() throws IOException {
 		System.out.print("Straatnaam: ");
 		String straatnaam = input.readLine();
@@ -122,20 +90,15 @@ public class Service {
 		return artikelPrijs;
 	}
 	String artikelNaamPrompt() throws IOException {
-		System.out.print("Geef de naam van het artikel dat u wilt toevoegen: ");
+		System.out.print("Welk artikel wilt u toevoegen: ");
 		String artikelNaam = input.readLine();
 		return artikelNaam;
 	}
-	
 	int arikelIdPrompt() throws IOException {
-		System.out.println("Geef het artikelnummer van het artikel dat u wilt toevoegen: ");
-		String artikelIdString = input.readLine();
-		int artikelId = Integer.parseInt(artikelIdString);
-		return artikelId;
+		// TODO Auto-generated method stub
+		return 0;
 	}
-
-	
-	// Hier de printmethodes (had ook een aparte klasse kunnen zijn).
+		
 	void printKlant(Klant klant){
 		System.out.printf("%-20s %-20s %-20s %-20s\n", "Voornaam", "Tussenvoegsel", "Achternaam", "E-mail");
 		System.out.printf("%-20s %-20s %-20s %-20s", klant.getVoornaam(), klant.getTussenvoegsel(), klant.getAchternaam(), klant.getEmail());
@@ -182,43 +145,11 @@ public class Service {
 		}
 	}
 	
-	// Hier de getters/setters die voor het keuzemenu gebruikt worden
-		public AdresController getAdrescontrol() {
-			return adrescontrol;
-		}
-		public void setAdrescontrol(AdresController adrescontrol) {
-			this.adrescontrol = adrescontrol;
-		}
-		public KlantController getKlantcontrol() {
-			return klantcontrol;
-		}
-		public void setKlantcontrol(KlantController klantcontrol) {
-			this.klantcontrol = klantcontrol;
-		}
-		public BestellingController getBestellingcontrol() {
-			return bestellingcontrol;
-		}
-		public void setBestellingcontrol(BestellingController bestellingcontrol) {
-			this.bestellingcontrol = bestellingcontrol;
-		}
-		
 	
-	void kiesDataOpslag(int keuze){
-		
-		setKlantcontrol(new KlantController(this, daoFactory.getKlantbestand(keuze)));
-		setAdrescontrol(new AdresController(this, daoFactory.getAdreslijst(keuze)));
-		setBestellingcontrol(new BestellingController(this, daoFactory.getBestellijst(keuze)));
-			switch(keuze){
-			case 1: DatabaseConnection.setDriverClass("com.mysql.jdbc.Driver"); DatabaseConnection.setURL("jdbc:mysql://localhost:3306/workshop");; break;
-			case 2: DatabaseConnection.setDriverClass("org.firebirdsql.jdbc.FBDriver"); DatabaseConnection.setURL("jdbc:firebirdsql://localhost:3050/C:/Users/sande_000/Desktop/Java RSVIER/Firebird database workshop/Workshop.GDB"); break;
-			//case 3: DatabaseConnection.setDriverClass("Hier moet JSON komen dan");
-			//case 4: DatabaseConnection.setDriverClass("Hier XML");
-			}
-		}
-
-	void kiesConnectie(){
+	int kiesConnectie(){
 		boolean invalidInput = true;
 		boolean invalidInput2 = true;
+		int connectieKeuze = 0;
 		while (invalidInput){
 		System.out.println("Wilt u een connectietype kiezen? \n 1. Ja \n 2. Nee \n");
 		int userInput = scInput.nextInt();
@@ -230,11 +161,11 @@ public class Service {
 				userInput = scInput.nextInt();
 				if (userInput == 1){
 					invalidInput2 = false;
-					DatabaseConnection.setConnectieKeuze(1);
+					connectieKeuze = 1;
 				}
 				else if (userInput == 2){
 					invalidInput2 = false;
-					DatabaseConnection.setConnectieKeuze(2);
+					connectieKeuze = 2;
 				}
 				else 
 					System.out.println("Verkeerde opgave, probeer opnieuw");
@@ -242,11 +173,12 @@ public class Service {
 			}
 			else if (userInput == 2){
 				invalidInput = false;	
-				DatabaseConnection.setConnectieKeuze(2);
+				connectieKeuze = 1;
 			}
 			else
 				System.out.println("Verkeerde opgave probeer opnieuw");
 		}
+		return connectieKeuze;
 	}
 	
 	Klant newKlant() throws IOException{

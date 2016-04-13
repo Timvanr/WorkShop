@@ -103,51 +103,76 @@ public class Bestellijst implements BestellingDAO {
 			close();
 		}
 	}
-	
+	/*
+	public Bestelling haalBestelling(int bestelling_id) throws SQLException {
+		RowSet rowSet = null;
+		RowSet rowSet2 = null;
+		String haalBestellingString = "SELECT artikel_id FROM Bestelling_has_artikel WHERE bestelling_id = ?";
+		Bestelling bestelling = new Bestelling();
+		ArtikelLijst aLijst = new ArtikelLijst();
+		
+		try {
+			connection = DatabaseConnection.getPooledConnection();
+			rowSet2 = new JdbcRowSetImpl(connection);			
+			rowSet = new JdbcRowSetImpl(connection);
+			rowSet.setCommand(haalBestellingString);
+			rowSet.setInt(1, bestelling_id);
+			rowSet.execute();
+
+			int i = 0;
+			while (rowSet.next()) {
+				Artikel artikel = aLijst.getArtikelWithArtikelId(rowSet.getInt(1));
+				
+				String haalAantal = String.format("SELECT artikel%d_aantal FROM bestelling WHERE bestelling_id=?", i + 1);
+				rowSet2.setCommand(haalAantal);
+				rowSet2.setInt(1, bestelling_id);
+				rowSet2.execute();
+				while (rowSet2.next()){
+					artikel.setAantal(rowSet2.getInt(1));
+				}
+				bestelling.voegArtikelToeAanBestelling(artikel);
+				i++;
+			}
+			System.out.println(bestelling.toString());
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			rowSet.close();
+		}
+		return bestelling;
+	}
+	*/
 	
 	@Override
-	public Bestelling getBestelling(int bestelling_id) throws SQLException{
+	public Bestelling getBestelling(int bestelling_id){
 		connection = DatabaseConnection.getPooledConnection();
+		ArtikelLijst aLijst = new ArtikelLijst();
 		Bestelling bestelling = null;
-		RowSet artikelData = null;
-		RowSet bestelData = null;
-		try{
-			bestelling = new Bestelling();
-			bestelData = new JdbcRowSetImpl(connection);
-			bestelData.setCommand("SELECT * FROM Bestelling INNER JOIN bestelling_has_artikel ON bestelling.bestelling_id=bestelling_has_artikel.bestelling_id WHERE bestelling.bestelling_id=?");
+		try {
+			RowSet bestelData = new JdbcRowSetImpl(connection);
+			bestelData.setCommand(
+					"SELECT * FROM Bestelling " +
+					"INNER JOIN bestelling_has_artikel " +
+					"ON Bestelling.bestelling_id = bestelling_has_artikel.bestelling_id " +
+					"WHERE bestelling_id = ?");
 			bestelData.setInt(1, bestelling_id);
 			bestelData.execute();
 			
-			if (bestelData.isBeforeFirst()){
-								
+			bestelling = new Bestelling();
 			while (bestelData.next()){
-				
-			artikelData = new JdbcRowSetImpl(connection);
-			artikelData.setCommand("SELECT * FROM Artikel WHERE artikel_id = ?");
-			artikelData.setInt(1, bestelData.getInt("artikel_id"));
-			artikelData.execute();
-			
-			while (artikelData.next()){
-				bestelling.setKlant_id(bestelData.getInt("klant_id"));
-				bestelling.setBestelling_id(bestelling_id);
-				Artikel artikel = new Artikel();
-				artikel.setId(artikelData.getInt("artikel_id"));
-				artikel.setNaam(artikelData.getString("artikel_naam"));
-				artikel.setPrijs(artikelData.getBigDecimal("artikel_prijs"));
-				bestelling.voegArtikelToeAanBestelling(artikel, bestelData.getInt("artikel_aantal"));
-					}
+				bestelling.setKlant_id(bestelData.getInt(2));
+				if (bestelData.getInt(4) > 0){
+					bestelling.voegArtikelToeAanBestelling
+							(aLijst.getArtikelWithArtikelId(bestelData.getInt(4)), bestelData.getInt(5));
 				}
-			} 
+			}
+			bestelData.close();
 			
-		else {
-			System.out.println("Bestelling not found!");
-			
-		} 
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			bestelData.close();
-			artikelData.close();
+			close();
 		}
 		
 		return bestelling;
