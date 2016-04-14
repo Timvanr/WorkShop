@@ -1,10 +1,7 @@
 import java.sql.*;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.sql.RowSet;
 import com.sun.rowset.JdbcRowSetImpl;
-import com.sun.rowset.*;
 
 public class AdresDAOFireBird implements AdresDAO {
 	Connection connection = null;
@@ -54,7 +51,7 @@ public class AdresDAOFireBird implements AdresDAO {
 	} 	
 	
 	@Override
-	public Adres readAdres(int id) {
+	public Adres readAdresmetAdresId(int id) {
 		Connection connection = getConnection();
 		String query = "SELECT * FROM adres WHERE adres_id =?";
 		Adres adres = null;
@@ -92,10 +89,10 @@ public class AdresDAOFireBird implements AdresDAO {
 	}
 
 	@Override
-	public Set<Adres> adressenPerKlant(int klant_id){
+	public Set<Adres> readAdressenPerKlant(int klant_id){
 		Connection connection = getConnection();
 		
-		Set<Adres> adressen = new LinkedHashSet();
+		Set<Adres> adressen = new LinkedHashSet<>();
 		try {
 			RowSet adressenPerKlant = new JdbcRowSetImpl(connection);
 			adressenPerKlant.setCommand
@@ -153,33 +150,7 @@ public class AdresDAOFireBird implements AdresDAO {
 	}
 
 	@Override
-	public Adres searchById(int id) {
-		Connection connection = getConnection();
-		
-		Adres adres = null;
-		try {
-			PreparedStatement searchById = connection.prepareStatement
-					("SELECT * FROM Adres WHERE adres_id = ?");
-			searchById.setInt(1, id);
-			ResultSet adresInfo = searchById.executeQuery();
-			
-			if (adresInfo.next()){
-				adres = new Adres(adresInfo.getString(2), adresInfo.getInt(3), adresInfo.getString(4), adresInfo.getString(5), adresInfo.getString(6));
-			}else{
-				System.out.println("Adres niet gevonden!");
-			}
-			
-		}catch (SQLException ex){
-			ex.printStackTrace();
-		}finally {
-			close();
-		}
-		
-		return adres;
-	}
-
-	@Override
-	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer,	String toevoeging) {
+	public Adres readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer,	String toevoeging) {
 		Connection connection = getConnection();
 		
 		Adres adres = new Adres();
@@ -218,14 +189,14 @@ public class AdresDAOFireBird implements AdresDAO {
 	}
 	//overloaded zonder toevoeging
 	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer){
-		return searchByPostcodeAndHuisnummer(postcode, huisnummer, null);
+		return readAdresMetPostcodeEnHuisnummer(postcode, huisnummer, null);
 	}
 	
 	@Override
-	public Set<Adres> searchByWoonplaats(String plaats){
+	public Set<Adres> readAdresMetWoonplaats(String plaats){
 		Connection connection = getConnection();
 		
-		Set<Adres> adressen = new LinkedHashSet();
+		Set<Adres> adressen = new LinkedHashSet<>();
 		try {
 			RowSet adresData = new JdbcRowSetImpl(connection);
 			adresData.setCommand("SELECT * FROM Adres WHERE woonplaats = ? ORDER BY straatnaam ASC");
@@ -248,10 +219,10 @@ public class AdresDAOFireBird implements AdresDAO {
 	}
 
 	@Override
-	public Set<Adres> searchByStraat(String straat, String plaats) {
+	public Set<Adres> readAdresMetStraat(String straat, String plaats) {
 		Connection connection = getConnection();
 		
-		Set<Adres> adressen = new LinkedHashSet();
+		Set<Adres> adressen = new LinkedHashSet<>();
 		try {
 			RowSet adresData = new JdbcRowSetImpl(connection);
 			adresData.setCommand("SELECT * FROM Adres WHERE straatnaam = ? AND woonplaats = ? ORDER BY huisnummer ASC");
@@ -274,9 +245,9 @@ public class AdresDAOFireBird implements AdresDAO {
 	}
 
 	@Override
-	public Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging, String plaats) {
-		Set<Adres> adressen = new LinkedHashSet();
-		for (Adres a: searchByStraat(straat, plaats)){
+	public Set<Adres> readAdresMetStraatEnHuisnummer(String straat, int huisnummer, String toevoeging, String plaats) {
+		Set<Adres> adressen = new LinkedHashSet<>();
+		for (Adres a: readAdresMetStraat(straat, plaats)){
 			if (a.getHuisnummer() == huisnummer){
 				if (a.getToevoeging() == toevoeging || a.getToevoeging() == null)
 					adressen.add(a);
@@ -287,11 +258,11 @@ public class AdresDAOFireBird implements AdresDAO {
 	}
 	//overloaded zonder toevoeging
 	public Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String plaats) {
-		return searchByStraatAndHuisnummer(straat, huisnummer, null, plaats);
+		return readAdresMetStraatEnHuisnummer(straat, huisnummer, null, plaats);
 	}
 
 	@Override
-	public Set<Klant> getKlant(int adres_id) {
+	public Set<Klant> readKlantenMetAdresId(int adres_id) {
 		Connection connection = getConnection();
 		
 		Set<Klant> klantSet = new LinkedHashSet<>();

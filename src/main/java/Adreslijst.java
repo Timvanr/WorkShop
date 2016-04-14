@@ -4,6 +4,7 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.sql.RowSet;
+
 import com.sun.rowset.JdbcRowSetImpl;
 
 
@@ -79,7 +80,7 @@ public class Adreslijst implements AdresDAO {
 			//System.out.println(ex.getErrorCode());
 			if (ex.getErrorCode() == 1062){
 				try {
-					int existingAdres_id = searchByPostcodeAndHuisnummer
+					int existingAdres_id = readAdresMetPostcodeEnHuisnummer
 							(adres.getPostcode(), adres.getHuisnummer(), adres.getToevoeging()).getId();
 					
 					getConnection();//connectie openen omdat die gesloten is door searchByPostcodeAndHuisnummer!
@@ -107,32 +108,43 @@ public class Adreslijst implements AdresDAO {
 		
 	}
 
+<<<<<<< HEAD
+	
+=======
 
+>>>>>>> origin/master
 	@Override
-	public Adres readAdres(int id) {
+	public Adres readAdresmetAdresId(int adres_id) {
 		getConnection();
 		
 		String query = "SELECT * FROM Adres WHERE adres_id =?";
-		Adres adres = null;
+		Adres adres = new Adres();
 		
 		try {
 			RowSet rowSet = new JdbcRowSetImpl(connection);
+	
 			rowSet.setCommand(query);
-			rowSet.setInt(1, id);
+			rowSet.setInt(1, adres_id);
 			rowSet.execute();
 	
-			ResultSetMetaData rsMD = rowSet.getMetaData();
-	
-			for (int i = 1; i <= rsMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rsMD.getColumnLabel(i));
-			}
-			System.out.println(); 
 			while (rowSet.next()) {
+<<<<<<< HEAD
+				adres.setId(rowSet.getInt("adres_id"));
+				adres.setStraatnaam(rowSet.getString("straatnaam"));
+				adres.setHuisnummer(rowSet.getInt("huisnummer"));
+				adres.setToevoeging(rowSet.getString("toevoeging"));
+				adres.setWoonplaats(rowSet.getString("woonplaats"));
+			}
+			
+			rowSet.close();
+			
+=======
 				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
 					System.out.printf("%-12s\t", rowSet.getObject(i));
 				}
 			}			
 			rowSet.close();			
+>>>>>>> origin/master
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -154,7 +166,7 @@ public class Adreslijst implements AdresDAO {
 	}
 
 	@Override
-	public Set<Adres> adressenPerKlant(int klant_id){
+	public Set<Adres> readAdressenPerKlant(int klant_id){
 		getConnection();
 		
 		Set<Adres> adressen = new LinkedHashSet();
@@ -226,6 +238,9 @@ public class Adreslijst implements AdresDAO {
 	}
 
 	@Override
+<<<<<<< HEAD
+	public Adres readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer,	String toevoeging) {
+=======
 	public Adres searchById(int id) {
 		getConnection();
 		
@@ -258,6 +273,7 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer,	String toevoeging) {
+>>>>>>> origin/master
 		getConnection();
 		
 		Adres adres = new Adres();
@@ -300,12 +316,12 @@ public class Adreslijst implements AdresDAO {
 		return adres;
 	}
 	//overloaded zonder toevoeging
-	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer){
-		return searchByPostcodeAndHuisnummer(postcode, huisnummer, null);
+	public Adres readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer){
+		return readAdresMetPostcodeEnHuisnummer(postcode, huisnummer, null);
 	}
 	
 	@Override
-	public Set<Adres> searchByWoonplaats(String plaats){
+	public Set<Adres> readAdresMetWoonplaats(String plaats){
 		getConnection();
 		
 		Set<Adres> adressen = new LinkedHashSet();
@@ -336,7 +352,7 @@ public class Adreslijst implements AdresDAO {
 	}
 
 	@Override
-	public Set<Adres> searchByStraat(String straat, String plaats) {
+	public Set<Adres> readAdresMetStraat(String straat, String plaats) {
 		getConnection();
 		
 		Set<Adres> adressen = new LinkedHashSet();
@@ -367,9 +383,9 @@ public class Adreslijst implements AdresDAO {
 	}
 
 	@Override
-	public Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String toevoeging, String plaats) {
+	public Set<Adres> readAdresMetStraatEnHuisnummer(String straat, int huisnummer, String toevoeging, String plaats) {
 		Set<Adres> adressen = new LinkedHashSet();
-		for (Adres a: searchByStraat(straat, plaats)){
+		for (Adres a: readAdresMetStraat(straat, plaats)){
 			if (a.getHuisnummer() == huisnummer){
 				if (a.getToevoeging() == toevoeging || a.getToevoeging() == null)
 					adressen.add(a);
@@ -379,12 +395,12 @@ public class Adreslijst implements AdresDAO {
 		return adressen;
 	}
 	//overloaded zonder toevoeging
-	public Set<Adres> searchByStraatAndHuisnummer(String straat, int huisnummer, String plaats) {
-		return searchByStraatAndHuisnummer(straat, huisnummer, null, plaats);
+	public Set<Adres> readAdresMetStraatEnHuisnummer(String straat, int huisnummer, String plaats) {
+		return readAdresMetStraatEnHuisnummer(straat, huisnummer, null, plaats);
 	}
 
 	@Override
-	public Set<Klant> getKlant(int adres_id) {
+	public Set<Klant> readKlantenMetAdresId(int adres_id) {
 		getConnection();
 		
 		Set<Klant> klantSet = new LinkedHashSet<>();
