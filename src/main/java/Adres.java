@@ -1,5 +1,3 @@
-
-
 public class Adres {
 	private int adres_id;
 	private String straatnaam;
@@ -8,8 +6,7 @@ public class Adres {
 	private String postcode;
 	private String woonplaats;
 	
-	public Adres(){
-		
+	public Adres(){	
 	}
 	
 	public Adres(String straat, int huisnummer, String toevoeging, String postcode, String plaats){
@@ -91,8 +88,7 @@ public class Adres {
 	}
 	
 	public String toDB(){
-		return "'" + this.toString().replaceAll("[ \n]", "', '") + "'";
-		
+		return "'" + this.toString().replaceAll("[ \n]", "', '") + "'";	
 				//"'" + this.straatnaam + "', " + this.huisnummer + ", '" + this.toevoeging + "', " + this.postcode + "', " + this.woonplaats + "', ";
 	}
 }

@@ -163,8 +163,12 @@ public class KeuzeMenu {
 			System.out.print("Maak een keuze: ");
 			int keuze = scInput.nextInt();
 			switch (keuze){
-			case 1:	service.getKlantcontrol().createKlant();	break;
-			case 2:	service.getKlantcontrol().createKlantenAdres(); break;
+			case 1:	service.getKlantcontrol().createKlant();
+			startHoofd();
+			break;
+			case 2:	service.getKlantcontrol().createKlantenAdres(); 
+			startHoofd();
+			break;
 			/*case 3: BESTELLING EN ARTIKELEN NOG OP ELKAAR AFStEMMEN, KLOPT VOLGENS MIJ NOG NIET.
 				klant = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
 				adres = new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
