@@ -55,6 +55,7 @@ public class Service {
 		String newEmail = null;
 		try{
 			while(invalidInput){
+				System.out.print("Email: ");
 			newEmail = input.readLine();
 			if (emailVal.isValid(newEmail)){
 				invalidInput = false;

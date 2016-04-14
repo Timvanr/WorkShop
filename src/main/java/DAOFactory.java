@@ -79,7 +79,7 @@ public class DAOFactory {
 	}
 	
 	// Deze hebben we nu (nog) niet maar moeten we wel nog opnemen
-	public ArtikelLijst getArtikelLijst(int dataOpslagType){
+	public ArtikelDAO getArtikelLijst(int dataOpslagType){
 		
 		ArtikelDAO artikelDao = null;
 		

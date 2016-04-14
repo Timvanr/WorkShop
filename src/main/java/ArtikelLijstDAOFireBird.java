@@ -8,7 +8,7 @@ import javax.sql.RowSet;
 import com.mysql.jdbc.Statement;
 import com.sun.rowset.JdbcRowSetImpl;
 
-public class ArtikelLijstDAOFireBird extends ArtikelLijst {
+public class ArtikelLijstDAOFireBird implements ArtikelDAO {
 
 	public static Connection getConnection(){
 		Connection connection = DatabaseConnection.getPooledConnection();

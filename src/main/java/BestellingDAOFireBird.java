@@ -147,7 +147,11 @@ public class BestellingDAOFireBird implements BestellingDAO{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return bestelling;
@@ -271,16 +275,7 @@ public class BestellingDAOFireBird implements BestellingDAO{
 		System.out.println("table Bestelling dropped!");
 	}*/
 	
-	public void close() {
-		try {
-			connection.close();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Connection closed!");
-		
-	}
+
 
 	@Override
 	public void updateBestelling(int bestelling_id, Bestelling bestelling) {

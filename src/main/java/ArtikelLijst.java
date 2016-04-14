@@ -9,36 +9,20 @@ import javax.sql.RowSet;
 import com.mysql.jdbc.Statement;
 import com.sun.rowset.JdbcRowSetImpl;
 
-public class ArtikelLijst {
-
+public class ArtikelLijst implements ArtikelDAO {
 	private static Connection connection;
 	
-	public static Connection getConnection() throws SQLException {
-		if (connection == null || connection.isClosed()){
-			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				System.out.print("Driver loaded... ");
-			
-				connection = DriverManager.getConnection("jdbc:mysql://localhost/workshop", "sandermegens", "FrIkandel");
-				System.out.println("Database connected!");
-				
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-				
+	public static Connection getConnection(){
+		Connection connection = DatabaseConnection.getPooledConnection();
+						
 		return connection;
 	}
 		
 	public ArtikelLijst(){
-		try{
-			getConnection();
-		}
-		catch (SQLException ex){
-			ex.printStackTrace();
-		}
+		getConnection();
 	}
 	
+	@Override
 	public int createArtikel(Artikel artikel) throws SQLException{
 		
 		String createArtikelString = "INSERT INTO artikel (artikel_naam, artikel_prijs) values (?,?);";
@@ -65,10 +49,12 @@ public class ArtikelLijst {
 		finally {
 			rs.close();
 			createArtikel.close();
+			close();
 		}
 		return artikel_id;
 	}
 	
+	@Override
 	public Artikel getArtikelWithArtikelId(int artikel_id) throws SQLException{
 		String getArtikelString = "SELECT * FROM artikel WHERE artikel_id=?;";
 		RowSet rs = null;
@@ -113,6 +99,7 @@ public class ArtikelLijst {
 		
 	}
 	
+	@Override
 	public void deleteArtikelWithArtikelId(int artikel_id) throws SQLException{
 		getConnection();
 		String deleteArtikelString = "DELETE * FROM artikel WHERE artikel_id=?;";
@@ -131,6 +118,12 @@ public class ArtikelLijst {
 		}
 	}
 	
-	
+	public void close() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

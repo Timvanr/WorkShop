@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,25 +5,15 @@ import java.sql.*;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
-
 import javax.sql.RowSet;
-
 import org.apache.commons.validator.routines.EmailValidator;
-
 import com.sun.rowset.JdbcRowSetImpl;
+
 public class Klantbestand implements KlantDAO{
-	
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Scanner scInput = new Scanner(System.in);
 	
 	public Klantbestand() {
-	
-	}
-	
-	public static Connection getConnection(){
-		Connection connection = DatabaseConnection.getPooledConnection();
-						
-		return connection;
 	}
 	
 	public void createTable() throws SQLException{
@@ -45,13 +34,12 @@ public class Klantbestand implements KlantDAO{
 	}
 		
 	public int createKlant(Klant klant) throws SQLException {
-
+		Connection connection = DatabaseConnection.getPooledConnection();
 		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email) values (?,?,?,?);";
 		PreparedStatement insertKlantNaam = null;
 		ResultSet rs = null;
 		int klantId = 0;
-		try {
-			Connection connection = DatabaseConnection.getPooledConnection();
+		try {				
 			insertKlantNaam = connection.prepareStatement(insertKlantNaamString, Statement.RETURN_GENERATED_KEYS);
 			insertKlantNaam.setString(1, klant.getVoornaam());
 			insertKlantNaam.setString(2, klant.getTussenvoegsel());
@@ -64,13 +52,12 @@ public class Klantbestand implements KlantDAO{
 				klantId = rs.getInt(1);
 				System.out.println("Klant met klantnummer " + klantId + " is succesvol aangemaakt");
 			}
-			
-
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
 			insertKlantNaam.close();
-		}
+			connection.close();
+		}	
 		return klantId;
 	}
 
