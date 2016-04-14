@@ -8,7 +8,6 @@ import java.util.Scanner;
 import javax.sql.RowSet;
 import org.apache.commons.validator.routines.EmailValidator;
 import com.sun.rowset.JdbcRowSetImpl;
-import org.firebirdsql.*;
 
 public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 	
