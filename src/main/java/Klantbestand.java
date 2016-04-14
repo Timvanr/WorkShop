@@ -21,6 +21,11 @@ public class Klantbestand implements KlantDAO{
 	
 	}
 	
+	public static Connection getConnection(){
+		Connection connection = DatabaseConnection.getPooledConnection();
+						
+		return connection;
+	}
 	
 	public void createTable() throws SQLException{
 		Connection connection = DatabaseConnection.getPooledConnection();
@@ -67,7 +72,6 @@ public class Klantbestand implements KlantDAO{
 			insertKlantNaam.close();
 		}
 		return klantId;
-
 	}
 
 	public void createKlantEnAdres(Klant klant, Adres adres) throws SQLException {
@@ -81,14 +85,14 @@ public class Klantbestand implements KlantDAO{
 		Bestellijst bl = new Bestellijst();
 		int klant_id = createKlant(klant);
 		al.createAdres(klant_id, adres);
-		bl.voegBestellingToe(klant_id, bestelling);
+		bl.voegBestellingToe(bestelling);
 		
 	}
 		
 		public void createKlantEnBestelling(Klant klant, Bestelling bestelling) throws SQLException {
 			Bestellijst bl = new Bestellijst();
 			int klant_id = createKlant(klant);
-			bl.voegBestellingToe(klant_id, bestelling);
+			bl.voegBestellingToe(bestelling);
 				
 		}
 	
@@ -111,13 +115,11 @@ public class Klantbestand implements KlantDAO{
 					klant.setAchternaam(rowSet.getString("achternaam"));
 					klant.setEmail(rowSet.getString("email"));
 					
-					}
-			
+					}			
 				rowSet.close();
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
-
 			return klant;
 		}
 	@Override

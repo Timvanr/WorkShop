@@ -22,7 +22,7 @@ public class Adreslijst implements AdresDAO {
 		return connection;
 	}
 	
-	public void createTable(){
+	public void createTable() throws SQLException{
 		getConnection();
 		
 		try {
@@ -40,14 +40,14 @@ public class Adreslijst implements AdresDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			close();
+			connection.close();
 		}
 		System.out.println("Table Adres created!");
 	}
 	
 	@Override
 	public void createAdres(int klant_id, Adres adres){
-		getConnection();
+		Connection connection = DatabaseConnection.getPooledConnection();
 		
 		String insertAdresString = "INSERT INTO Adres (straatnaam, huisnummer, toevoeging, postcode, woonplaats) VALUES (?,?,?,?,?);";
 		String insertKlantHasAdresString = "INSERT INTO klant_has_adres (klant_id, adres_id) values (?,?);";
@@ -99,13 +99,14 @@ public class Adreslijst implements AdresDAO {
 			try {
 				insertAdres.close();
 				insertKlantHasAdres.close();
+				connection.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			close();
 		}
 		
 	}
+
 
 	@Override
 	public Adres readAdres(int id) {
@@ -130,16 +131,17 @@ public class Adreslijst implements AdresDAO {
 				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
 					System.out.printf("%-12s\t", rowSet.getObject(i));
 				}
-			}
-			
-			rowSet.close();
-			
+			}			
+			rowSet.close();			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			close();
-		}
-		
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}		
 		return adres;
 	}
 	
@@ -174,7 +176,12 @@ public class Adreslijst implements AdresDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return adressen;
@@ -207,7 +214,12 @@ public class Adreslijst implements AdresDAO {
 		} catch (SQLException ex){
 			ex.printStackTrace();
 		} finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return adresLijst;
@@ -233,7 +245,12 @@ public class Adreslijst implements AdresDAO {
 		}catch (SQLException ex){
 			ex.printStackTrace();
 		}finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return adres;
@@ -272,7 +289,12 @@ public class Adreslijst implements AdresDAO {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return adres;
@@ -302,7 +324,12 @@ public class Adreslijst implements AdresDAO {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return adressen;
@@ -328,7 +355,12 @@ public class Adreslijst implements AdresDAO {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return adressen;
@@ -378,7 +410,12 @@ public class Adreslijst implements AdresDAO {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return klantSet;
 	}
@@ -396,7 +433,12 @@ public class Adreslijst implements AdresDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		System.out.println("Adres is verwijderd!");
 	}
@@ -414,20 +456,16 @@ public class Adreslijst implements AdresDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			close();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		System.out.println("Klant-Adres-koppeling is verwijderd!");
 	}
 	
-	public void close() {
-		try {
-			connection.close();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Connection closed!");
-		
-	}
+	
 
 }
