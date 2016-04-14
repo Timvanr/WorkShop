@@ -307,7 +307,11 @@ public class Adreslijst implements AdresDAO {
 		Set<Klant> klantSet = new LinkedHashSet<>();
 		try {
 			RowSet rowSet = new JdbcRowSetImpl(connection);
-			String query = "Select * from `Klant` where adres_id=? order by achternaam asc;";
+			String query = "SELECT * FROM `Klant` " +
+					"INNER JOIN klant_has_adres " +
+					"ON Klant.klant_id = klant_has_adres.klant_id " +
+					"WHERE klant_has_adres.adres_id = ? " +
+					"ORDER BY achternaam ASC";
 			rowSet.setCommand(query);
 			rowSet.setInt(1, adres_id);
 			rowSet.execute();
