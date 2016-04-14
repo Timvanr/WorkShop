@@ -16,6 +16,11 @@ public class Klantbestand implements KlantDAO{
 	public Klantbestand() {
 	}
 	
+	public static Connection getConnection(){
+		Connection connection = DatabaseConnection.getPooledConnection();
+		return connection;		
+	}
+	
 	public void createTable() throws SQLException{
 		Connection connection = DatabaseConnection.getPooledConnection();
 		
@@ -34,7 +39,7 @@ public class Klantbestand implements KlantDAO{
 	}
 		
 	public int createKlant(Klant klant) throws SQLException {
-		Connection connection = DatabaseConnection.getPooledConnection();
+		Connection connection = getConnection();
 		String insertKlantNaamString = "INSERT INTO klant (voornaam, tussenvoegsel, achternaam, email) values (?,?,?,?);";
 		PreparedStatement insertKlantNaam = null;
 		ResultSet rs = null;

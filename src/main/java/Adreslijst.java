@@ -1,20 +1,16 @@
-
 import java.sql.*;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.sql.RowSet;
-
 import com.sun.rowset.JdbcRowSetImpl;
 
 
 public class Adreslijst implements AdresDAO {
-	private static Connection connection;
 	static final Logger LOG = LoggerFactory.getLogger(Adreslijst.class);
 	
 	public Adreslijst(){
-		getConnection();
-			
+				
 	}
 	
 	public static Connection getConnection(){
@@ -24,7 +20,7 @@ public class Adreslijst implements AdresDAO {
 	}
 	
 	public void createTable() throws SQLException{
-		getConnection();
+		Connection connection = getConnection();
 		
 		try {
 			Statement createTable = connection.createStatement();
@@ -104,18 +100,13 @@ public class Adreslijst implements AdresDAO {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}
-		
+		}		
 	}
 
-<<<<<<< HEAD
-	
-=======
 
->>>>>>> origin/master
 	@Override
 	public Adres readAdresmetAdresId(int adres_id) {
-		getConnection();
+		Connection connection = getConnection();
 		
 		String query = "SELECT * FROM Adres WHERE adres_id =?";
 		Adres adres = new Adres();
@@ -128,34 +119,26 @@ public class Adreslijst implements AdresDAO {
 			rowSet.execute();
 	
 			while (rowSet.next()) {
-<<<<<<< HEAD
+
 				adres.setId(rowSet.getInt("adres_id"));
 				adres.setStraatnaam(rowSet.getString("straatnaam"));
 				adres.setHuisnummer(rowSet.getInt("huisnummer"));
 				adres.setToevoeging(rowSet.getString("toevoeging"));
 				adres.setWoonplaats(rowSet.getString("woonplaats"));
-			}
-			
+			}		
 			rowSet.close();
-			
-=======
-				for (int i = 1; i <= rowSet.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rowSet.getObject(i));
-				}
-			}			
-			rowSet.close();			
->>>>>>> origin/master
-		} catch (SQLException e) {
+		} catch (SQLException e){
 			e.printStackTrace();
-		} finally {
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}		
+		}
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return adres;
 	}
+
 	
 	@Override
 	public void updateAdres(int klant_id, Adres adres){
@@ -167,7 +150,7 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public Set<Adres> readAdressenPerKlant(int klant_id){
-		getConnection();
+		Connection connection = getConnection();
 		
 		Set<Adres> adressen = new LinkedHashSet();
 		try {
@@ -201,7 +184,7 @@ public class Adreslijst implements AdresDAO {
 	
 	@Override
 	public Set<Adres> readAll() {
-		getConnection();
+		Connection connection = getConnection();
 
 		Set<Adres> adresLijst = new LinkedHashSet<>();
 		try {
@@ -237,84 +220,6 @@ public class Adreslijst implements AdresDAO {
 		return adresLijst;
 	}
 
-	@Override
-<<<<<<< HEAD
-	public Adres readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer,	String toevoeging) {
-=======
-	public Adres searchById(int id) {
-		getConnection();
-		
-		Adres adres = null;
-		try {
-			PreparedStatement searchById = connection.prepareStatement
-					("SELECT * FROM Adres WHERE adres_id = ?");
-			searchById.setInt(1, id);
-			ResultSet adresInfo = searchById.executeQuery();
-			
-			if (adresInfo.next()){
-				adres = new Adres(adresInfo.getString(2), adresInfo.getInt(3), adresInfo.getString(4), adresInfo.getString(5), adresInfo.getString(6));
-			}else{
-				System.out.println("Adres niet gevonden!");
-			}
-			
-		}catch (SQLException ex){
-			ex.printStackTrace();
-		}finally {
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		return adres;
-	}
-
-	@Override
-	public Adres searchByPostcodeAndHuisnummer(String postcode, int huisnummer,	String toevoeging) {
->>>>>>> origin/master
-		getConnection();
-		
-		Adres adres = new Adres();
-		
-		try {
-			RowSet rowSet = new JdbcRowSetImpl(connection);
-			String query = "Select * from `Adres` where postcode=? AND huisnummer=? AND toevoeging=?;";
-			
-			rowSet.setCommand(query);
-			rowSet.setString(1, postcode);
-			rowSet.setInt(2, huisnummer);
-			rowSet.setString(3, toevoeging);
-
-			rowSet.execute();
-
-			if (!rowSet.next()) {
-				System.out.println("no entries found with this address");
-			} else {
-				adres.setId(rowSet.getInt(1));
-				adres.setStraatnaam(rowSet.getString(2));
-				adres.setHuisnummer(rowSet.getInt(3));
-				adres.setToevoeging(rowSet.getString(4));
-				adres.setPostcode(rowSet.getString(5));
-				adres.setWoonplaats(rowSet.getString(6));
-										
-			}
-			rowSet.close();
-			
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		return adres;
-	}
 	//overloaded zonder toevoeging
 	public Adres readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer){
 		return readAdresMetPostcodeEnHuisnummer(postcode, huisnummer, null);
@@ -322,7 +227,7 @@ public class Adreslijst implements AdresDAO {
 	
 	@Override
 	public Set<Adres> readAdresMetWoonplaats(String plaats){
-		getConnection();
+		Connection connection = getConnection();
 		
 		Set<Adres> adressen = new LinkedHashSet();
 		try {
@@ -343,17 +248,15 @@ public class Adreslijst implements AdresDAO {
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		
+		}		
 		return adressen;
 	}
 
 	@Override
 	public Set<Adres> readAdresMetStraat(String straat, String plaats) {
-		getConnection();
+		Connection connection = getConnection();
 		
 		Set<Adres> adressen = new LinkedHashSet();
 		try {
@@ -374,11 +277,9 @@ public class Adreslijst implements AdresDAO {
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		
+		}		
 		return adressen;
 	}
 
@@ -390,10 +291,10 @@ public class Adreslijst implements AdresDAO {
 				if (a.getToevoeging() == toevoeging || a.getToevoeging() == null)
 					adressen.add(a);
 			}
-		}
-		
+		}		
 		return adressen;
 	}
+	
 	//overloaded zonder toevoeging
 	public Set<Adres> readAdresMetStraatEnHuisnummer(String straat, int huisnummer, String plaats) {
 		return readAdresMetStraatEnHuisnummer(straat, huisnummer, null, plaats);
@@ -401,7 +302,7 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public Set<Klant> readKlantenMetAdresId(int adres_id) {
-		getConnection();
+		Connection connection = getConnection();
 		
 		Set<Klant> klantSet = new LinkedHashSet<>();
 		try {
@@ -429,7 +330,6 @@ public class Adreslijst implements AdresDAO {
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -438,9 +338,9 @@ public class Adreslijst implements AdresDAO {
 
 	@Override
 	public void deleteAdres(int id) {
-		try {
-			getConnection();
+		Connection connection = getConnection();
 		
+		try {		
 			PreparedStatement deleteAdres = connection.prepareStatement
 					("DELETE * FROM Adres WHERE adres_id = ?");
 			deleteAdres.setInt(1, id);
@@ -452,7 +352,6 @@ public class Adreslijst implements AdresDAO {
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -460,9 +359,8 @@ public class Adreslijst implements AdresDAO {
 	}
 	
 	public void deleteKlantAdresPair(int klant_id, int adres_id){
+		Connection connection = getConnection();		
 		try {
-			getConnection();
-			
 			PreparedStatement deleteKlantAdresPair = connection.prepareStatement
 					("DELETE * FROM klant_has_adres WHERE klant_id = ? AND adres_id = ?");
 			deleteKlantAdresPair.setInt(1, klant_id);
@@ -475,13 +373,10 @@ public class Adreslijst implements AdresDAO {
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		System.out.println("Klant-Adres-koppeling is verwijderd!");
 	}
-	
-	
 
 }
