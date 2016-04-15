@@ -223,7 +223,44 @@ public class Adreslijst implements AdresDAO {
 		return adressen;
 	}
 	
+	@Override
+	public Adres readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer, String toevoeging) {
+		Connection connection = getConnection();
+		logger.info("readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer, String toevoeging); gestart");
+		String query = "SELECT * FROM Adres WHERE postcode = ? AND huisnummer = ? and toevoeging = ? ";
+		Adres adres = new Adres();
+		
+		try {
+			RowSet rowSet = new JdbcRowSetImpl(connection);	
+			rowSet.setCommand(query);
+			rowSet.setString(1, postcode);
+			rowSet.setInt(2, huisnummer);
+			rowSet.setString(3, toevoeging);
+			rowSet.execute();
 	
+			while (rowSet.next()) {
+
+				adres.setId(rowSet.getInt("adres_id"));
+				adres.setStraatnaam(rowSet.getString("straatnaam"));
+				adres.setHuisnummer(rowSet.getInt("huisnummer"));
+				adres.setToevoeging(rowSet.getString("toevoeging"));
+				adres.setPostcode(rowSet.getString("postcode"));
+				adres.setWoonplaats(rowSet.getString("woonplaats"));
+				logger.info("readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer, String toevoeging); uitgevoerd");
+			}		
+			rowSet.close();
+		} catch (SQLException ex){
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+		try {
+			connection.close();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return adres;
+	}
+
 	//overloaded zonder toevoeging
 	public Adres readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer){
 		return readAdresMetPostcodeEnHuisnummer(postcode, huisnummer, null);
@@ -400,11 +437,4 @@ public class Adreslijst implements AdresDAO {
 		}
 		System.out.println("Klant-Adres-koppeling is verwijderd!");
 	}
-
-	@Override
-	public Adres readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer, String toevoeging) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
