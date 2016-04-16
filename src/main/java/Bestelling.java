@@ -1,5 +1,7 @@
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +13,7 @@ public class Bestelling {
 	
 	public Bestelling(int klant_id) {
 		this.klant_id = klant_id;
-		this.artikelen = new HashMap<>();
+		this.artikelen = new HashMap<Artikel, Integer>();
 	}
 	public Bestelling(){
 		this(0);
@@ -45,14 +47,20 @@ public class Bestelling {
 		this.artikelen.remove(artikel);
 	}
 	
+	public BigDecimal getTotaalPrijs(){
+		BigDecimal total = BigDecimal.ZERO;
+		
+		for (Map.Entry<Artikel, Integer> entrySet: this.artikelen.entrySet()){
+			BigDecimal artikelTimesAantal = entrySet.getKey().getPrijs().multiply(new BigDecimal(entrySet.getValue()));
+			total = total.add(artikelTimesAantal);
+		}
+		
+		return total;
+	}
+	
 	public Klant getKlant(){
 		Klantbestand klantbestand = new Klantbestand();
-		Klant klant = new Klant();
-		try {
-			klant = klantbestand.readKlantWithId(this.klant_id);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		Klant klant = klantbestand.readKlantWithId(this.klant_id);
 		return klant;
 	}
 		
@@ -60,9 +68,17 @@ public class Bestelling {
 	public String toString(){
 		String artikelLijst = "";
 		for (Map.Entry<Artikel, Integer> entry: this.artikelen.entrySet()){
-			artikelLijst += entry.getKey().toString() + " " + entry.getValue() + "\n";
+			artikelLijst += entry.getKey().toString() + " aantal: " + entry.getValue() + "\n";
 		}
-		return "Bestellingnummer: " + this.bestelling_id + " Klantnummer: " + this.klant_id + "\n" + artikelLijst;
+		return "Bestellingnummer: " + this.bestelling_id + ", Klantnummer: " + this.klant_id + "\n" + 
+				artikelLijst + "Totaalprijs: " + NumberFormat.getCurrencyInstance().format(getTotaalPrijs());
 	}
-	
+	/*
+	public static void main(String[] args){
+		Bestelling bestelling = new Bestelling(555);
+		bestelling.voegArtikelToeAanBestelling(new Artikel(34, "warm broodje", new BigDecimal(3.95)), 2);
+		bestelling.voegArtikelToeAanBestelling(new Artikel(44, "latte machiato", new BigDecimal(2.95)), 2);
+		System.out.println(bestelling);
+	}
+	*/
 }

@@ -1,5 +1,7 @@
 
+
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 
 public class Artikel {
@@ -42,7 +44,7 @@ public class Artikel {
 	
 	@Override
 	public String toString(){
-		return "Artikel- ID: " + this.artikel_id + " Naam: " + this.artikel_naam + " Prijs: " + this.artikel_prijs;
+		return "Artikelnummer: " + this.artikel_id + " Naam: " + this.artikel_naam + " Prijs: " + NumberFormat.getCurrencyInstance().format(this.artikel_prijs);
 	}
 	
 	
