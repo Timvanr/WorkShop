@@ -38,6 +38,19 @@ public class KlantController {
 		klantbestand.createKlantEnAdres(klant, adres);
 	}
 	
+	public void createKlantenAdresEnBestelling() throws SQLException, IOException{
+		Klant klant = service.newKlant();
+		Adres adres = service.newAdres();
+		Bestelling bestelling = service.newBestelling();
+		klantbestand.createKlantEnAdresEnBestelling(klant, adres, bestelling);
+	}
+	
+	public void createKlantenBestelling() throws SQLException, IOException{
+		Klant klant = service.newKlant();
+		Bestelling bestelling = service.newBestelling();
+		klantbestand.createKlantEnBestelling(klant, bestelling);
+	}
+	
 	public void updateKlant() throws SQLException, IOException{
 		klantbestand.UpdateKlantNaam(service.id_Prompt());
 	}
