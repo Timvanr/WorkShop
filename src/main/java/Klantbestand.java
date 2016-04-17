@@ -159,6 +159,7 @@ public class Klantbestand implements KlantDAO{
 
 			while (rowSet.next()) {
 				klant = new Klant();
+				klant.setId(rowSet.getInt("klant_id"));
 				klant.setVoornaam(rowSet.getString("voornaam"));
 				klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
 				klant.setAchternaam(rowSet.getString("achternaam"));
@@ -180,7 +181,6 @@ public class Klantbestand implements KlantDAO{
 			System.out.println();
 		}
 		return klantset;
-
 	}
 
 	public Klant readKlantWithFirstLastName(String voornaam, String tussenvoegsel, String achternaam){
@@ -328,8 +328,8 @@ public class Klantbestand implements KlantDAO{
 				klant.setEmail(rowSet.getString(5));
 				
 				klantList.add(klant);	
-				rowSet.close();
 			}
+			rowSet.close();
 		}
 		catch (SQLException ex){
 			ex.printStackTrace();

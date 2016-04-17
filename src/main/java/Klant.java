@@ -25,24 +25,12 @@ public class Klant {
 	
 	public static Klant get(int id){
 		Klantbestand klantb = new Klantbestand();
-		try {
-			return klantb.readKlantWithId(id);
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return klantb.readKlantWithId(id);
 	}
 	
 	public Adres getAdres(){
 		Adreslijst adressen = new Adreslijst();
-		// try {
-			return adressen.searchById(this.adres_id);
-		/*	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null; */
+		return adressen.readAdresmetAdresId(this.adres_id); 
 	}
 			
 	public int getId() {

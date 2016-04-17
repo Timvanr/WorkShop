@@ -1,4 +1,10 @@
 import java.sql.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import javax.sql.RowSet;
+
+import com.sun.rowset.JdbcRowSetImpl;
 
 public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 	
@@ -69,5 +75,51 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 		bl.voegBestellingToe(bestelling);
 
 	}
+	
+	@Override
+	public Set<Klant> readAll(){
+			Connection connection = getConnection();		
+			LinkedHashSet<Klant> klantset = new LinkedHashSet<>();
+			String query = "Select * from klant";
+			Klant klant = null;
+			RowSet rowSet = null;
+
+			try {
+				rowSet = new JdbcRowSetImpl(connection);
+				rowSet.setCommand(query);
+				rowSet.execute();
+
+				if (!rowSet.isBeforeFirst()) {
+					System.out.println("There are no records");
+					logger.info("Geen gegevens gevonden");
+					return klantset;
+				}
+
+				while (rowSet.next()) {
+					klant = new Klant();
+					klant.setId(rowSet.getInt("klant_id"));
+					klant.setVoornaam(rowSet.getString("voornaam"));
+					klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
+					klant.setAchternaam(rowSet.getString("achternaam"));
+					klant.setEmail(rowSet.getString("email"));
+					klantset.add(klant);
+					logger.info("readKlantWithFirstName(String voornaam); uitgevoerd");
+				}
+				
+			} catch (SQLException ex) {
+				logger.error(ex.getMessage());
+				ex.printStackTrace();
+			} finally {
+				try {
+					rowSet.close();
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				System.out.println();
+			}
+			return klantset;
+
+		}
 
 }
