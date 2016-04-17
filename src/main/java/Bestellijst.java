@@ -11,6 +11,7 @@ import javax.sql.rowset.JdbcRowSet;
 
 public class Bestellijst implements BestellingDAO {
 	private static Connection connection;
+	ArtikelDAO artikellijst;
 	
 	public Bestellijst() {
 		connection = DatabaseConnection.getPooledConnection();
@@ -67,14 +68,14 @@ public class Bestellijst implements BestellingDAO {
 	}
 */
 	@Override
-	public void voegBestellingToe(Bestelling bestelling){
+	public void voegBestellingToe(int klant_id, Bestelling bestelling){
 		
 		HashMap<Artikel, Integer> artikelen = bestelling.getArtikelen();
 		try {
 			connection = DatabaseConnection.getPooledConnection();
 			PreparedStatement voegToe = connection.prepareStatement(
 					"INSERT INTO Bestelling (klant_id) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
-			voegToe.setInt(1, bestelling.getKlant_id());
+			voegToe.setInt(1, klant_id);
 			voegToe.executeUpdate();
 			
 			ResultSet rs = voegToe.getGeneratedKeys();
@@ -104,6 +105,9 @@ public class Bestellijst implements BestellingDAO {
 		}
 	}
 	
+	//@Override
+	
+	
 	
 	@Override
 	public Bestelling getBestelling(int bestelling_id) throws SQLException{
@@ -114,7 +118,10 @@ public class Bestellijst implements BestellingDAO {
 		try{
 			bestelling = new Bestelling();
 			bestelData = new JdbcRowSetImpl(connection);
-			bestelData.setCommand("SELECT * FROM Bestelling INNER JOIN bestelling_has_artikel ON bestelling.bestelling_id=bestelling_has_artikel.bestelling_id WHERE bestelling.bestelling_id=?");
+			bestelData.setCommand("SELECT * FROM Bestelling INNER JOIN"
+					+ " bestelling_has_artikel ON bestelling.bestelling_id=bestelling_has_artikel.bestelling_id"
+					+ " WHERE bestelling.bestelling_id=?");
+			
 			bestelData.setInt(1, bestelling_id);
 			bestelData.execute();
 			
@@ -122,22 +129,23 @@ public class Bestellijst implements BestellingDAO {
 								
 			while (bestelData.next()){
 				
-			artikelData = new JdbcRowSetImpl(connection);
-			artikelData.setCommand("SELECT * FROM Artikel WHERE artikel_id = ?");
-			artikelData.setInt(1, bestelData.getInt("artikel_id"));
-			artikelData.execute();
-			
-			while (artikelData.next()){
-				bestelling.setKlant_id(bestelData.getInt("klant_id"));
-				bestelling.setBestelling_id(bestelling_id);
-				Artikel artikel = new Artikel();
-				artikel.setId(artikelData.getInt("artikel_id"));
-				artikel.setNaam(artikelData.getString("artikel_naam"));
-				artikel.setPrijs(artikelData.getBigDecimal("artikel_prijs"));
-				bestelling.voegArtikelToeAanBestelling(artikel, bestelData.getInt("artikel_aantal"));
+				artikelData = new JdbcRowSetImpl(connection);
+				artikelData.setCommand("SELECT * FROM Artikel WHERE artikel_id = ?");
+				artikelData.setInt(1, bestelData.getInt("artikel_id"));
+				artikelData.execute();
+				
+				while (artikelData.next()){
+					bestelling.setKlant_id(bestelData.getInt("klant_id"));
+					bestelling.setBestelling_id(bestelling_id);
+					Artikel artikel = new Artikel();
+					artikel.setId(artikelData.getInt("artikel_id"));
+					artikel.setNaam(artikelData.getString("artikel_naam"));
+					artikel.setPrijs(artikelData.getBigDecimal("artikel_prijs"));
+					
+					bestelling.voegArtikelToeAanBestelling(artikel, bestelData.getInt("artikel_aantal"));
+						}
 					}
-				}
-			} 
+				} 
 			
 		else {
 			System.out.println("Bestelling not found!");
@@ -147,7 +155,6 @@ public class Bestellijst implements BestellingDAO {
 			e.printStackTrace();
 		} finally {
 			bestelData.close();
-			artikelData.close();
 		}
 		
 		return bestelling;
@@ -183,9 +190,9 @@ public class Bestellijst implements BestellingDAO {
 		try {
 			connection = DatabaseConnection.getPooledConnection();
 			verwijder = connection.prepareStatement(
-					"DELETE FROM Bestelling " +
-					"INNER JOIN bestelling_has_artikel" + 
-					"WHERE bestelling_id = ?");
+					"DELETE FROM Bestelling, bestelling_has_artikel" + 
+					" USING Bestelling INNER JOIN bestelling_has_artikel ON" + 
+					" bestelling.bestelling_id=bestelling_has_artikel.bestelling_id WHERE bestelling.bestelling_id=?");
 			verwijder.setInt(1, bestelling_id);
 			verwijder.executeUpdate();
 			
@@ -198,40 +205,6 @@ public class Bestellijst implements BestellingDAO {
 		}
 	}
 
-	@Override
-	public void updateBestelling(int bestelling_id, Bestelling bestelling) {
-		PreparedStatement update = null;
-		
-		HashMap<Artikel, Integer> artikelen = bestelling.getArtikelen();
-		try {
-			connection = DatabaseConnection.getPooledConnection();
-			
-			PreparedStatement deleteArtikelenOud = connection.prepareStatement(
-					"DELETE * FROM bestelling_has_artikel " +
-					"WHERE bestelling_id = ?");
-			deleteArtikelenOud.setInt(1, bestelling_id);
-			deleteArtikelenOud.executeUpdate();
-			deleteArtikelenOud.close();
-			
-			for (Map.Entry<Artikel, Integer> entrySet: artikelen.entrySet()){
-				update = connection.prepareStatement(
-						"INSERT INTO bestelling_has_artikel " +
-						"(bestelling_id, artikel_id, artikel_aantal) " +
-						"VALUES (?, ?, ?)");
-				update.setInt(1, bestelling_id);
-				update.setInt(2, entrySet.getKey().getId());
-				update.setInt(3, entrySet.getValue());
-				update.executeUpdate();
-				update.close();
-			}
-			System.out.println("Bestelling " + bestelling_id + " is veranderd!");
-			
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			close();
-		}
-	}
 
 	@Override
 	public int haalKlant_id(int bestelling_id){

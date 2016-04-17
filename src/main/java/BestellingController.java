@@ -5,13 +5,23 @@ public class BestellingController {
 	
 		private Service service; // view
 		private BestellingDAO bestellijst; // model
+		private ArtikelDAO artikellijst;
 		
-		public BestellingController(Service service, BestellingDAO bestellijst2) {
-
+		
+		public BestellingController(Service service, BestellingDAO bestellijst2, ArtikelDAO artikellijst) {
+			
 			this.service = service;
 			this.bestellijst = bestellijst2;
+			this.artikellijst = artikellijst;
 		}
+		
+		
 
+		public void createBestellingVoorBestaandeKlant() throws IOException, SQLException{
+			bestellijst.voegBestellingToe(service.id_Prompt(), service.newBestelling());
+			
+		}
+		
 		public void printBestellingmetId() throws SQLException, IOException{
 			service.printBestelling(bestellijst.getBestelling(service.bestellingIdPrompt()));
 		}
@@ -20,8 +30,19 @@ public class BestellingController {
 			service.printBestellingen(bestellijst.haalBestellijst());
 		}
 		
-		public void updateBestelling() throws SQLException, IOException {
-			bestellijst.updateBestelling(bestellijst.getBestelling(service.bestellingIdPrompt()));
+		public void updateBestelling() throws SQLException, IOException { 
+			int bestelling_id = service.bestellingIdPrompt();
+			service.printBestelling(bestellijst.getBestelling(bestelling_id));
+			switch (service.updateBestellingPrompt()){
+			case 1: artikellijst.verwijderArtikelUitBestelling(bestelling_id, service.artikelIdPrompt()); break;
+			case 2: artikellijst.voegArtikelToeAanBestelling(bestelling_id, service.artikelIdPrompt(), service.artikelAantalPrompt()); break;
+			case 3: artikellijst.verwijderArtikelUitBestelling(bestelling_id, service.artikelIdPrompt()); 
+			artikellijst.voegArtikelToeAanBestelling(bestelling_id, service.artikelIdPrompt(), service.artikelAantalPrompt()); break;
+			}
+		}
+		
+		public void deleteArtikelVanBestelling() throws SQLException, IOException{
+			artikellijst.verwijderArtikelUitBestelling(service.bestellingIdPrompt(), service.artikelIdPrompt());
 		}
 		
 		public void deleteBestelling() throws SQLException, IOException {
