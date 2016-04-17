@@ -145,7 +145,7 @@ public class Service {
 	void printKlanten(Set<Klant> klantset){
 		System.out.printf("%-10s %-20s %-20s %-20s %-20s\n", "Klant id", "Voornaam", "Tussenvoegsel", "Achternaam", "E-mail");
 		for(Klant klant: klantset){
-			System.out.printf("%-20s %-20s %-20s %-20s\n", klant.getVoornaam(), klant.getTussenvoegsel(), klant.getAchternaam(), klant.getEmail());
+			System.out.printf("%10s %-20s %-20s %-20s %-20s\n", klant.getId(), klant.getVoornaam(), klant.getTussenvoegsel(), klant.getAchternaam(), klant.getEmail());
 		}
 	}
 
