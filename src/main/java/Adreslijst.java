@@ -145,6 +145,7 @@ public class Adreslijst implements AdresDAO {
 		return adresLijst;
 	}
 
+	@Override
 	public Adres readAdresmetAdresId(int adres_id) {
 		Connection connection = getConnection();
 		logger.info("readAdresmetAdresId(int adres_id); gestart");
@@ -181,13 +182,13 @@ public class Adreslijst implements AdresDAO {
 		return adres;
 	}
 
-	
+	@Override
 	public void updateAdres(int klant_id, Adres adres){		
 		createAdres(klant_id, adres);		
 		System.out.println("Adresgegevens gewijzigd");
 	}
 
-
+	@Override
 	public Set<Adres> readAdressenPerKlant(int klant_id){
 		Connection connection = getConnection();		
 		logger.info("readAdressenPerKlant(int klant_id); gestart");
@@ -222,6 +223,7 @@ public class Adreslijst implements AdresDAO {
 		return adressen;
 	}
 
+	@Override
 	public Adres readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer, String toevoeging) {
 		Connection connection = getConnection();
 		logger.info("readAdresMetPostcodeEnHuisnummer(String postcode, int huisnummer, String toevoeging); gestart");
@@ -264,7 +266,7 @@ public class Adreslijst implements AdresDAO {
 		return readAdresMetPostcodeEnHuisnummer(postcode, huisnummer, null);
 	}
 	
-
+	@Override
 	public Set<Adres> readAdresMetWoonplaats(String plaats){
 		Connection connection = getConnection();		
 		logger.info("readAdresMetWoonplaats(String plaats); gestart");
@@ -296,7 +298,7 @@ public class Adreslijst implements AdresDAO {
 		return adressen;
 	}
 
-
+	@Override
 	public Set<Adres> readAdresMetStraat(String straat, String plaats) {
 		Connection connection = getConnection();
 		logger.info("readAdresMetStraat(String straat, String plaats); gestart");
@@ -327,7 +329,7 @@ public class Adreslijst implements AdresDAO {
 		return adressen;
 	}
 
-
+	@Override
 	public Set<Adres> readAdresMetStraatEnHuisnummer(String straat, int huisnummer, String toevoeging, String plaats) {
 		Set<Adres> adressen = new LinkedHashSet<Adres>();
 		for (Adres a: readAdresMetStraat(straat, plaats)){
@@ -344,7 +346,7 @@ public class Adreslijst implements AdresDAO {
 		return readAdresMetStraatEnHuisnummer(straat, huisnummer, null, plaats);
 	}
 	
-
+	@Override
 	public Set<Klant> readKlantenMetAdresId(int adres_id) {
 		Connection connection = getConnection();
 		logger.info("readKlantenMetAdresId(int adres_id); gestart");

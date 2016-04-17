@@ -48,9 +48,12 @@ public class KlantController {
 	
 	public void deleteKlantmetKlantId() throws SQLException, IOException{
 		klantbestand.deleteAllFromKlantId(service.id_Prompt());
+		System.out.println("Klant succesvol verwijderd.");
 	}
 	
 	public void deleteKlantmetKlantNaam() throws SQLException, IOException{
-		klantbestand.deleteAllFromKlantNaam(service.voornaamPrompt(), service.achternaamPrompt(), service.tussenvoegselPrompt());
+		Klant klant = klantbestand.readKlantWithFirstLastName(service.voornaamPrompt(), service.tussenvoegselPrompt(), service.achternaamPrompt());
+		klantbestand.deleteAllFromKlantId(klant.getId());
+		System.out.println("Klant succesvol verwijderd.");
 	}
 }

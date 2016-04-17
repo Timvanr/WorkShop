@@ -205,6 +205,7 @@ public class Klantbestand implements KlantDAO{
 
 			while (rowSet2.next()) {
 				klant = new Klant();
+				klant.setId(rowSet2.getInt("klant_id"));
 				klant.setVoornaam(rowSet2.getString("voornaam"));
 				klant.setTussenvoegsel(rowSet2.getString("tussenvoegsel"));
 				klant.setAchternaam(rowSet2.getString("achternaam"));
@@ -347,13 +348,13 @@ public class Klantbestand implements KlantDAO{
 		Connection connection = getConnection();
 		logger.info("deleteAllFromKlantId(int klant_id); gestart");
 		PreparedStatement deleteFromId = null;
-		String query = "Delete FROM `klant`, `bestelling` USING `klant`, `bestelling` WHERE klant.klant_id=bestelling.klant_id AND klant.klant_id=?;";
-		
+		String query = "Delete FROM klant WHERE klant_id=?;";
 		try{
 			deleteFromId = connection.prepareStatement(query);
 			deleteFromId.setInt(1, klant_id);			
 			deleteFromId.executeUpdate();
 			logger.info("deleteAllFromKlantId(int klant_id); uitgevoerd");
+			
 
 		}
 		catch (SQLException ex){
@@ -374,13 +375,14 @@ public class Klantbestand implements KlantDAO{
 		Connection connection = getConnection();
 		logger.info("deleteAllFromKlantNaam(String voornaam, String achternaam, String tussenvoegsel); gestart");
 		PreparedStatement deleteAllFromNaam = null;
-		String query = "Delete FROM klant, bestelling USING klant, bestelling WHERE klant.klant_id=bestelling.klant_id AND klant.voornaam=? AND klant.achternaam=? AND klant.tussenvoegsel=?;";
+		String query = "Delete FROM klant WHERE voornaam='" + voornaam + "' AND tussenvoegsel='" + tussenvoegsel
+				+ "' AND achternaam='" + achternaam + "';";
 		
 		try{
 			deleteAllFromNaam = connection.prepareStatement(query);
-			deleteAllFromNaam.setString(1, voornaam);
+			/*deleteAllFromNaam.setString(1, voornaam);
 			deleteAllFromNaam.setString(2, achternaam);
-			deleteAllFromNaam.setString(3, tussenvoegsel);			
+			deleteAllFromNaam.setString(3, tussenvoegsel);	*/		
 			deleteAllFromNaam.executeUpdate();
 			logger.info("deleteAllFromKlantNaam(String voornaam, String achternaam, String tussenvoegsel); uitgevoerd");
 
