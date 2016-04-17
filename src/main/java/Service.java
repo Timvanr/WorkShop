@@ -16,7 +16,8 @@ public class Service {
 	Scanner scInput = new Scanner(System.in);
 	AdresController adrescontrol = new AdresController(this, daoFactory.getAdreslijst(1));
 	KlantController klantcontrol = new KlantController(this, daoFactory.getKlantbestand(1));
-	BestellingController bestellingcontrol = new BestellingController(this, daoFactory.getBestellijst(1));
+	BestellingController bestellingcontrol = new BestellingController(this, daoFactory.getBestellijst(1), daoFactory.getArtikelLijst(1));
+	ArtikelController artikelcontrol = new ArtikelController(this, daoFactory.getArtikelLijst(1));
 	
 	//Hier de prompt opdrachten
 	int id_Prompt() throws IOException {
@@ -104,7 +105,7 @@ public class Service {
 		return woonplaats;
 		}
 	int artikelAantalPrompt() throws IOException {
-		System.out.print("Hoeveel wilt u van dit atikel: ");
+		System.out.print("Hoeveel van deze atikelen wilt u: ");
 		String artikelAantalstr = input.readLine();
 		int artikelAantal = Integer.parseInt(artikelAantalstr);
 		return artikelAantal;
@@ -129,7 +130,7 @@ public class Service {
 	}
 	
 	int arikelIdPrompt() throws IOException {
-		System.out.println("Geef het artikelnummer van het artikel dat u wilt toevoegen: ");
+		System.out.println("(toets 0 om de invoer te stoppen)\nGeef het artikelnummer van het artikel: ");
 		String artikelIdString = input.readLine();
 		int artikelId = Integer.parseInt(artikelIdString);
 		return artikelId;
@@ -167,7 +168,7 @@ public class Service {
 		System.out.println("De inhoud van de bestelling:");
 		String artikelLijst = "";
 		for (Map.Entry<Artikel, Integer> entry: bestelling.getArtikelen().entrySet()){
-				artikelLijst += entry.getKey().toString() + " " + entry.getValue() + "\n";
+				artikelLijst += entry.getKey().toString() + " Aantal: " + entry.getValue() + "\n";
 			}
 			System.out.println("Bestellingnummer: " + bestelling.getBestelling_id() + " Klantnummer: " + bestelling.getKlant_id() + "\n" + artikelLijst);
 		}
@@ -177,7 +178,7 @@ public class Service {
 		for (Bestelling bestelling: bestellijst){
 			String artikelLijst = "";
 			for (Map.Entry<Artikel, Integer> entry: bestelling.getArtikelen().entrySet()){
-				artikelLijst += entry.getKey().toString() + " " + entry.getValue() + "\n";
+				artikelLijst += entry.getKey().toString() + " Aantal: " + entry.getValue() + "\n";
 			}
 			System.out.println("Bestellingnummer: " + bestelling.getBestelling_id() + " Klantnummer: " + bestelling.getKlant_id() + "\n" + artikelLijst);
 		}
@@ -208,7 +209,7 @@ public class Service {
 		
 		setKlantcontrol(new KlantController(this, daoFactory.getKlantbestand(keuze)));
 		setAdrescontrol(new AdresController(this, daoFactory.getAdreslijst(keuze)));
-		setBestellingcontrol(new BestellingController(this, daoFactory.getBestellijst(keuze)));
+		setBestellingcontrol(new BestellingController(this, daoFactory.getBestellijst(keuze), daoFactory.getArtikelLijst(keuze)));
 			switch(keuze){
 			case 1: DatabaseConnection.setDriverClass("com.mysql.jdbc.Driver"); DatabaseConnection.setURL("jdbc:mysql://localhost:3306/workshop");; break;
 			case 2: DatabaseConnection.setDriverClass("org.firebirdsql.jdbc.FBDriver"); DatabaseConnection.setURL("jdbc:firebirdsql://localhost:3050/C:/Users/sande_000/Desktop/Java RSVIER/Firebird database workshop/Workshop.GDB"); break;
@@ -221,7 +222,7 @@ public class Service {
 		boolean invalidInput = true;
 		boolean invalidInput2 = true;
 		while (invalidInput){
-		System.out.println("Wilt u een connectietype kiezen? \n 1. Ja \n 2. Nee \n");
+		System.out.println("Wilt u een connectietype kiezen? \n 1. Ja \n 2. Nee");
 		int userInput = scInput.nextInt();
 		
 		if (userInput == 1){
@@ -260,5 +261,39 @@ public class Service {
 		return adres;
 	}
 	
+	Bestelling newBestelling() throws IOException, SQLException{
+		Bestelling bestelling = new Bestelling();
+		ArtikelLijst aLijst = new ArtikelLijst();
+		int artikelcount = 0;
+		int stopInput = 0;
+		while (stopInput == 0 && artikelcount < 3){
+			int artikelId = artikelIdPrompt();
+			if (artikelId == 0){
+				stopInput = 1;
+				return bestelling;
+			}
+			else{
+				int artikelAantal = artikelAantalPrompt();
+				bestelling.voegArtikelToeAanBestelling(aLijst.getArtikelWithArtikelId(artikelId), artikelAantal);
+				artikelcount++;
+			}
+		}
+			return bestelling;
+		
+	}
 	
+	public int updateBestellingPrompt() throws IOException{
+		System.out.println("Wat wilt u doen?\n1. Artikel verwijderen\n2. Artikel toevoegen\n3. Artikel vervangen\n4. Terug");
+		int userIn = scInput.nextInt();
+		switch (userIn){
+		case 1:	userIn = 1; break;
+		case 2: userIn = 2; break;
+		case 3: userIn = 3; break;
+		case 4: break;
+		default: 
+			System.out.println("foute invoer, probeer opnieuw");
+			updateBestellingPrompt();
+		}
+		return userIn;
+	}
 }
