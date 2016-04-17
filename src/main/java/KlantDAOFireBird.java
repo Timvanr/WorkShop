@@ -60,21 +60,23 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 		al.createAdres(klant_id, adres);
 	}
 
-	public void createKlantEnAdresEnBestelling(Klant klant, Adres adres, Bestelling bestelling) {
+	@Override
+	public void createKlantEnAdresEnBestelling(Klant klant, Adres adres, Bestelling bestelling) throws SQLException {
 		AdresDAOFireBird al = new AdresDAOFireBird();
 		BestellingDAOFireBird bl = new BestellingDAOFireBird();
 		int klant_id = createKlant(klant);
 		al.createAdres(klant_id, adres);
-		bl.voegBestellingToe(bestelling);
-
+		bl.voegBestellingToe(klant_id, bestelling);
+		
 	}
 
-	public void createKlantEnBestelling(Klant klant, Bestelling bestelling) {
+	@Override
+	public void createKlantEnBestelling(Klant klant, Bestelling bestelling) throws SQLException {
 		BestellingDAOFireBird bl = new BestellingDAOFireBird();
-		createKlant(klant);
-		bl.voegBestellingToe(bestelling);
-
-	}
+		int klant_id = createKlant(klant);
+		bl.voegBestellingToe(klant_id, bestelling);
+				
+		}
 	
 	@Override
 	public Set<Klant> readAll(){
