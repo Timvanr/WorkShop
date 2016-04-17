@@ -85,22 +85,20 @@ public class Klantbestand implements KlantDAO{
 	}
 
 	@Override
-	public void createKlantEnAdresEnBestelling(Klant klant, Adres adres, Bestelling bestelling) throws SQLException {
+	public void createKlantEnAdresEnBestelling(Klant klant, Adres adres, Bestelling bestelling) {
 		Adreslijst al = new Adreslijst();
 		Bestellijst bl = new Bestellijst();
 		int klant_id = createKlant(klant);
 		al.createAdres(klant_id, adres);
-		bl.voegBestellingToe(bestelling);
 		bl.voegBestellingToe(klant_id, bestelling);
 		
 	}
 		
-		public void createKlantEnBestelling(Klant klant, Bestelling bestelling){
+	
 		@Override
-		public void createKlantEnBestelling(Klant klant, Bestelling bestelling) throws SQLException {
+		public void createKlantEnBestelling(Klant klant, Bestelling bestelling) {
 			Bestellijst bl = new Bestellijst();
 			createKlant(klant);
-			bl.voegBestellingToe(bestelling);
 			int klant_id = createKlant(klant);
 			bl.voegBestellingToe(klant_id, bestelling);
 				
