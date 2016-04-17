@@ -116,32 +116,28 @@ public class KeuzeMenu {
 		}
 	}
 
-	private void startClassSelectie() throws IOException, SQLException{
+private void startClassSelectie() throws IOException, SQLException {
 		System.out.println("");
 		System.out.println("KLASSE SELECTIE: ");
 		System.out.println("");
 		System.out.println("1. Klant klasse");
 		System.out.println("2. Adres klasse");
 		System.out.println("3. Bestelling klasse");
-		System.out.println("4. Artikel klasse");
-		System.out.println("5. Hoofdmenu");
+		System.out.println("4. Hoofdmenu");
 		System.out.println("");
 		System.out.print("Maak een keuze: ");
 		int keuze = scInput.nextInt();
-		switch (keuze){
+		switch (keuze) {
 		case 1:
-			System.out.println("Verdere implementatie volgt");
+			startKlantMenu();
 			break;
 		case 2:
-			System.out.println("Verdere implementatie volgt");
+			startAdresMenu();
 			break;
 		case 3:
-			System.out.println("Verdere implementatie volgt");
+			startBestellingMenu();
 			break;
 		case 4:
-			System.out.println("Verdere implementatie volgt");
-			break;
-		case 5:
 			System.out.println("Terug naar het hoofdmenu...");
 			startHoofd();
 		default:
@@ -158,7 +154,8 @@ public class KeuzeMenu {
 			System.out.println("2. Create klant & adres");
 			System.out.println("3. Create klant, adres & bestelling");
 			System.out.println("4. Create klant & bestelling");
-			System.out.println("5. Hoofdmenu");
+			System.out.println("5. Create Bestelling voor bestaande klant");
+			System.out.println("6. Hoofdmenu");
 			System.out.println("");
 			System.out.print("Maak een keuze: ");
 			int keuze = scInput.nextInt();
@@ -169,36 +166,22 @@ public class KeuzeMenu {
 			case 2:	service.getKlantcontrol().createKlantenAdres(); 
 			startHoofd();
 			break;
-			/*case 3: BESTELLING EN ARTIKELEN NOG OP ELKAAR AFStEMMEN, KLOPT VOLGENS MIJ NOG NIET.
-				klant = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
-				adres = new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
-				bestelling = new Bestelling();
-				System.out.println("Hoeveel artikelen wilt u toevoegen: ");
-				int aantal = scInput.nextInt();
-				/*for (int i = 0; i < aantal; i++){
-					artikel = new Artikel(arikelIdPrompt(), artikelNaamPrompt(), artikelPrijsPrompt(), artikelAantalPrompt());
-					bestelling.voegArtikelToeAanBestelling(artikel);
-				}
-				klantBestand.createKlantEnAdresEnBestelling(klant, adres, bestelling);
-				break;
-			case 4:
-				klant = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
-				bestelling = new Bestelling();
-				System.out.println("Hoeveel artikelen wilt u toevoegen: ");
-				int aantal2 = scInput.nextInt();
-				/*for (int i = 0; i < aantal2; i++){
-					artikel = new Artikel(arikelIdPrompt(), artikelNaamPrompt(), artikelPrijsPrompt(), artikelAantalPrompt());
-					bestelling.voegArtikelToeAanBestelling(artikel);
-				}
-				klantBestand.createKlantEnBestelling(klant, bestelling);
-				break;*/
-			case 5:
-				System.out.println("Terug naar het hoofdmenu...");
-				startHoofd();
-			default:
-				System.out.println("Ongeldige keuze!");
-				createMenu();
-				break;
+			case 3:
+			service.getKlantcontrol().createKlantenAdresEnBestelling();
+			break;
+		case 4:
+			service.getKlantcontrol().createKlantenBestelling();
+			break;
+		case 5:
+			service.getBestellingcontrol().createBestellingVoorBestaandeKlant();
+			break;
+		case 6:
+			System.out.println("Terug naar het hoofdmenu...");
+			startHoofd();
+		default:
+			System.out.println("Ongeldige keuze!");
+			createMenu();
+			break;
 			}
 		}
 						
@@ -270,9 +253,9 @@ public class KeuzeMenu {
 		System.out.println("");
 		System.out.println("1. Update Klantnaam");
 		System.out.println("2. Update E-mail adres");
-		System.out.println("2. Update Adres");
-		System.out.println("3. Update Bestelling");
-		System.out.println("4. Hoofdmenu");
+		System.out.println("3. Update Adres");
+		System.out.println("4. Update Bestelling");
+		System.out.println("5. Hoofdmenu");
 		System.out.println("");
 		System.out.print("Maak een keuze: ");
 		int keuze = scInput.nextInt();
@@ -320,12 +303,143 @@ public class KeuzeMenu {
 		case 3: service.getAdrescontrol().deleteAdresvanKlant(); 
 		deleteMenu();
 		break;
-		//case 4: bestellingcontrol.deletebestelling
-		//case 5: bestellingcontrol.deleteartikelvanbestelling
+		case 4:
+			service.getBestellingcontrol().deleteBestelling();
+			break;
+		case 5:
+			service.getBestellingcontrol().deleteArtikelVanBestelling();
+			break;
 		default:
 			System.out.println("Ongeldige keuze!");
 			deleteMenu();
 			break;
+		}
+	}
+	private void startKlantMenu() throws IOException, SQLException {
+		System.out.println("\nSELECTEER EEN KLANT METHODE");
+		System.out.println("1. Create Klant");
+		System.out.println("2. Create Klant & adres");
+		System.out.println("3. Create Klant, adres & bestelling");
+		System.out.println("4. Create Klant & bestelling");
+		System.out.println("5. Read Klant met klant id");
+		System.out.println("6. Read Klant met voor- en achternaam");
+		System.out.println("7. Read Klant(en) met voornaam");
+		System.out.println("8. Read alle Klanten");
+		System.out.println("9. Update Klantnaam");
+		System.out.println("10. Update E-mail adres");
+		System.out.println("11. Delete Klant met ID-nummer");
+		System.out.println("12. Delete Klant met naam");
+		System.out.println("13. Terug naar hoofdmenu");
+		int keuze = scInput.nextInt();
+		switch (keuze) {
+		case 1:
+			service.getKlantcontrol().createKlant();
+			break;
+		case 2:
+			service.getKlantcontrol().createKlantenAdres();
+			break;
+		case 3:
+			service.getKlantcontrol().createKlantenAdresEnBestelling();
+			break;
+		case 4:
+			service.getKlantcontrol().createKlantenBestelling();
+			break;
+		case 5:
+			service.getKlantcontrol().printKlantmetId();
+			break;
+		case 6:
+			service.getKlantcontrol().printKlantmetNaam();
+			break;
+		case 7:
+			service.getKlantcontrol().printKlantmetVoornaam();
+			break;
+		case 8:
+			service.getKlantcontrol().printAlleKlanten();
+			break;
+		case 9:
+			service.getKlantcontrol().updateKlant();
+			break;
+		case 10:
+			service.getKlantcontrol().updateKlantEmail();
+			break;
+		case 11:
+			service.getKlantcontrol().deleteKlantmetKlantId();
+			break;
+		case 12:
+			service.getKlantcontrol().deleteKlantmetKlantNaam();
+			break;
+		case 13:
+			startHoofd();
+		default:
+			System.out.println("Ongeldige keuze!");
+			startKlantMenu();
+			break;
+		}
+	}
+
+	private void startAdresMenu() throws IOException, SQLException {
+		System.out.println("\nSELECTEER EEN ADRES METHODE");
+		System.out.println("1. Read Adres met adres id");
+		System.out.println("2. Read Adres met klant id");
+		System.out.println("3. Read Adres(sen) met straatnaam en woonplaats");
+		System.out.println("4. Read Adres met postcode en huisnummer");
+		System.out.println("5. Read alle Adressen");
+		System.out.println("6. Update Adres");
+		System.out.println("7. Delete Adres van Klant");
+		System.out.println("8. Terug naar hoofdmenu");
+		int keuze = scInput.nextInt();
+		switch (keuze) {
+		case 1:
+			service.getAdrescontrol().printAdresMetId();
+			break;
+		case 2:
+			service.getAdrescontrol().printAdresMetKlantId();
+			break;
+		case 3:
+			service.getAdrescontrol().printAdresMetStraatnaam();
+			break;
+		case 4:
+			service.getAdrescontrol().printAdresMetPCEnHuisnummer();
+			break;
+		case 5:
+			service.getAdrescontrol().printAlleAdressen();
+			break;
+		case 6:
+			service.getAdrescontrol().updateAdres();
+			break;
+		case 7:
+			service.getAdrescontrol().deleteAdresvanKlant();
+			break;
+		case 8:
+			startHoofd();
+		default:
+			System.out.println("Ongeldige keuze!");
+			startAdresMenu();
+			break;
+		}
+	}
+
+	private void startBestellingMenu() throws IOException, SQLException {
+		System.out.println("\nSELECTEER EEN BESTELLING METHODE");
+		System.out.println("1. Create Bestelling voor bestaande klant");
+		System.out.println("2. Read Bestelling met bestelling id");
+		System.out.println("3. Read alle bestellingen");
+		System.out.println("4. Update Bestelling");
+		System.out.println("5. Delete Bestelling van Klant");
+		System.out.println("6. Delete Artikel uit Bestelling");
+		System.out.println("7. Terug naar hoofdmenu");
+		int keuze = scInput.nextInt();
+		switch(keuze){
+		case 1: service.getBestellingcontrol().createBestellingVoorBestaandeKlant(); break;
+		case 2: service.getBestellingcontrol().printBestellingmetId(); break;
+		case 3: service.getBestellingcontrol().printAlleBestellingen(); break;
+		case 4: service.getBestellingcontrol().updateBestelling(); break;
+		case 5: service.getBestellingcontrol().deleteBestelling(); break;
+		case 6: service.getBestellingcontrol().deleteArtikelVanBestelling(); break;
+		case 7: startHoofd();
+		default:System.out.println("Ongeldige keuze!");
+				startBestellingMenu();
+				break;
 		}
 	}
 
