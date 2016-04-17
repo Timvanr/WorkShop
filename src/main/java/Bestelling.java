@@ -14,7 +14,7 @@ public class Bestelling {
 		this.artikelen = new HashMap<>();
 	}
 	public Bestelling(){
-		this(0);
+		this.artikelen = new HashMap<>();
 	}
 	
 	public int getKlant_id() { 

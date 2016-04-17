@@ -18,6 +18,7 @@ public class ArtikelLijstDAOFireBird implements ArtikelDAO {
 	public ArtikelLijstDAOFireBird(){
 	}
 
+	@Override
 	public int createArtikel(Artikel artikel) throws SQLException{
 		Connection connection = getConnection();
 		String createArtikelString = "INSERT INTO artikel (artikel_naam, artikel_prijs) values (?,?);";
@@ -42,51 +43,42 @@ public class ArtikelLijstDAOFireBird implements ArtikelDAO {
 		}
 		return artikel_id;
 	}
-
+	@Override
 	public Artikel getArtikelWithArtikelId(int artikel_id) throws SQLException{
-		Connection connection = getConnection();
 		String getArtikelString = "SELECT * FROM artikel WHERE artikel_id=?;";
 		RowSet rs = null;
-		Artikel artikel = new Artikel();
+		Artikel artikel = null;
 		try{
-
-			getConnection();
+			
+			Connection connection = getConnection();
 			rs = new JdbcRowSetImpl(connection);
 			rs.setCommand(getArtikelString);
 			rs.setInt(1, artikel_id);
 			rs.execute();
-			ResultSetMetaData rowSetMD = rs.getMetaData();
-
+			
+			
 			if (!rs.isBeforeFirst()) {
 				System.out.println("There are no records with this artikel_id");
 				return artikel;
 			}
 
-			for (int i = 1; i <= rowSetMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rowSetMD.getColumnLabel(i));
-			}
-			System.out.println();
-
 			while (rs.next()) {
-				for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rs.getObject(i));
-					if (i % rowSetMD.getColumnCount() == 0) {
-						System.out.println();
-					}
-					artikel.setId(rs.getInt(1));
-					artikel.setNaam(rs.getString(2));
-					artikel.setPrijs(rs.getBigDecimal(3));
-				}
+				artikel = new Artikel();
+				artikel.setId(rs.getInt("artikel_id"));
+				artikel.setNaam(rs.getString("artikel_naam"));
+				artikel.setPrijs(rs.getBigDecimal("artikel_prijs"));
+		
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-			System.out.println();
 			rs.close();
 		}
-		return artikel;	
+		return artikel;
+		
 	}
 
+	@Override
 	public void deleteArtikelWithArtikelId(int artikel_id) throws SQLException{
 		Connection connection = getConnection();
 		String deleteArtikelString = "DELETE * FROM artikel WHERE artikel_id=?;";
@@ -104,4 +96,43 @@ public class ArtikelLijstDAOFireBird implements ArtikelDAO {
 			deleteArtikel.close();
 		}
 	}
+
+	@Override
+	public void voegArtikelToeAanBestelling(int bestelling_id, int artikel_id, int artikel_aantal) throws SQLException{
+		Connection connection = getConnection();
+		try{
+			PreparedStatement voegArtikelToe = connection.prepareStatement(
+					"INSERT INTO bestelling_has_artikel (artikel_id, bestelling_id, artikel_aantal) values (?, ?, ?)");
+		voegArtikelToe.setInt(1, artikel_id);
+		voegArtikelToe.setInt(2, bestelling_id);
+		voegArtikelToe.setInt(3, artikel_aantal);
+		voegArtikelToe.executeUpdate();
+		System.out.println("Artikel toegevoegd aan bestelling");
+	}
+		catch(SQLException ex){
+			ex.printStackTrace();
+		}
+		finally{
+			connection.close();
+		}
+		}
+
+	@Override
+	public void verwijderArtikelUitBestelling(int bestelling_id, int artikel_id) throws SQLException{
+		Connection connection = getConnection();
+		try{
+			PreparedStatement verwijderArtikel = connection.prepareStatement(
+					"DELETE FROM bestelling_has_artikel WHERE artikel_id=? AND bestelling_id=?");
+		verwijderArtikel.setInt(1, artikel_id);
+		verwijderArtikel.setInt(2, bestelling_id);
+		verwijderArtikel.executeUpdate();
+		System.out.println("Artikel verwijderd uit bestelling");
+	}
+		catch(SQLException ex){
+			ex.printStackTrace();
+		}
+		finally{
+			connection.close();
+		}
+		}
 }

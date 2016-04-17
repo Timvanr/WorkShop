@@ -1,129 +1,150 @@
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import javax.sql.RowSet;
 import com.mysql.jdbc.Statement;
 import com.sun.rowset.JdbcRowSetImpl;
 
 public class ArtikelLijst implements ArtikelDAO {
-	private static Connection connection;
-	
-	public static Connection getConnection(){
+
+	public static Connection getConnection() {
 		Connection connection = DatabaseConnection.getPooledConnection();
-						
+
 		return connection;
 	}
-		
-	public ArtikelLijst(){
-		getConnection();
+
+	public ArtikelLijst() {
+
 	}
-	
+
 	@Override
-	public int createArtikel(Artikel artikel) throws SQLException{
-		
+	public int createArtikel(Artikel artikel) throws SQLException {
+
 		String createArtikelString = "INSERT INTO artikel (artikel_naam, artikel_prijs) values (?,?);";
 		PreparedStatement createArtikel = null;
 		ResultSet rs = null;
 		int artikel_id = 0;
-		try{
-			getConnection();
-			createArtikel = connection.prepareStatement(createArtikelString, Statement.RETURN_GENERATED_KEYS); //HIER MOET NOG EEN UNIQUE ID EXCEPTION AFGEVANGEN WORDEN!
+		try {
+			Connection connection = getConnection();
+			createArtikel = connection.prepareStatement(createArtikelString, java.sql.Statement.RETURN_GENERATED_KEYS); // HIER
+																														// MOET
+																														// NOG
+																														// EEN
+																														// UNIQUE
+																														// ID
+																														// EXCEPTION
+																														// AFGEVANGEN
+																														// WORDEN!
 			createArtikel.setString(1, artikel.getNaam());
 			createArtikel.setBigDecimal(2, artikel.getPrijs());
 			createArtikel.executeUpdate();
-			
+
 			rs = createArtikel.getGeneratedKeys();
-			if (rs.isBeforeFirst()){
+			if (rs.isBeforeFirst()) {
 				rs.next();
 				artikel_id = rs.getInt(1);
 				System.out.println("Artikel met artikel_id " + artikel_id + " succesvol aangemaakt");
 			}
-			}
-		catch (SQLException ex){
+		} catch (SQLException ex) {
 			ex.printStackTrace();
-		}
-		finally {
+		} finally {
 			rs.close();
 			createArtikel.close();
-			close();
 		}
 		return artikel_id;
 	}
-	
+
 	@Override
-	public Artikel getArtikelWithArtikelId(int artikel_id) throws SQLException{
+	public Artikel getArtikelWithArtikelId(int artikel_id) throws SQLException {
 		String getArtikelString = "SELECT * FROM artikel WHERE artikel_id=?;";
 		RowSet rs = null;
-		Artikel artikel = new Artikel();
-		try{
-			
-			getConnection();
+		Artikel artikel = null;
+		try {
+
+			Connection connection = getConnection();
 			rs = new JdbcRowSetImpl(connection);
 			rs.setCommand(getArtikelString);
 			rs.setInt(1, artikel_id);
 			rs.execute();
-			ResultSetMetaData rowSetMD = rs.getMetaData();
 
-			if (!rs.isBeforeFirst()) {
-				System.out.println("There are no records with this artikel_id");
-				return artikel;
-			}
+			if (rs.isBeforeFirst()) {
 
-			for (int i = 1; i <= rowSetMD.getColumnCount(); i++) {
-				System.out.printf("%-12s\t", rowSetMD.getColumnLabel(i));
-			}
-			System.out.println();
+				while (rs.next()) {
+					artikel = new Artikel();
+					artikel.setId(rs.getInt("artikel_id"));
+					artikel.setNaam(rs.getString("artikel_naam"));
+					artikel.setPrijs(rs.getBigDecimal("artikel_prijs"));
 
-			while (rs.next()) {
-				for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-					System.out.printf("%-12s\t", rs.getObject(i));
-					if (i % rowSetMD.getColumnCount() == 0) {
-						System.out.println();
-					}
-					artikel.setId(rs.getInt(1));
-					artikel.setNaam(rs.getString(2));
-					artikel.setPrijs(rs.getBigDecimal(3));
 				}
+			} else {
+				System.out.println("geen artikel met dit artikelnummer gevonden");
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
-			System.out.println();
 			rs.close();
 		}
 		return artikel;
-		
+
 	}
-	
+
 	@Override
-	public void deleteArtikelWithArtikelId(int artikel_id) throws SQLException{
-		getConnection();
-		String deleteArtikelString = "DELETE * FROM artikel WHERE artikel_id=?;";
+	public void deleteArtikelWithArtikelId(int artikel_id) throws SQLException {
+		Connection connection = getConnection();
+		String deleteArtikelString = "DELETE FROM artikel WHERE artikel_id=?;";
 		PreparedStatement deleteArtikel = connection.prepareStatement(deleteArtikelString);
-		
-		try{
+
+		try {
 			deleteArtikel.setInt(1, artikel_id);
 			deleteArtikel.executeUpdate();
 			System.out.println("Artikel met artikel_id " + artikel_id + " is succesvol verwijderd");
-		}
-		catch (SQLException ex){
+		} catch (SQLException ex) {
 			ex.printStackTrace();
-		}
-		finally {
+		} finally {
 			deleteArtikel.close();
 		}
 	}
-	
-	public void close() {
+
+	@Override
+	public void verwijderArtikelUitBestelling(int bestelling_id, int artikel_id) throws SQLException {
+		Connection connection = getConnection();
 		try {
+			PreparedStatement verwijderArtikel = connection
+					.prepareStatement("DELETE FROM bestelling_has_artikel WHERE artikel_id=? AND bestelling_id=?");
+			verwijderArtikel.setInt(1, artikel_id);
+			verwijderArtikel.setInt(2, bestelling_id);
+			verwijderArtikel.executeUpdate();
+			System.out.println("Artikel verwijderd uit bestelling");
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
 			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 	}
-	
+
+	@Override
+	public void voegArtikelToeAanBestelling(int bestelling_id, int artikel_id, int artikel_aantal) throws SQLException {
+		Connection connection = getConnection();
+		try {
+			PreparedStatement voegArtikelToe = connection
+					.prepareStatement("INSERT INTO bestelling_has_artikel (artikel_id, bestelling_id, artikel_aantal) values (?, ?, ?)");
+			voegArtikelToe.setInt(1, artikel_id);
+			voegArtikelToe.setInt(2, bestelling_id);
+			voegArtikelToe.setInt(3, artikel_aantal);
+			voegArtikelToe.executeUpdate();
+			System.out.println("Artikel toegevoegd aan bestelling");
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			connection.close();
+		}
+	}
+
+	/*
+	 * public void close() { try { connection.close(); } catch (SQLException e)
+	 * { e.printStackTrace(); } }
+	 */
+
 }
