@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -129,7 +130,7 @@ public class Service {
 		return artikelNaam;
 	}
 	
-	int arikelIdPrompt() throws IOException {
+	int artikelIdPrompt() throws IOException {
 		System.out.println("(toets 0 om de invoer te stoppen)\nGeef het artikelnummer van het artikel: ");
 		String artikelIdString = input.readLine();
 		int artikelId = Integer.parseInt(artikelIdString);

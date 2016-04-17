@@ -61,7 +61,7 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 	}
 
 	@Override
-	public void createKlantEnAdresEnBestelling(Klant klant, Adres adres, Bestelling bestelling) throws SQLException {
+	public void createKlantEnAdresEnBestelling(Klant klant, Adres adres, Bestelling bestelling) {
 		AdresDAOFireBird al = new AdresDAOFireBird();
 		BestellingDAOFireBird bl = new BestellingDAOFireBird();
 		int klant_id = createKlant(klant);
@@ -71,7 +71,7 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 	}
 
 	@Override
-	public void createKlantEnBestelling(Klant klant, Bestelling bestelling) throws SQLException {
+	public void createKlantEnBestelling(Klant klant, Bestelling bestelling) {
 		BestellingDAOFireBird bl = new BestellingDAOFireBird();
 		int klant_id = createKlant(klant);
 		bl.voegBestellingToe(klant_id, bestelling);
