@@ -15,18 +15,18 @@ public class Klantbestand implements KlantDAO{
 	Scanner scInput = new Scanner(System.in);
 	static Logger logger = LoggerFactory.getLogger(Klantbestand.class);
 
-	
+
 	public Klantbestand() {
 	}
-	
+
 	public static Connection getConnection(){
 		Connection connection = DatabaseConnection.getPooledConnection();
 		return connection;		
 	}
-	
+
 	public void createTable() throws SQLException{
 		Connection connection = getConnection();
-		
+
 		Statement createTable = connection.createStatement();
 		createTable.execute("CREATE TABLE Klant (" +
 				"klant_id INT AUTO_INCREMENT PRIMARY KEY, " +
@@ -36,11 +36,11 @@ public class Klantbestand implements KlantDAO{
 				"adres_id INT, " +
 				"email VARCHAR(180)" +
 				")");
-		
-		
+
+
 		System.out.println("Table Klant created!");
 	}
-		
+
 	public int createKlant(Klant klant) {
 		Connection connection = getConnection();
 		logger.info("CreataKlant(Klant klant); gestart.");
@@ -48,7 +48,7 @@ public class Klantbestand implements KlantDAO{
 		PreparedStatement insertKlantNaam = null;
 		ResultSet rs = null;
 		int klantId = 0;
-		
+
 		try {				
 			insertKlantNaam = connection.prepareStatement(insertKlantNaamString, Statement.RETURN_GENERATED_KEYS);
 			insertKlantNaam.setString(1, klant.getVoornaam());
@@ -91,56 +91,54 @@ public class Klantbestand implements KlantDAO{
 		int klant_id = createKlant(klant);
 		al.createAdres(klant_id, adres);
 		bl.voegBestellingToe(klant_id, bestelling);
-		
-	}
-		
-	
-		@Override
-		public void createKlantEnBestelling(Klant klant, Bestelling bestelling) {
-			Bestellijst bl = new Bestellijst();
-			createKlant(klant);
-			int klant_id = createKlant(klant);
-			bl.voegBestellingToe(klant_id, bestelling);
-				
-		}
-	
-		public Klant readKlantWithId(int klant_id){
-			Connection connection = getConnection();
-			logger.info("readKlantWithId(int klant_id); gestart");		
-			String query = "SELECT * FROM klant WHERE klant_id =?";
-			Klant klant = null;
-			
-			try{
-				RowSet rowSet = new JdbcRowSetImpl(connection);
-				rowSet.setCommand(query);
-				rowSet.setInt(1, klant_id);
-				rowSet.execute();
-				
-				while (rowSet.next()) {
-					klant = new Klant();
-					klant.setVoornaam(rowSet.getString("voornaam"));
-					klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
-					klant.setAchternaam(rowSet.getString("achternaam"));
-					klant.setEmail(rowSet.getString("email"));
-					logger.info("readKlantWithId(int klant_id) ); uitgevoerd"
-							+ klant.toString() + "gelezen");
 
-					}			
-				rowSet.close();
-			
-			} catch (SQLException ex) {
-				logger.error(ex.getMessage());
-				ex.printStackTrace();
-			}finally {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+	}
+
+	@Override
+	public void createKlantEnBestelling(Klant klant, Bestelling bestelling) {
+		Bestellijst bl = new Bestellijst();
+		int klant_id = createKlant(klant);
+		bl.voegBestellingToe(klant_id, bestelling);
+
+	}
+
+	public Klant readKlantWithId(int klant_id){
+		Connection connection = getConnection();
+		logger.info("readKlantWithId(int klant_id); gestart");		
+		String query = "SELECT * FROM klant WHERE klant_id =?";
+		Klant klant = null;
+
+		try{
+			RowSet rowSet = new JdbcRowSetImpl(connection);
+			rowSet.setCommand(query);
+			rowSet.setInt(1, klant_id);
+			rowSet.execute();
+
+			while (rowSet.next()) {
+				klant = new Klant();
+				klant.setVoornaam(rowSet.getString("voornaam"));
+				klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
+				klant.setAchternaam(rowSet.getString("achternaam"));
+				klant.setEmail(rowSet.getString("email"));
+				logger.info("readKlantWithId(int klant_id) ); uitgevoerd"
+						+ klant.toString() + "gelezen");
+
+			}			
+			rowSet.close();
+
+		} catch (SQLException ex) {
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}finally {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-			return klant;
 		}
-		
+		return klant;
+	}
+
 	@Override
 	public Set<Klant> readKlantWithFirstName(String voornaam) {
 		Connection connection = getConnection();
@@ -171,7 +169,7 @@ public class Klantbestand implements KlantDAO{
 				klantset.add(klant);
 				logger.info("readKlantWithFirstName(String voornaam); uitgevoerd");
 			}
-			
+
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
@@ -232,7 +230,7 @@ public class Klantbestand implements KlantDAO{
 		return klant;
 	}
 
-	
+
 	public void UpdateKlantNaam(int klant_id){
 		Connection connection = getConnection();
 		logger.info("UpdateKlantNaam(int klant_id); gestart");
@@ -240,7 +238,7 @@ public class Klantbestand implements KlantDAO{
 		PreparedStatement updateKlantNaam = null;
 		String[] newNaam = null;
 		Service service = new Service();
-		
+
 		try {
 			newNaam = service.completeNaamPrompt();
 		}
@@ -270,7 +268,7 @@ public class Klantbestand implements KlantDAO{
 			}		
 		}
 	}
-	
+
 	public void updateEmail(int klant_id){
 		Connection connection = getConnection();
 		logger.info("updateEmail(int klant_id); gestart"); 
@@ -283,7 +281,7 @@ public class Klantbestand implements KlantDAO{
 			logger.error(ez.getMessage());
 			ez.printStackTrace();
 		}
-		
+
 		System.out.println("Nieuw Email adres");
 		try{
 			newEmail = service.emailPrompt();
@@ -292,12 +290,12 @@ public class Klantbestand implements KlantDAO{
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
-		
+
 		try {
-		updateEmail.setString(1, newEmail);
-		updateEmail.setInt(2, klant_id);
-		updateEmail.executeUpdate();
-		logger.info("updateEmail(int klant_id); uitgevoerd"); 
+			updateEmail.setString(1, newEmail);
+			updateEmail.setInt(2, klant_id);
+			updateEmail.executeUpdate();
+			logger.info("updateEmail(int klant_id); uitgevoerd"); 
 
 		}
 		catch (SQLException ex){
@@ -312,18 +310,18 @@ public class Klantbestand implements KlantDAO{
 		System.out.println("E-mailadres is veranderd!");
 		System.out.println();
 	}
-	
+
 	// WILLEN WE HIER ALLEEN EEN NAAM OF OOK EEN ADRES? ANDERS MOET DIT NOG AANGEPAST WORDEN...
 	public Set<Klant> readAll(){
 		Connection connection = getConnection();
 		LinkedHashSet<Klant> klantList = new LinkedHashSet<>();		
 		String query = "Select * from `klant`";
-		
+
 		try{ 
 			RowSet rowSet = new JdbcRowSetImpl(connection);
 			rowSet.setCommand(query);			
 			rowSet.execute();
-				
+
 			while(rowSet.next()){
 				Klant klant = new Klant();
 				klant.setId(rowSet.getInt(1));
@@ -331,7 +329,7 @@ public class Klantbestand implements KlantDAO{
 				klant.setAchternaam(rowSet.getString(3));
 				klant.setTussenvoegsel(rowSet.getString(4));
 				klant.setEmail(rowSet.getString(5));
-				
+
 				klantList.add(klant);	
 			}
 			rowSet.close();
@@ -347,7 +345,7 @@ public class Klantbestand implements KlantDAO{
 		}
 		return klantList;
 	}
-	
+
 	public void deleteAllFromKlantId(int klant_id){
 		Connection connection = getConnection();
 		logger.info("deleteAllFromKlantId(int klant_id); gestart");
@@ -358,7 +356,7 @@ public class Klantbestand implements KlantDAO{
 			deleteFromId.setInt(1, klant_id);			
 			deleteFromId.executeUpdate();
 			logger.info("deleteAllFromKlantId(int klant_id); uitgevoerd");
-			
+
 
 		}
 		catch (SQLException ex){
@@ -374,14 +372,14 @@ public class Klantbestand implements KlantDAO{
 			}
 		}
 	}
-	
+
 	public void deleteAllFromKlantNaam(String voornaam, String achternaam, String tussenvoegsel){
 		Connection connection = getConnection();
 		logger.info("deleteAllFromKlantNaam(String voornaam, String achternaam, String tussenvoegsel); gestart");
 		PreparedStatement deleteAllFromNaam = null;
 		String query = "Delete FROM klant WHERE voornaam='" + voornaam + "' AND tussenvoegsel='" + tussenvoegsel
 				+ "' AND achternaam='" + achternaam + "';";
-		
+
 		try{
 			deleteAllFromNaam = connection.prepareStatement(query);
 			/*deleteAllFromNaam.setString(1, voornaam);
