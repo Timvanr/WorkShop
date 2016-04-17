@@ -222,24 +222,46 @@ public class KeuzeMenu {
 			System.out.print("Maak een keuze: ");
 			int keuze = scInput.nextInt();
 			switch (keuze){
-				case 1:	service.getKlantcontrol().printKlantmetId();	break;
-				case 2:	service.getKlantcontrol().printKlantmetNaam(); break;
-				case 3:	service.getKlantcontrol().printKlantmetVoornaam(); break;
-				case 4:	service.getKlantcontrol().printAlleKlanten(); break;
-				case 5:	service.getAdrescontrol().printAdresMetId();	break;
-				case 6:	service.getAdrescontrol().printAdresMetKlantId(); break;
-				case 7:	service.getAdrescontrol().printAdresMetStraatnaam();	break;
-				case 8:	service.getAdrescontrol().printAdresMetPCEnHuisnummer();	break;
-				case 9:	service.getAdrescontrol().printAlleAdressen(); break;
-				case 10:service.getBestellingcontrol().printBestellingmetId(); break;
-				case 11:service.getBestellingcontrol().printAlleBestellingen(); break;
+				case 1:	service.getKlantcontrol().printKlantmetId();	
+				readMenu();
+				break;
+				case 2:	service.getKlantcontrol().printKlantmetNaam(); 
+				readMenu();
+				break;
+				case 3:	service.getKlantcontrol().printKlantmetVoornaam(); 
+				readMenu();
+				break;
+				case 4:	service.getKlantcontrol().printAlleKlanten(); 
+				readMenu();
+				break;
+				case 5:	service.getAdrescontrol().printAdresMetId();	
+				readMenu();
+				break;
+				case 6:	service.getAdrescontrol().printAdresMetKlantId(); 
+				readMenu();
+				break;
+				case 7:	service.getAdrescontrol().printAdresMetStraatnaam();	
+				readMenu();
+				break;
+				case 8:	service.getAdrescontrol().printAdresMetPCEnHuisnummer();	
+				readMenu();
+				break;
+				case 9:	service.getAdrescontrol().printAlleAdressen(); 
+				readMenu();
+				break;
+				case 10:service.getBestellingcontrol().printBestellingmetId(); 
+				readMenu();
+				break;
+				case 11:service.getBestellingcontrol().printAlleBestellingen(); 
+				readMenu();
+				break;
 				case 12:
-					System.out.println("Terug naar het hoofdmenu...");
-					startHoofd();
-					default:
-						System.out.println("Ongeldige keuze!");
-						startHoofd();
-						break;
+				System.out.println("Terug naar het hoofdmenu...");
+				startHoofd();
+				default:
+				System.out.println("Ongeldige keuze!");
+				readMenu();
+				break;
 			}
 		}
 	
@@ -255,15 +277,21 @@ public class KeuzeMenu {
 		System.out.print("Maak een keuze: ");
 		int keuze = scInput.nextInt();
 		switch (keuze){
-		case 1:	service.getKlantcontrol().updateKlant(); break;
-		case 2:	service.getKlantcontrol().updateKlantEmail(); break;
-		case 3:	service.getAdrescontrol().updateAdres();	break;
+		case 1:	service.getKlantcontrol().updateKlant(); 
+		updateMenu();
+		break;
+		case 2:	service.getKlantcontrol().updateKlantEmail(); 
+		updateMenu();
+		break;
+		case 3:	service.getAdrescontrol().updateAdres();	
+		updateMenu();
+		break;
 		case 4: service.getBestellingcontrol().updateBestelling();
 		case 5:
-			System.out.println("Terug naar het hoofdmenu...");
-			startHoofd();
+		System.out.println("Terug naar het hoofdmenu...");
+		startHoofd();
 		default:
-			System.out.println("Ongeldige keuze!");
+		System.out.println("Ongeldige keuze!");
 			updateMenu();
 			break;
 		}
@@ -283,9 +311,15 @@ public class KeuzeMenu {
 		System.out.print("Maak een keuze: ");
 		int keuze = scInput.nextInt();
 		switch (keuze){
-		case 1:	service.getKlantcontrol().deleteKlantmetKlantId();	break;
-		case 2:	service.getKlantcontrol().deleteKlantmetKlantNaam();	break;
-		case 3: service.getAdrescontrol().deleteAdresvanKlant(); break;
+		case 1:	service.getKlantcontrol().deleteKlantmetKlantId();	
+		deleteMenu();
+		break;
+		case 2:	service.getKlantcontrol().deleteKlantmetKlantNaam();	
+		deleteMenu();
+		break;
+		case 3: service.getAdrescontrol().deleteAdresvanKlant(); 
+		deleteMenu();
+		break;
 		//case 4: bestellingcontrol.deletebestelling
 		//case 5: bestellingcontrol.deleteartikelvanbestelling
 		default:
