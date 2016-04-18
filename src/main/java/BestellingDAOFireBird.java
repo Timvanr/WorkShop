@@ -14,7 +14,6 @@ import com.sun.rowset.JdbcRowSetImpl;
 
 public class BestellingDAOFireBird implements BestellingDAO{
 	private static Connection connection;
-	private ArtikelDAO artikellijst;
 	public BestellingDAOFireBird(){
 		connection = DatabaseConnection.getPooledConnection();
 	}
@@ -105,6 +104,7 @@ public class BestellingDAOFireBird implements BestellingDAO{
 	public Bestelling getBestelling(int bestelling_id){
 		connection = DatabaseConnection.getPooledConnection();
 		Bestelling bestelling = null;
+		ArtikelDAO aLijst = new ArtikelLijst();
 		RowSet bestelData = null;
 		try{
 			bestelling = new Bestelling();
@@ -119,7 +119,7 @@ public class BestellingDAOFireBird implements BestellingDAO{
 				
 			bestelling.setKlant_id(bestelData.getInt("klant_id"));
 			bestelling.setBestelling_id(bestelling_id);
-			Artikel artikel = artikellijst.getArtikelWithArtikelId(bestelData.getInt("artikel_id"));
+			Artikel artikel = aLijst.getArtikelWithArtikelId(bestelData.getInt("artikel_id"));
 			bestelling.voegArtikelToeAanBestelling(artikel, bestelData.getInt("artikel_aantal"));
 					
 				}

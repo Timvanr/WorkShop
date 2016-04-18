@@ -183,6 +183,7 @@ private void startClassSelectie() throws IOException, SQLException {
 			createMenu();
 			break;
 			}
+			createMenu();
 		}
 						
 		private void readMenu() throws IOException, SQLException {
@@ -246,6 +247,7 @@ private void startClassSelectie() throws IOException, SQLException {
 				readMenu();
 				break;
 			}
+			
 		}
 	
 	private void updateMenu() throws IOException, SQLException{
@@ -269,7 +271,7 @@ private void startClassSelectie() throws IOException, SQLException {
 		case 3:	service.getAdrescontrol().updateAdres();	
 		updateMenu();
 		break;
-		case 4: service.getBestellingcontrol().updateBestelling();
+		case 4: service.getBestellingcontrol().updateBestelling(); updateMenu(); break;
 		case 5:
 		System.out.println("Terug naar het hoofdmenu...");
 		startHoofd();
@@ -278,6 +280,7 @@ private void startClassSelectie() throws IOException, SQLException {
 			updateMenu();
 			break;
 		}
+		
 	}
 
 	private void deleteMenu() throws IOException, SQLException {
@@ -304,10 +307,10 @@ private void startClassSelectie() throws IOException, SQLException {
 		deleteMenu();
 		break;
 		case 4:
-			service.getBestellingcontrol().deleteBestelling();
+			service.getBestellingcontrol().deleteBestelling(); deleteMenu();
 			break;
 		case 5:
-			service.getBestellingcontrol().deleteArtikelVanBestelling();
+			service.getBestellingcontrol().deleteArtikelVanBestelling(); deleteMenu();
 			break;
 		case 6: System.out.println("Terug naar het hoofdmenu...");
 		startHoofd();

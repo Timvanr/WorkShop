@@ -156,7 +156,7 @@ public class BuildStatement {
 			boolean hasPrimaryKeyField = false; // Dit is gebruikt omdat nagegaan moet worden of er
 												// een primary-key veld in de klasse gedefinieerd is.
 
-			for (Field field : declaredFields) { // Loop gaat na of één van de gedeclareerde velden de
+			for (Field field : declaredFields) { // Loop gaat na of 1 van de gedeclareerde velden de
 													// primary key annotatie bevat
 				if (field.isAnnotationPresent(Id.class)) {
 					Column column = field.getAnnotation(Column.class);
