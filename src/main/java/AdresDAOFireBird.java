@@ -49,8 +49,34 @@ public class AdresDAOFireBird extends Adreslijst implements AdresDAO {
 			}
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage());
-			ex.printStackTrace();
-		}
+			//System.out.println(ex.getErrorCode());
+			if (ex.getErrorCode() == 335544665){
+				try {
+					int existingAdres_id = readAdresMetPostcodeEnHuisnummer
+							(adres.getPostcode(), adres.getHuisnummer(), adres.getToevoeging()).getId();
+					
+					Connection connection1 = getConnection();//connectie openen omdat die gesloten is door searchByPostcodeAndHuisnummer!
+					PreparedStatement assignExistingAdres = connection1.prepareStatement(insertKlantHasAdresString);
+					assignExistingAdres.setInt(1, klant_id);
+					assignExistingAdres.setInt(2, existingAdres_id);
+					assignExistingAdres.executeUpdate();
+					System.out.println("Adres already exists; existing Adres was assigned to Klant!");
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			} else {
+				ex.printStackTrace();
+			}
+		} finally {
+			try {
+				insertAdres.close();
+				insertKlantHasAdres.close();
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}	
 	} 	
 	
 
