@@ -309,6 +309,8 @@ private void startClassSelectie() throws IOException, SQLException {
 		case 5:
 			service.getBestellingcontrol().deleteArtikelVanBestelling();
 			break;
+		case 6: System.out.println("Terug naar het hoofdmenu...");
+		startHoofd();
 		default:
 			System.out.println("Ongeldige keuze!");
 			deleteMenu();
@@ -370,11 +372,13 @@ private void startClassSelectie() throws IOException, SQLException {
 			break;
 		case 13:
 			startHoofd();
+			break;
 		default:
 			System.out.println("Ongeldige keuze!");
 			startKlantMenu();
 			break;
 		}
+		startKlantMenu();
 	}
 
 	private void startAdresMenu() throws IOException, SQLException {
@@ -412,11 +416,13 @@ private void startClassSelectie() throws IOException, SQLException {
 			break;
 		case 8:
 			startHoofd();
+			break;
 		default:
 			System.out.println("Ongeldige keuze!");
 			startAdresMenu();
 			break;
 		}
+		startAdresMenu();
 	}
 
 	private void startBestellingMenu() throws IOException, SQLException {
@@ -436,11 +442,12 @@ private void startClassSelectie() throws IOException, SQLException {
 		case 4: service.getBestellingcontrol().updateBestelling(); break;
 		case 5: service.getBestellingcontrol().deleteBestelling(); break;
 		case 6: service.getBestellingcontrol().deleteArtikelVanBestelling(); break;
-		case 7: startHoofd();
+		case 7: startHoofd(); break;
 		default:System.out.println("Ongeldige keuze!");
 				startBestellingMenu();
 				break;
 		}
+		startBestellingMenu();
 	}
 
 	private void startDataOpslagSelectie() throws IOException, SQLException{

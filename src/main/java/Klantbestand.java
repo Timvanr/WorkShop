@@ -234,7 +234,7 @@ public class Klantbestand implements KlantDAO{
 	public void UpdateKlantNaam(int klant_id){
 		Connection connection = getConnection();
 		logger.info("UpdateKlantNaam(int klant_id); gestart");
-		String updateKlantNaamquery = "UPDATE klant SET voornaam=?, achternaam=?, tussenvoegsel=?, WHERE klant_id=?;";
+		String updateKlantNaamquery = "UPDATE klant SET voornaam=?, achternaam=?, tussenvoegsel=? WHERE klant_id=?;";
 		PreparedStatement updateKlantNaam = null;
 		String[] newNaam = null;
 		Service service = new Service();

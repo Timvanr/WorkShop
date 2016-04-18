@@ -147,14 +147,14 @@ public class Service {
 	void printKlanten(Set<Klant> klantset){
 		System.out.printf("%-10s %-20s %-20s %-20s %-20s\n", "Klant id", "Voornaam", "Tussenvoegsel", "Achternaam", "E-mail");
 		for(Klant klant: klantset){
-			System.out.printf("%10s %-20s %-20s %-20s %-20s\n", klant.getId(), klant.getVoornaam(), klant.getTussenvoegsel(), klant.getAchternaam(), klant.getEmail());
+			System.out.printf("%-10s %-20s %-20s %-20s %-20s\n", klant.getId(), klant.getVoornaam(), klant.getTussenvoegsel(), klant.getAchternaam(), klant.getEmail());
 		}
 	}
 
 	void printAdres(Adres adres){
 		System.out.println("Het adres van deze klant:");
-		System.out.printf("%-10s %-20s %-11s %-8s %-20s %-20s\n", "Adres id", "Straatnaam", "Huisnummer", "Toevoeging", "Postcode", "Woonplaats");
-		System.out.printf("%-10d %-20s %-11d %-8s %-20s %-20s\n", adres.getId(), adres.getStraatnaam(), adres.getHuisnummer(), adres.getToevoeging(), adres.getPostcode(), adres.getWoonplaats());
+		System.out.printf("%-10s %-20s %-11s %-11s %-20s %-20s\n", "Adres id", "Straatnaam", "Huisnummer", "Toevoeging", "Postcode", "Woonplaats");
+		System.out.printf("%-10d %-20s %-11d %-11s %-20s %-20s\n", adres.getId(), adres.getStraatnaam(), adres.getHuisnummer(), adres.getToevoeging(), adres.getPostcode(), adres.getWoonplaats());
 	}
 	
 	void printAdressen(Set<Adres> adresset){

@@ -419,7 +419,7 @@ public class Adreslijst implements AdresDAO {
 		logger.info("deleteKlantAdresPair(int klant_id, int adres_id); gestart");
 		try {
 			PreparedStatement deleteKlantAdresPair = connection.prepareStatement
-					("DELETE * FROM klant_has_adres WHERE klant_id = ? AND adres_id = ?");
+					("DELETE FROM klant_has_adres WHERE klant_id = ? AND adres_id = ?");
 			deleteKlantAdresPair.setInt(1, klant_id);
 			deleteKlantAdresPair.setInt(2, adres_id);
 			deleteKlantAdresPair.executeUpdate();
