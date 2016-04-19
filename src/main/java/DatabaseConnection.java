@@ -78,10 +78,9 @@ public class DatabaseConnection {
 			if (c3p0DS == null){
 				c3p0DS = getC3p0DataSource();
 				
-				if (c3p0Conn == null || c3p0Conn.isClosed()){
-					return c3p0DS.getConnection();
-				}
-			}else if (c3p0Conn == null || c3p0Conn.isClosed()){
+				return c3p0DS.getConnection();
+				
+			} else if (c3p0Conn == null || c3p0Conn.isClosed()){
 				return c3p0DS.getConnection();
 			}
 		} catch (SQLException e) {
@@ -96,10 +95,8 @@ public class DatabaseConnection {
 			if (hikariDS == null){
 				hikariDS = getHikariDataSource();
 				
-				if (hikariConn == null || hikariConn.isClosed()){
-					return hikariDS.getConnection();
-				}
-				
+				return hikariDS.getConnection();
+			
 			} else if (hikariConn == null || hikariConn.isClosed()){
 				return hikariDS.getConnection();
 			}
