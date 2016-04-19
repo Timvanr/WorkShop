@@ -9,11 +9,15 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class DatabaseConnection {
-	static String DriverClass;
-	static String URL;
-	static String PW;
-	static String USERNAME;
-	static int connectieKeuze;
+	private static String DriverClass;
+	private static String URL;
+	private static String PW;
+	private static String USERNAME;
+	private static int connectieKeuze;
+	private static HikariDataSource hikariDS;
+	private static Connection hikariConn;
+	private static ComboPooledDataSource c3p0DS;
+	private static Connection c3p0Conn;
 	
 	public static String getDriverClass() {
 		return DriverClass;
