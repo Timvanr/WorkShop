@@ -55,29 +55,65 @@ public class DatabaseConnection {
 		USERNAME = userName;
 	}
 	
-public static Connection getPooledConnection(){
-	
-	Connection connection = null;
+	public static Connection getPooledConnection(){
 		
-	if (getConnectieKeuze() == 1){
-			return getHikariConnection();
-	}
-	else if (getConnectieKeuze() == 2){
-			return getC3p0Connection();
-	}
+		Connection connection = null;
 			
-	return connection;
-	
+		if (getConnectieKeuze() == 1){
+			return getHikariConnection();
+		}
+		else if (getConnectieKeuze() == 2){
+			return getC3p0Connection();
+		}
+				
+		return connection;
+	}
+
+	private static Connection getC3p0Connection(){
+		try {
+			if (c3p0DS == null){
+				c3p0DS = getC3p0DataSource();
+				
+				if (c3p0Conn == null || c3p0Conn.isClosed()){
+					return c3p0DS.getConnection();
+				}
+			}else if (c3p0Conn == null || c3p0Conn.isClosed()){
+				return c3p0DS.getConnection();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	private static Connection getHikariConnection(){
+		try {
+			if (hikariDS == null){
+				hikariDS = getHikariDataSource();
+				
+				if (hikariConn == null || hikariConn.isClosed()){
+					return hikariDS.getConnection();
+				}
+				
+			} else if (hikariConn == null || hikariConn.isClosed()){
+				return hikariDS.getConnection();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
-	public static Connection getHikariConnection() {
-
+	private static HikariDataSource getHikariDataSource() {
+		
 		HikariConfig config = new HikariConfig();
 		config.setMinimumIdle(1);
 		config.setMaximumPoolSize(3);
 		config.setInitializationFailFast(true);
 		config.setDriverClassName(DriverClass);
-		config.setJdbcUrl(URL);
+		config.setJdbcUrl("jdbc:mysql://localhost:3306/Adresboek");
 		config.setUsername(USERNAME);
 		config.setPassword(PW);
 		config.addDataSourceProperty("useSSL", "false");
@@ -86,40 +122,27 @@ public static Connection getPooledConnection(){
 		config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 		
 		HikariDataSource dataSource = new HikariDataSource(config);
-		Connection connection = null;
-		try {
-			connection = dataSource.getConnection();
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			
-		}
-		return connection;
+		
+		return dataSource;
 	}
 
-	public static Connection getC3p0Connection(){
+	private static ComboPooledDataSource getC3p0DataSource(){
 		
-		Connection connection = null;
 		ComboPooledDataSource cpds = new ComboPooledDataSource();
 		
 		try{
-		cpds.setDriverClass(DriverClass);
-		cpds.setJdbcUrl(URL +"?useSSL=false"); 
-		cpds.setUser(USERNAME); 
-		cpds.setPassword(PW);
-		cpds.setMinPoolSize(1); 
-		cpds.setAcquireIncrement(1); 
-		cpds.setMaxPoolSize(3);
-		
-		connection = cpds.getConnection();
-	}
-	catch (Exception ex){
-		ex.printStackTrace();
-	}
-	finally{
-		
-	}
-	return connection;		
+			cpds.setDriverClass(DriverClass);
+			cpds.setJdbcUrl(URL +"?useSSL=false"); 
+			cpds.setUser(USERNAME); 
+			cpds.setPassword(PW);
+			cpds.setMinPoolSize(1); 
+			cpds.setAcquireIncrement(1); 
+			cpds.setMaxPoolSize(3);
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return cpds;		
 	}
 
 	public static Connection getSingleConnection() {
