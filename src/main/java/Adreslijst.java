@@ -63,7 +63,7 @@ public class Adreslijst implements AdresDAO {
 			insertAdres.setString(4, adres.getPostcode());
 			insertAdres.setString(5, adres.getWoonplaats());
 			insertAdres.executeUpdate();
-			System.out.println("Adres created!");
+		
 			
 			rs = insertAdres.getGeneratedKeys();
 			if (rs.isBeforeFirst()) {
@@ -71,6 +71,7 @@ public class Adreslijst implements AdresDAO {
 				insertKlantHasAdres.setInt(1, klant_id);
 				insertKlantHasAdres.setInt(2, rs.getInt(1));
 				insertKlantHasAdres.executeUpdate();
+				System.out.println("Adres met ID: " + rs.getInt(1) + " aangemaakt");
 			}
 			logger.info("createAdres(int klant_id, Adres adres); uitgevoerd");
 

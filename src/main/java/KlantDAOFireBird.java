@@ -1,13 +1,15 @@
 import java.sql.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.RowSet;
 
 import com.sun.rowset.JdbcRowSetImpl;
 
 public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
-	
+	static Logger logger = LoggerFactory.getLogger(KeuzeMenu.class);
 	
 	public static Connection getConnection(){
 		Connection connection = DatabaseConnection.getPooledConnection();
