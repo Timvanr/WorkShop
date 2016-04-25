@@ -54,8 +54,8 @@ public class KeuzeMenu {
 	}
 
 	private void startHoofd() {
-		System.out.println("     *************");
-		System.out.println("  --|- HOOFDMENU -|--");
+		System.out.println("     ***************");
+		System.out.println("  ---|- HOOFDMENU -|---");
 		System.out.println("1. Nieuwe klant");
 		System.out.println("2. Bestaande klant");
 		System.out.println("3. Voer een wijziging door");
@@ -99,7 +99,34 @@ public class KeuzeMenu {
 	}
 
 	private void updateMenu() {
-		System.out.println("Kan nog niet!");
+		System.out.println("__________________________________");
+		System.out.println("Wat wilt u wijzigen?");
+		System.out.println("1. Klant of Adres -gegevens");
+		System.out.println("2. Een Bestelling");
+		System.out.println("3. Een Artikel");
+		System.out.println("4. Terug naar het hoofdmenu");
+		int keuze = keuzePrompt();
+		switch (keuze){
+			case 1:
+				zoekKlant();
+				break;
+			case 2:
+				BestellingDAOInterface bdi = DAOFactory.getBestellingDAO();
+				this.bestelling = bdi.getBestelling(bestellingIdPrompt());
+				this.klant_id = bdi.haalKlant_id(this.bestelling.getBestelling_id());
+				addArtikel();
+				break;
+			case 3:
+				artikelMenu();
+				break;
+			case 4:
+				startHoofd();
+				break;
+		}
+	}
+	
+	private void artikelMenu(){
+		System.out.println("kan lekker niet");
 		startHoofd();
 	}
 
@@ -131,38 +158,6 @@ public class KeuzeMenu {
 					defaultSwitch();
 					startHoofd();
 			}
-		}
-	}
-
-	private void voegToeMenu() {
-		KlantDAOInterface kdi = DAOFactory.getKlantDAO();
-		System.out.println("________________________________________________");
-		System.out.println(kdi.readKlantWithId(this.klant_id));
-		System.out.println("Voeg een Adres of Bestelling toe aan deze Klant");
-		System.out.println("1. Voeg Adres toe aan Klant");
-		System.out.println("2. Voeg Bestelling toe aan Klant");
-		System.out.println("3. Voer wijziging door");
-		System.out.println("4. Terug naar Hoofdmenu");
-		
-		int keuze = keuzePrompt();
-		switch (keuze){
-			case 1:	
-				createAdres();
-				break;
-			case 2:
-				this.bestelling = new Bestelling(this.klant_id);
-				addArtikel();
-				break;
-			case 3:
-				updateMenu();
-				break;
-			case 4:	
-				startHoofd();
-				break;	
-			default:
-				defaultSwitch();
-				voegToeMenu();
-				break;
 		}
 	}
 
@@ -202,13 +197,45 @@ public class KeuzeMenu {
 				break;
 			case 6: 
 				BestellingDAOInterface bdi = DAOFactory.getBestellingDAO();
-				this.klant_id = kdi.readKlantWithId(bdi.haalKlant_id(bestellingIdPrompt())).getId();
+				this.klant_id = bdi.haalKlant_id(bestellingIdPrompt());
 				voegToeMenu();
 			case 7: 
 				service.printKlanten(kdi.readAll());
 				this.klant_id = klant_idPrompt();
 				voegToeMenu();
 			default: defaultSwitch();
+		}
+	}
+	
+	private void voegToeMenu() {
+		KlantDAOInterface kdi = DAOFactory.getKlantDAO();
+		System.out.println("________________________________________________");
+		System.out.println(kdi.readKlantWithId(this.klant_id));
+		System.out.println();
+		System.out.println("1. Voeg Adres toe aan Klant");
+		System.out.println("2. Voeg Bestelling toe aan Klant");
+		System.out.println("3. Voer wijziging door");
+		System.out.println("4. Terug naar Hoofdmenu");
+		
+		int keuze = keuzePrompt();
+		switch (keuze){
+			case 1:	
+				createAdres();
+				break;
+			case 2:
+				this.bestelling = new Bestelling(this.klant_id);
+				addArtikel();
+				break;
+			case 3:
+				updateMenu();
+				break;
+			case 4:	
+				startHoofd();
+				break;	
+			default:
+				defaultSwitch();
+				voegToeMenu();
+				break;
 		}
 	}
 	
@@ -251,6 +278,15 @@ public class KeuzeMenu {
 			case 2: 
 				service.printAdressen(adi.readAdresMetStraatEnHuisnummer(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), woonplaatsPrompt()));
 				break;
+			case 3:
+				service.printAdressen(adi.readAdresMetStraat(straatnaamPrompt(), woonplaatsPrompt()));
+				break;
+			case 4:
+				service.printAdressen(adi.readAdresMetWoonplaats(woonplaatsPrompt()));
+				break;
+			case 5:
+				zoekKlant();
+				break;
 		}
 	}
 
@@ -259,7 +295,8 @@ public class KeuzeMenu {
 		System.out.println(this.bestelling);
 		System.out.println("1. Voer een artikelnummer in om toe te voegen");
 		System.out.println("2. Zoek een artikel");
-		System.out.println("3. Bestelling is afgerond");
+		System.out.println("3. Verwijder een artikel");
+		System.out.println("4. Bestelling is afgerond");
 		int keuze = keuzePrompt();
 		ArtikelDAOInterface artikelDAO = DAOFactory.getArtikelDAO();
 		BestellingDAOInterface bestelDAO = DAOFactory.getBestellingDAO();
@@ -271,13 +308,24 @@ public class KeuzeMenu {
 			case 2: 
 				zoekArtikel();
 				break;
-			case 3: 
-				bestelDAO.voegBestellingToe(this.bestelling);
+			case 3:
+				Artikel a = artikelDAO.getArtikelWithArtikelId(artikelIdPrompt());
+				this.bestelling.removeArtikel(a);
+				//System.out.println(a);
+				addArtikel();
+				break;
+			case 4: 
+				if (this.bestelling.getBestelling_id() == 0){
+					bestelDAO.voegBestellingToe(this.bestelling);
+				} else {
+					bestelDAO.updateBestelling(this.bestelling.getBestelling_id(), this.bestelling);
+				}
 				voegToeMenu();
 				break;
 			default: 
 				defaultSwitch();
 				addArtikel();
+				break;
 		}
 	}
 	

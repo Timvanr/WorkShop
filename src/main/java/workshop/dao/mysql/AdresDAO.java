@@ -10,13 +10,14 @@ import workshop.model.Adres;
 import workshop.DatabaseConnection;
 
 public class AdresDAO implements workshop.dao.AdresDAOInterface {
+	private static Connection connection;
 	static Logger logger = LoggerFactory.getLogger(AdresDAO.class);
 	
 	public AdresDAO(){			
 	}
 	
 	public static Connection getConnection(){
-		Connection connection = DatabaseConnection.getPooledConnection();
+		connection = DatabaseConnection.getPooledConnection();
 						
 		return connection;
 	}
@@ -195,17 +196,16 @@ public class AdresDAO implements workshop.dao.AdresDAOInterface {
 
 	@Override
 	public Set<Adres> readAdressenPerKlant(int klant_id){
-		Connection connection = getConnection();		
+		connection = getConnection();		
 		logger.info("readAdressenPerKlant(int klant_id); gestart");
 		Set<Adres> adressen = new LinkedHashSet<Adres>();
-		
 		try {
 			RowSet adressenPerKlant = new JdbcRowSetImpl(connection);
-			adressenPerKlant.setCommand
-					("SELECT * FROM Adres " +
+			adressenPerKlant.setCommand(
+					"SELECT * FROM Adres " +
 					"INNER JOIN klant_has_adres " +
 					"ON klant_has_adres.adres_id=Adres.adres_id " +
-					"WHERE klant_has_adres.klant_id=? " +
+					"WHERE klant_has_adres.klant_id = ? " +
 					"ORDER BY woonplaats ASC, straatnaam ASC");
 			adressenPerKlant.setInt(1, klant_id);
 			adressenPerKlant.execute();
@@ -215,15 +215,19 @@ public class AdresDAO implements workshop.dao.AdresDAOInterface {
 						adressenPerKlant.getString(4), adressenPerKlant.getString(5), adressenPerKlant.getString(6)));
 				logger.info("readAdressenPerKlant(int klant_id); uitgevoerd");
 			}
+			adressenPerKlant.close();
+			
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
+		
 		} finally {
 			try {
 				connection.close();
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
+		
 		}		
 		return adressen;
 	}

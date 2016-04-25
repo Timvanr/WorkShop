@@ -62,8 +62,6 @@ public class DatabaseConnection {
 	
 	public static Connection getPooledConnection(){
 		
-		Connection connection = null;
-			
 		if (getConnectieKeuze() == 1){
 			return getHikariConnection();
 		}
@@ -71,7 +69,7 @@ public class DatabaseConnection {
 			return getC3p0Connection();
 		}
 				
-		return connection;
+		return null;
 	}
 
 	private static Connection getC3p0Connection(){
@@ -112,7 +110,7 @@ public class DatabaseConnection {
 		
 		HikariConfig config = new HikariConfig();
 		config.setMinimumIdle(1);
-		config.setMaximumPoolSize(3);
+		config.setMaximumPoolSize(14);
 		config.setInitializationFailFast(true);
 		config.setDriverClassName(DriverClass);
 		config.setJdbcUrl(URL);
@@ -139,7 +137,7 @@ public class DatabaseConnection {
 			cpds.setPassword(PW);
 			cpds.setMinPoolSize(1); 
 			cpds.setAcquireIncrement(1); 
-			cpds.setMaxPoolSize(3);
+			cpds.setMaxPoolSize(14);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
