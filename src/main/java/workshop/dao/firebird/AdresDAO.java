@@ -3,7 +3,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AdresDAOFireBird extends Adreslijst implements AdresDAO {
-	static final Logger LOG = LoggerFactory.getLogger(AdresDAOFireBird.class);
+	static Logger logger = LoggerFactory.getLogger(AdresDAOFireBird.class);
 
 	
 	public static Connection getConnection(){
@@ -35,18 +35,15 @@ public class AdresDAOFireBird extends Adreslijst implements AdresDAO {
 			ResultSet resultSet = insertAdres.executeQuery();
 			System.out.println("Adres created!");
 
-			while (resultSet .next()) {
-				adres_id = resultSet.getInt("adres_id");
-
-				if (resultSet.isBeforeFirst()) {
-					resultSet.next();
-					insertKlantHasAdres.setInt(1, klant_id);
-					insertKlantHasAdres.setInt(2, adres_id);
-					insertKlantHasAdres.executeUpdate();
-					logger.info("createAdres(int klant_id, Adres adres); uitgevoerd");
+			if (resultSet.isBeforeFirst()) {
+				resultSet.next();
+				insertKlantHasAdres.setInt(1, klant_id);
+				insertKlantHasAdres.setInt(2, resultSet.getInt("adres_id"));
+				insertKlantHasAdres.executeUpdate();
+				logger.info("createAdres(int klant_id, Adres adres); uitgevoerd");
 
 				}
-			}
+			
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage());
 			//System.out.println(ex.getErrorCode());
@@ -79,7 +76,6 @@ public class AdresDAOFireBird extends Adreslijst implements AdresDAO {
 		}	
 	} 	
 	
-
 	@Override
 	public void updateAdres(int klant_id, Adres adres){		
 		createAdres(klant_id, adres);		

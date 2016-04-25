@@ -30,14 +30,13 @@ public class BestellingDAOFireBird implements BestellingDAO{
 		try {
 			connection = DatabaseConnection.getPooledConnection();
 			PreparedStatement voegToe = connection.prepareStatement(
-					"INSERT INTO Bestelling (klant_id) VALUES (?)", java.sql.Statement.RETURN_GENERATED_KEYS);
+					"INSERT INTO Bestelling (klant_id) VALUES (?) RETURNING bestelling_id ");
 			voegToe.setInt(1, klant_id);
-			voegToe.executeUpdate();
-			
-			ResultSet rs = voegToe.getGeneratedKeys();
+			ResultSet rs = voegToe.executeQuery();
+
 			if (rs.isBeforeFirst()) {
 				rs.next();
-				bestelling.setBestelling_id(rs.getInt(1));
+				bestelling.setBestelling_id(rs.getInt("bestelling_id"));
 			}
 			voegToe.close();
 			

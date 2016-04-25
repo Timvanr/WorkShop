@@ -10,7 +10,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class DatabaseConnection {
 	private static String DriverClass;
-	private static String URL;
+	private static String URL; // Hier je databasenaam en pad
 	private static String PW;
 	private static String USERNAME;
 	private static int connectieKeuze;
@@ -114,7 +114,7 @@ public class DatabaseConnection {
 		config.setMaximumPoolSize(3);
 		config.setInitializationFailFast(true);
 		config.setDriverClassName(DriverClass);
-		config.setJdbcUrl("jdbc:mysql://localhost:3306/Adresboek");
+		config.setJdbcUrl(URL);
 		config.setUsername(USERNAME);
 		config.setPassword(PW);
 		config.addDataSourceProperty("useSSL", "false");
