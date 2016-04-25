@@ -1,22 +1,24 @@
+package workshop.dao.firebird;
+
 import java.sql.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import workshop.DatabaseConnection;
 import javax.sql.RowSet;
-
+import workshop.model.*;
 import com.sun.rowset.JdbcRowSetImpl;
 
-public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
-	static Logger logger = LoggerFactory.getLogger(KeuzeMenu.class);
+public class KlantDAO extends workshop.dao.mysql.KlantDAO {
+	static Logger logger = LoggerFactory.getLogger(workshop.KeuzeMenu.class);
 	
 	public static Connection getConnection(){
 		Connection connection = DatabaseConnection.getPooledConnection();
 		return connection;		
 	}
    	
-	public KlantDAOFireBird() {     
+	public KlantDAO() {     
 	}
 	
 	@Override
@@ -55,7 +57,7 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 		}
 		return klantId;
 	}
-	
+	/*
 	public void createKlantEnAdres(Klant klant, Adres adres) {
 		AdresDAOFireBird al = new AdresDAOFireBird();
 		int klant_id = createKlant(klant);
@@ -79,11 +81,11 @@ public class KlantDAOFireBird extends Klantbestand implements KlantDAO {
 		bl.voegBestellingToe(klant_id, bestelling);
 				
 		}
-	
+	*/
 	@Override
 	public Set<Klant> readAll(){
 			Connection connection = getConnection();		
-			LinkedHashSet<Klant> klantset = new LinkedHashSet<>();
+			LinkedHashSet<Klant> klantset = new LinkedHashSet();
 			String query = "Select * from klant";
 			Klant klant = null;
 			RowSet rowSet = null;

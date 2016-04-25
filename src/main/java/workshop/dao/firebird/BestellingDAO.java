@@ -1,20 +1,24 @@
+package workshop.dao.firebird;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.sql.*;
 import javax.sql.RowSet;
 import com.mysql.jdbc.Statement;
 import com.sun.rowset.JdbcRowSetImpl;
+import workshop.model.Bestelling;
+import workshop.model.Artikel;
+import workshop.DatabaseConnection;
 
-public class BestellingDAOFireBird implements BestellingDAO{
+public class BestellingDAO extends workshop.dao.mysql.BestellingDAO{
 	private static Connection connection;
-	public BestellingDAOFireBird(){
+	
+	public BestellingDAO(){
 		connection = DatabaseConnection.getPooledConnection();
 	}
 	
@@ -24,14 +28,14 @@ public class BestellingDAOFireBird implements BestellingDAO{
 	}
 	
 	@Override
-	public void voegBestellingToe(int klant_id, Bestelling bestelling) {
+	public void voegBestellingToe(Bestelling bestelling) {
 		
 		HashMap<Artikel, Integer> artikelen = bestelling.getArtikelen();
 		try {
 			connection = DatabaseConnection.getPooledConnection();
 			PreparedStatement voegToe = connection.prepareStatement(
 					"INSERT INTO Bestelling (klant_id) VALUES (?) RETURNING bestelling_id ");
-			voegToe.setInt(1, klant_id);
+			voegToe.setInt(1, bestelling.getKlant_id());
 			ResultSet rs = voegToe.executeQuery();
 
 			if (rs.isBeforeFirst()) {
@@ -59,7 +63,7 @@ public class BestellingDAOFireBird implements BestellingDAO{
 			//close();
 		}
 	}
-
+/*
 	public Bestelling haalBestelling(int bestelling_id) throws SQLException {
 		RowSet rowSet = null;
 		RowSet rowSet2 = null;
@@ -86,7 +90,7 @@ public class BestellingDAOFireBird implements BestellingDAO{
 				/*while (rowSet2.next()){
 					artikel.setAantal(rowSet2.getInt(1));
 				}
-				bestelling.voegArtikelToeAanBestelling(artikel);*/
+				bestelling.voegArtikelToeAanBestelling(artikel);
 				i++;
 			}
 			System.out.println(bestelling.toString());
@@ -98,42 +102,33 @@ public class BestellingDAOFireBird implements BestellingDAO{
 		}
 		return bestelling;
 	}
-
+*/
 	@Override
 	public Bestelling getBestelling(int bestelling_id){
 		connection = DatabaseConnection.getPooledConnection();
 		Bestelling bestelling = null;
-		ArtikelDAO aLijst = new ArtikelLijst();
+		workshop.dao.ArtikelDAOInterface aLijst = new ArtikelDAO();
 		RowSet bestelData = null;
 		try{
-			bestelling = new Bestelling();
 			bestelData = new JdbcRowSetImpl(connection);
 			bestelData.setCommand("SELECT * FROM Bestelling INNER JOIN bestelling_has_artikel ON bestelling.bestelling_id=bestelling_has_artikel.bestelling_id WHERE bestelling.bestelling_id=?");
 			bestelData.setInt(1, bestelling_id);
 			bestelData.execute();
 			 
-			if (bestelData.isBeforeFirst()){
-								
 			while (bestelData.next()){
-				
-			bestelling.setKlant_id(bestelData.getInt("klant_id"));
-			bestelling.setBestelling_id(bestelling_id);
-			Artikel artikel = aLijst.getArtikelWithArtikelId(bestelData.getInt("artikel_id"));
-			bestelling.voegArtikelToeAanBestelling(artikel, bestelData.getInt("artikel_aantal"));
-					
-				}
-			} 
+				bestelling = new Bestelling();
+				bestelling.setKlant_id(bestelData.getInt("klant_id"));
+				bestelling.setBestelling_id(bestelling_id);
+				Artikel artikel = aLijst.getArtikelWithArtikelId(bestelData.getInt("artikel_id"));
+				bestelling.voegArtikelToe(artikel, bestelData.getInt("artikel_aantal"));			
+			}
 			
-		else {
-			System.out.println("Bestelling not found!");
-			
-		} 
 		}catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			try {
 				bestelData.close();
-				
+				connection.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -144,12 +139,11 @@ public class BestellingDAOFireBird implements BestellingDAO{
 	}
 	
 	@Override
-	public ArrayList<Bestelling> haalBestellijst() {
+	public Set<Bestelling> haalBestellijst() {
 		Connection connection = getConnection();
 		RowSet rowSet = null;
-		ArrayList<Bestelling> bestellijst = new ArrayList();
+		Set<Bestelling> bestellijst = new LinkedHashSet();
 		try {
-			bestellijst = new ArrayList<>();
 			rowSet = new JdbcRowSetImpl(connection);
 			rowSet.setCommand("SELECT * FROM Bestelling");
 			rowSet.execute();

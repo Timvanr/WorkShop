@@ -1,9 +1,13 @@
+package workshop.dao.firebird;
+
 import java.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import workshop.model.Adres;
+import workshop.DatabaseConnection;
 
-public class AdresDAOFireBird extends Adreslijst implements AdresDAO {
-	static Logger logger = LoggerFactory.getLogger(AdresDAOFireBird.class);
+public class AdresDAO extends workshop.dao.mysql.AdresDAO {
+	static Logger logger = LoggerFactory.getLogger(AdresDAO.class);
 
 	
 	public static Connection getConnection(){
@@ -11,7 +15,7 @@ public class AdresDAOFireBird extends Adreslijst implements AdresDAO {
 		return connection;
 	}
    	
-	public AdresDAOFireBird() {     
+	public AdresDAO() {     
 	}
 	
 	@Override

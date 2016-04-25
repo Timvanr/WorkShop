@@ -1,7 +1,6 @@
 package workshop.dao.mysql;
 
 import workshop.DatabaseConnection;
-import workshop.dao.KlantDAOInterface;;
 import workshop.model.Klant;
 
 import java.io.BufferedReader;
@@ -17,7 +16,7 @@ import com.sun.rowset.JdbcRowSetImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KlantDAO implements KlantDAOInterface{
+public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Scanner scInput = new Scanner(System.in);
 	protected static Logger logger = LoggerFactory.getLogger(KlantDAO.class);

@@ -1,14 +1,18 @@
+package workshop.dao.mysql;
+
 import java.sql.*;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.sql.RowSet;
 import com.sun.rowset.JdbcRowSetImpl;
+import workshop.model.Adres;
+import workshop.DatabaseConnection;
 
-public class Adreslijst implements AdresDAO {
-	static Logger logger = LoggerFactory.getLogger(Adreslijst.class);
+public class AdresDAO implements workshop.dao.AdresDAOInterface {
+	static Logger logger = LoggerFactory.getLogger(AdresDAO.class);
 	
-	public Adreslijst(){			
+	public AdresDAO(){			
 	}
 	
 	public static Connection getConnection(){
@@ -348,10 +352,10 @@ public class Adreslijst implements AdresDAO {
 	}
 	
 	@Override
-	public Set<Klant> readKlantenMetAdresId(int adres_id) {
+	public Set<workshop.model.Klant> readKlantenMetAdresId(int adres_id) {
 		Connection connection = getConnection();
 		logger.info("readKlantenMetAdresId(int adres_id); gestart");
-		Set<Klant> klantSet = new LinkedHashSet<>();
+		Set<workshop.model.Klant> klantSet = new LinkedHashSet();
 		try {
 			RowSet rowSet = new JdbcRowSetImpl(connection);
 			String query = "SELECT * FROM `Klant` " +
@@ -364,7 +368,7 @@ public class Adreslijst implements AdresDAO {
 			rowSet.execute();
 
 			while (rowSet.next()) {
-				Klant klant = new Klant();
+				workshop.model.Klant klant = new workshop.model.Klant();
 				klant.setId(rowSet.getInt(1));
 				klant.setVoornaam(rowSet.getString(2));
 				klant.setAchternaam(rowSet.getString(3));
