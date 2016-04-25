@@ -1,0 +1,96 @@
+2016-04-23 20:05:07.711 [workshop.KeuzeMenu.main()] INFO  workshop.KeuzeMenu.startInlog(35) - test3 {}
+2016-04-23 20:05:20.057 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(837) - HikariCP pool HikariPool-0 configuration:
+2016-04-23 20:05:20.067 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - allowPoolSuspension.............false
+2016-04-23 20:05:20.067 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - autoCommit......................true
+2016-04-23 20:05:20.068 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - catalog.........................
+2016-04-23 20:05:20.068 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - connectionCustomizer............com.zaxxer.hikari.AbstractHikariConfig$1@20428f23
+2016-04-23 20:05:20.068 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - connectionCustomizerClassName...
+2016-04-23 20:05:20.068 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - connectionInitSql...............
+2016-04-23 20:05:20.068 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - connectionTestQuery.............
+2016-04-23 20:05:20.068 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - connectionTimeout...............30000
+2016-04-23 20:05:20.069 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - dataSource......................
+2016-04-23 20:05:20.069 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - dataSourceClassName.............
+2016-04-23 20:05:20.069 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - dataSourceJNDI..................
+2016-04-23 20:05:20.069 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - dataSourceProperties............{password=<masked>, prepStmtCacheSqlLimit=2048, useSSL=false, cachePrepStmts=true, prepStmtCacheSize=250}
+2016-04-23 20:05:20.069 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - driverClassName.................com.mysql.jdbc.Driver
+2016-04-23 20:05:20.069 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - healthCheckProperties...........{}
+2016-04-23 20:05:20.070 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - healthCheckRegistry.............
+2016-04-23 20:05:20.070 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - idleTimeout.....................600000
+2016-04-23 20:05:20.070 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - initializationFailFast..........true
+2016-04-23 20:05:20.070 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - isolateInternalQueries..........false
+2016-04-23 20:05:20.070 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - jdbc4ConnectionTest.............false
+2016-04-23 20:05:20.070 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - jdbcUrl.........................jdbc:mysql://localhost:3306/Adresboek
+2016-04-23 20:05:20.071 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - leakDetectionThreshold..........0
+2016-04-23 20:05:20.071 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - maxLifetime.....................1800000
+2016-04-23 20:05:20.071 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - maximumPoolSize.................14
+2016-04-23 20:05:20.071 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - metricRegistry..................
+2016-04-23 20:05:20.071 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - minimumIdle.....................1
+2016-04-23 20:05:20.071 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - password........................<masked>
+2016-04-23 20:05:20.071 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - poolName........................HikariPool-0
+2016-04-23 20:05:20.072 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - readOnly........................false
+2016-04-23 20:05:20.072 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - registerMbeans..................false
+2016-04-23 20:05:20.072 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - threadFactory...................
+2016-04-23 20:05:20.072 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - transactionIsolation............
+2016-04-23 20:05:20.072 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - username........................root
+2016-04-23 20:05:20.072 [workshop.KeuzeMenu.main()] DEBUG com.zaxxer.hikari.HikariConfig.logConfiguration(848) - validationTimeout...............5000
+2016-04-23 20:05:20.074 [workshop.KeuzeMenu.main()] INFO  com.zaxxer.hikari.HikariDataSource.<init>(79) - HikariCP pool HikariPool-0 is starting.
+2016-04-23 20:05:28.025 [workshop.KeuzeMenu.main()] INFO  workshop.dao.mysql.KlantDAO.readKlantWithId(117) - readKlantWithId(int klant_id); gestart
+2016-04-23 20:05:28.098 [workshop.KeuzeMenu.main()] INFO  workshop.dao.mysql.AdresDAO.readAdressenPerKlant(200) - readAdressenPerKlant(int klant_id); gestart
+2016-04-23 20:05:28.101 [workshop.KeuzeMenu.main()] INFO  workshop.dao.mysql.KlantDAO.readKlantWithId(133) - readKlantWithId(int klant_id) ); uitgevoerdSjakie  Chocofreak
+[]
+sjakie@chocofactory.comgelezen
+2016-04-23 20:05:28.102 [workshop.KeuzeMenu.main()] INFO  workshop.dao.mysql.AdresDAO.readAdressenPerKlant(200) - readAdressenPerKlant(int klant_id); gestart
+2016-04-23 20:05:50.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:05:50.115 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:06:20.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:06:20.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:06:50.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:06:50.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:07:20.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:07:20.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:07:50.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:07:50.090 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:08:20.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:08:20.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:08:50.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:08:50.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:09:20.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:09:20.090 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=4, inUse=3, avail=1, waiting=0)
+2016-04-23 20:09:37.132 [workshop.KeuzeMenu.main()] INFO  workshop.dao.mysql.KlantDAO.readKlantWithId(117) - readKlantWithId(int klant_id); gestart
+2016-04-23 20:09:37.159 [workshop.KeuzeMenu.main()] INFO  workshop.dao.mysql.AdresDAO.readAdressenPerKlant(200) - readAdressenPerKlant(int klant_id); gestart
+2016-04-23 20:09:37.163 [workshop.KeuzeMenu.main()] INFO  workshop.dao.mysql.KlantDAO.readKlantWithId(133) - readKlantWithId(int klant_id) ); uitgevoerdSjakie  Chocofreak
+[]
+sjakie@chocofactory.comgelezen
+2016-04-23 20:09:37.163 [workshop.KeuzeMenu.main()] INFO  workshop.dao.mysql.AdresDAO.readAdressenPerKlant(200) - readAdressenPerKlant(int klant_id); gestart
+2016-04-23 20:09:50.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:09:50.090 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:10:20.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:10:20.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:10:50.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:10:50.090 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:11:20.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:11:20.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:11:50.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:11:50.090 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:12:20.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:12:20.090 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:12:50.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:12:50.090 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:13:20.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:13:20.090 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:13:50.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:13:50.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:14:20.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:14:20.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:14:50.088 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:14:50.089 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:15:19.603 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:15:19.604 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:15:49.603 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:15:49.605 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:16:19.603 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:16:19.605 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:16:49.603 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:16:49.604 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:17:19.604 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - Before cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)
+2016-04-23 20:17:19.604 [Hikari Housekeeping Timer (pool HikariPool-0)] DEBUG com.zaxxer.hikari.pool.HikariPool.logPoolState(582) - After cleanup pool stats HikariPool-0 (total=5, inUse=3, avail=2, waiting=0)

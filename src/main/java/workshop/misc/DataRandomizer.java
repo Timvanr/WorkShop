@@ -1,3 +1,4 @@
+package workshop.misc;
 
 import java.sql.*;
 
@@ -23,7 +24,7 @@ public class DataRandomizer {
 		try{
 			Scanner input = new Scanner(System.in);
 			int randoms = input.nextInt();
-			connection = DatabaseConnection.getPooledConnection();
+			//connection = DatabaseConnection.getPooledConnection();
 			insertRandoms = connection.prepareStatement(query);
 						
 			for (int i = 1; i <= randoms; i++){

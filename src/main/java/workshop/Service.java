@@ -1,3 +1,6 @@
+package workshop;
+
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,136 +10,41 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-
+import workshop.dao.*;
+import workshop.controller.*;
+import workshop.model.*;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public class Service {
 
-	DAOFactory daoFactory = new DAOFactory();
-	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-	Scanner scInput = new Scanner(System.in);
-	AdresController adrescontrol = new AdresController(this, daoFactory.getAdreslijst(1));
-	KlantController klantcontrol = new KlantController(this, daoFactory.getKlantbestand(1));
-	BestellingController bestellingcontrol = new BestellingController(this, daoFactory.getBestellijst(1), daoFactory.getArtikelLijst(1));
-	ArtikelController artikelcontrol = new ArtikelController(this, daoFactory.getArtikelLijst(1));
+	DAOFactory daoFactory;
+	BufferedReader input;
+	Scanner scInput;
+	AdresController adrescontrol;
+	KlantController klantcontrol;
+	BestellingController bestellingcontrol;
+	ArtikelController artikelcontrol;
 	
-	//Hier de prompt opdrachten
-	int id_Prompt() throws IOException {
-		System.out.println("Geef uw klant ID: ");
-		String IDstr = input.readLine();
-		int id = Integer.parseInt(IDstr);
-		return id;
-	}
-	
-	String voornaamPrompt() throws IOException {
-		System.out.print("Voornaam: ");
-		String voornaam = input.readLine();
-		return voornaam;
-		}
-	String tussenvoegselPrompt() throws IOException {
-		System.out.print("Tussenvoegsel: ");
-		String tussenvoegsel = input.readLine();
-		return tussenvoegsel;
-		}
-	String achternaamPrompt() throws IOException {
-		System.out.print("Achternaam: ");
-		String achternaam = input.readLine();
-		return achternaam;
-		}
-	
-	String[] completeNaamPrompt() throws IOException{
-		String[] naamArray = new String[3];
-		naamArray[0] = voornaamPrompt();
-		naamArray[1] = tussenvoegselPrompt();
-		naamArray[2] = achternaamPrompt();
-		return naamArray;
-	}
-	String emailPrompt() throws IOException {
-		EmailValidator emailVal = EmailValidator.getInstance();
-		boolean invalidInput = true;
-		String newEmail = null;
-		try{
-			while(invalidInput){
-				System.out.print("Email: ");
-			newEmail = input.readLine();
-			if (emailVal.isValid(newEmail)){
-				invalidInput = false;
-			}
-			else {
-				System.out.println("foutief E-mail adres. Probeer opnieuw a.u.b.");
-			}
-			}
-		}
-		catch (IOException ex){
-			ex.printStackTrace();
-		}
-		return newEmail;
-	}
-	int adresIdPrompt() throws IOException {
-		System.out.print("Adres ID: ");
-		String adres_idString = input.readLine();
-		int adres_id = Integer.parseInt(adres_idString);
-		return adres_id;
+	public Service(){
+		this.daoFactory = new DAOFactory();
+		this.input = new BufferedReader(new InputStreamReader(System.in));
+		this.scInput = new Scanner(System.in);
+		this.adrescontrol = new AdresController(this, daoFactory.getAdresDAO());
+		this.klantcontrol = new KlantController(this, daoFactory.getKlantDAO());
+		this.bestellingcontrol = new BestellingController(this, daoFactory.getBestellingDAO(), daoFactory.getArtikelDAO());
+		this.artikelcontrol = new ArtikelController(this, daoFactory.getArtikelDAO());
+		
 	}
 	
-	String straatnaamPrompt() throws IOException {
-		System.out.print("Straatnaam: ");
-		String straatnaam = input.readLine();
-		return straatnaam;
-		}
-	int huisnummerPrompt() throws IOException {
-		System.out.print("Huisnummer: ");
-		String huisnummerstr = input.readLine();
-		int huisnummer = Integer.parseInt(huisnummerstr);
-		return huisnummer;
-	}
-	String toevoegingPrompt() throws IOException {
-		System.out.print("Toevoeging: ");
-		String toevoeging = input.readLine();
-		return toevoeging;
-		}
-	String postcodePrompt() throws IOException {
-		System.out.print("Postcode: ");
-		String postcode = input.readLine();
-		return postcode;
-		}
-	String woonplaatsPrompt() throws IOException {
-		System.out.print("Woonplaats: ");
-		String woonplaats = input.readLine();
-		return woonplaats;
-		}
-	int artikelAantalPrompt() throws IOException {
-		System.out.print("Hoeveel van deze atikelen wilt u: ");
-		String artikelAantalstr = input.readLine();
-		int artikelAantal = Integer.parseInt(artikelAantalstr);
-		return artikelAantal;
-	}
 	
-	int bestellingIdPrompt() throws IOException {
-		System.out.println("Bestelling ID:");
-		String bestellingidString = input.readLine();
-		int bestelling_id = Integer.parseInt(bestellingidString);
-		return bestelling_id;
-	}
+	
 	BigDecimal artikelPrijsPrompt() throws IOException {
 		System.out.print("Wat is de prijs van dit artikel: ");
 		String artikelPrijsstr = input.readLine();
 		BigDecimal artikelPrijs = new BigDecimal(artikelPrijsstr);
 		return artikelPrijs;
 	}
-	String artikelNaamPrompt() throws IOException {
-		System.out.print("Geef de naam van het artikel dat u wilt toevoegen: ");
-		String artikelNaam = input.readLine();
-		return artikelNaam;
-	}
 	
-	int artikelIdPrompt() throws IOException {
-		System.out.println("(toets 0 om de invoer te stoppen)\nGeef het artikelnummer van het artikel: ");
-		String artikelIdString = input.readLine();
-		int artikelId = Integer.parseInt(artikelIdString);
-		return artikelId;
-	}
-
 	
 	// Hier de printmethodes (had ook een aparte klasse kunnen zijn).
 	void printKlant(Klant klant){
@@ -177,6 +85,15 @@ public class Service {
 		}
 	}
 	
+	void printArtikelen(){
+		ArtikelDAOInterface alijst = DAOFactory.getArtikelDAO();
+		System.out.println("Alle Artikelen");
+		System.out.printf("%-13s %-20s %-11s\n", "Artikelnummer", "Naam", "Prijs");
+		for (Artikel a: alijst.getArtikellijst()){
+			System.out.printf("%-13d %-20s %-11f\n", a.getId(), a.getNaam(), a.getPrijs().doubleValue());	
+		}
+	}
+	
 	// Hier de getters/setters die voor het keuzemenu gebruikt worden
 		public AdresController getAdrescontrol() {
 			return adrescontrol;
@@ -200,12 +117,20 @@ public class Service {
 	
 	void kiesDataOpslag(int keuze){
 		
-		setKlantcontrol(new KlantController(this, daoFactory.getKlantbestand(keuze)));
-		setAdrescontrol(new AdresController(this, daoFactory.getAdreslijst(keuze)));
-		setBestellingcontrol(new BestellingController(this, daoFactory.getBestellijst(keuze), daoFactory.getArtikelLijst(keuze)));
+		setKlantcontrol(new KlantController(this, daoFactory.getKlantDAO()));
+		setAdrescontrol(new AdresController(this, daoFactory.getAdresDAO()));
+		setBestellingcontrol(new BestellingController(this, daoFactory.getBestellingDAO(), daoFactory.getArtikelDAO()));
 			switch(keuze){
-			case 1: DatabaseConnection.setDriverClass("com.mysql.jdbc.Driver"); DatabaseConnection.setURL("jdbc:mysql://localhost:3306/workshop");; break;
-			case 2: DatabaseConnection.setDriverClass("org.firebirdsql.jdbc.FBDriver"); DatabaseConnection.setURL("jdbc:firebirdsql://localhost:3050/C:/Users/sande_000/Desktop/Java RSVIER/Firebird database workshop/Workshop.GDB"); break;
+				case 1: 
+					DatabaseConnection.setDriverClass("com.mysql.jdbc.Driver"); 
+					DatabaseConnection.setURL("jdbc:mysql://localhost:3306/Adresboek");
+					DAOFactory.setDataOpslagType(1);
+					break;
+				case 2: 
+					DatabaseConnection.setDriverClass("org.firebirdsql.jdbc.FBDriver");
+					DatabaseConnection.setURL("jdbc:firebirdsql://localhost:3050/C:/Users/sande_000/Desktop/Java RSVIER/Firebird database workshop/Workshop.GDB");
+					DAOFactory.setDataOpslagType(2);
+					break;
 			//case 3: DatabaseConnection.setDriverClass("Hier moet JSON komen dan");
 			//case 4: DatabaseConnection.setDriverClass("Hier XML");
 			}
@@ -243,7 +168,7 @@ public class Service {
 				System.out.println("Verkeerde opgave probeer opnieuw");
 		}
 	}
-	
+	/*
 	Klant newKlant() throws IOException{
 		Klant klant = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
 		return klant;
@@ -274,7 +199,7 @@ public class Service {
 			return bestelling;
 		
 	}
-	
+	*/
 	public int updateBestellingPrompt() throws IOException{
 		System.out.println("Wat wilt u doen?\n1. Artikel verwijderen\n2. Artikel toevoegen\n3. Artikel vervangen\n4. Terug");
 		int userIn = scInput.nextInt();

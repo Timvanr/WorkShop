@@ -1,9 +1,12 @@
+package workshop.model;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import workshop.dao.DAOFactory;
+import workshop.dao.KlantDAOInterface;
 
 
 public class Bestelling {
@@ -13,10 +16,10 @@ public class Bestelling {
 	
 	public Bestelling(int klant_id) {
 		this.klant_id = klant_id;
-		this.artikelen = new HashMap<Artikel, Integer>();
+		this.artikelen = new HashMap();
 	}
 	public Bestelling(){
-		this.artikelen = new HashMap<>();
+		this.artikelen = new HashMap();
 	}
 	
 	public int getKlant_id() { 
@@ -39,7 +42,7 @@ public class Bestelling {
 		return this.artikelen;
 	}
 	
-	public void voegArtikelToeAanBestelling(Artikel artikel, Integer aantal){
+	public void voegArtikelToe(Artikel artikel, Integer aantal){
 		this.artikelen.put(artikel, aantal);
 	}
 	
@@ -59,8 +62,8 @@ public class Bestelling {
 	}
 	
 	public Klant getKlant(){
-		Klantbestand klantbestand = new Klantbestand();
-		Klant klant = klantbestand.readKlantWithId(this.klant_id);
+		KlantDAOInterface klantDAO = DAOFactory.getKlantDAO();
+		Klant klant = klantDAO.readKlantWithId(this.klant_id);
 		return klant;
 	}
 		
@@ -76,8 +79,8 @@ public class Bestelling {
 	/*
 	public static void main(String[] args){
 		Bestelling bestelling = new Bestelling(555);
-		bestelling.voegArtikelToeAanBestelling(new Artikel(34, "warm broodje", new BigDecimal(3.95)), 2);
-		bestelling.voegArtikelToeAanBestelling(new Artikel(44, "latte machiato", new BigDecimal(2.95)), 2);
+		bestelling.voegArtikelToe(new Artikel(34, "warm broodje", new BigDecimal(3.95)), new Integer(2));
+		bestelling.voegArtikelToe(new Artikel(44, "latte machiato", new BigDecimal(2.95)), new Integer(2));
 		System.out.println(bestelling);
 	}
 	*/

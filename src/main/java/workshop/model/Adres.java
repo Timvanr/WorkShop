@@ -1,3 +1,5 @@
+package workshop.model;
+
 public class Adres {
 	private int adres_id;
 	private String straatnaam;
@@ -6,34 +8,23 @@ public class Adres {
 	private String postcode;
 	private String woonplaats;
 	
-	public Adres(){	
+	public Adres(){
+		this(0, null, 0, null, null, null);
 	}
 	
 	public Adres(String straat, int huisnummer, String toevoeging, String postcode, String plaats){
-		this.straatnaam = straat;
-		this.huisnummer = huisnummer;
-		this.toevoeging = toevoeging;
-		this.postcode = postcode;
-		this.woonplaats = plaats;
+		this(0, straat, huisnummer, toevoeging, postcode, plaats);
 	}
 	
 	public Adres(int adres_id, String straat, int huisnummer, String toevoeging, String postcode, String plaats){
 		this.adres_id = adres_id;
 		this.straatnaam = straat;
 		this.huisnummer = huisnummer;
-		this.toevoeging = null;
+		this.toevoeging = toevoeging;
 		this.postcode = postcode;
 		this.woonplaats = plaats;
 	}
 
-	public Adres(String straat, int huisnummer, String postcode, String plaats){
-		this.straatnaam = straat;
-		this.huisnummer = huisnummer;
-		this.toevoeging = null;
-		this.postcode = postcode;
-		this.woonplaats = plaats;
-	}
-	
 	public int getId(){
 		return adres_id;
 	}

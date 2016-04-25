@@ -1,17 +1,23 @@
+package workshop.controller;
+
+
 import java.io.IOException;
 import java.sql.SQLException;
+
+import workshop.Service;
+import workshop.dao.ArtikelDAOInterface;
 
 public class ArtikelController {
 	
 		private Service service; // view
-		private ArtikelDAO artikelLijst; // model
+		private ArtikelDAOInterface artikelLijst; // model
 		
-		public ArtikelController(Service service, ArtikelDAO artikelLijst) {
+		public ArtikelController(Service service, ArtikelDAOInterface artikellijst) {
 
 			this.service = service;
-			this.artikelLijst = artikelLijst;
+			this.artikelLijst = artikellijst;
 		}
-
+/*
 		public void getArtikel() throws SQLException, IOException{
 			artikelLijst.getArtikelWithArtikelId(service.artikelIdPrompt());
 		}

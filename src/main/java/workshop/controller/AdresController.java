@@ -1,17 +1,23 @@
+package workshop.controller;
+
+
+import workshop.Service;
+import workshop.dao.AdresDAOInterface;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
 public class AdresController {
 	
 	private Service service; // view
-	private AdresDAO adreslijst; // model
+	private AdresDAOInterface adreslijst; // model
 	
-	public AdresController(Service service, AdresDAO adreslijst2) {
+	public AdresController(Service service, AdresDAOInterface adreslijst) {
 
 		this.service = service;
-		this.adreslijst = adreslijst2;
+		this.adreslijst = adreslijst;
 	}
-
+	/*
 	public void printAdresMetId() throws SQLException, IOException{
 		service.printAdres(adreslijst.readAdresmetAdresId(service.adresIdPrompt()));
 	}
@@ -44,4 +50,5 @@ public class AdresController {
 	public void deleteAdresvanKlant() throws IOException{
 		adreslijst.deleteKlantAdresPair(service.id_Prompt(), service.adresIdPrompt());
 	}
+	*/
 }

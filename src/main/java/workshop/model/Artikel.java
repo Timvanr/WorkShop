@@ -1,4 +1,4 @@
-
+package workshop.model;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;

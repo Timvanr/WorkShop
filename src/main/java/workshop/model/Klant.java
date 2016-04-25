@@ -1,36 +1,39 @@
+package workshop.model;
 
+import workshop.dao.*;
 import java.sql.SQLException;
-
+import java.util.*;
 
 public class Klant {
 	private int klant_id;
 	private String voornaam;
 	private String tussenvoegsel;
 	private String achternaam;
-	Adres adres;
-	private int adres_id;
 	private String email;
 			
 	public Klant(){
-		
+		this(0, null, null, null, null);
+	}
+	public Klant(String voornaam, String tussenvoegsel, String achternaam, String email){
+		this(0, voornaam, tussenvoegsel, achternaam, email);
 	}
 	
-	public Klant(String voornaam, String tussenvoegsel, String achternaam, String email){
+	public Klant(int id, String voornaam, String tussenvoegsel, String achternaam, String email){
+		this.klant_id = id;
 		this.voornaam = voornaam;
 		this.achternaam = achternaam;
 		this.tussenvoegsel = tussenvoegsel;
 		this.email = email;
-		
 	}
 	
 	public static Klant get(int id){
-		Klantbestand klantb = new Klantbestand();
-		return klantb.readKlantWithId(id);
+		KlantDAOInterface klantDAO = DAOFactory.getKlantDAO();
+		return klantDAO.readKlantWithId(id);
 	}
 	
-	public Adres getAdres(){
-		Adreslijst adressen = new Adreslijst();
-		return adressen.readAdresmetAdresId(this.adres_id); 
+	public Set<Adres> getAdres(){
+		AdresDAOInterface adi = DAOFactory.getAdresDAO();
+		return adi.readAdressenPerKlant(this.klant_id); 
 	}
 			
 	public int getId() {
@@ -65,15 +68,7 @@ public class Klant {
 		this.achternaam = achternaam;
 	}
 	
-	public int getAdres_id(){
-		return this.adres_id;
-	}
-	
-	public void setAdres_id(int adres_id){
-		this.adres_id = adres_id;
-	}
-
-	public String getEmail() {
+		public String getEmail() {
 		return email;
 	}
 

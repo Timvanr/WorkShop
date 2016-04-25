@@ -1,108 +1,103 @@
+package workshop.dao;
+
 
 public class DAOFactory {
-
-	public KlantDAO getKlantbestand(int dataOpslagType){
-		
-		KlantDAO klantDao = null;
-		
-		if (dataOpslagType == 1){
-			return new Klantbestand();
-		}
-		else if (dataOpslagType == 2){
-			return new KlantDAOFireBird();
-		}
-		
-		/*else if (dataOpslagType == 3){
-			return new KlantbestandJson();
-		}
-		
-		else if (dataOpslagType == 4){
-			return new KlantbestandXML();
-		}
-		*/
-		else {
-			System.out.println("Voer een getal van 1 t/m 4 in");
-			return klantDao;
-		}
-		
+	private static KlantDAOInterface klantDAO;
+	private static AdresDAOInterface adresDAO;
+	private static BestellingDAOInterface bestellingDAO;
+	private static ArtikelDAOInterface artikelDAO;
+	private static int dataOpslagType;
+	
+	public static void setDataOpslagType(int opslagType) {
+		dataOpslagType = opslagType;
 	}
 	
-	
-	public AdresDAO getAdreslijst(int dataOpslagType){
-		
-			AdresDAO adresDao = null;
+	public static KlantDAOInterface getKlantDAO(){
+		if (klantDAO == null){
+			if (dataOpslagType == 1){
+				klantDAO = new workshop.dao.mysql.KlantDAO();
+			}
+			else if (dataOpslagType == 2){
+				klantDAO = new workshop.dao.firebird.KlantDAO();
+			}
 			
-		if (dataOpslagType == 1){
-			return new Adreslijst();
+			/*else if (dataOpslagType == 3){
+				klantDAO = new KlantDAOJson();
+			}
+			
+			else if (dataOpslagType == 4){
+				klantDAO = new KlantDAOXML();
+			}
+			*/
 		}
-		else if (dataOpslagType == 2){
-			return new AdresDAOFireBird();
-		}
+		return klantDAO;
 		
-		/*else if (dataOpslagType == 3){
-			return new AdreslijstJson();
-		}
-		
-		else if (dataOpslagType == 4){
-			return new AdreslijstXML();
-		}
-		*/
-		else {
-			System.out.println("Voer een getal van 1 t/m 4 in");
-			return adresDao;
-		}
 	}
 	
-	public BestellingDAO getBestellijst(int dataOpslagType){
-		
-		BestellingDAO bestellingDao = null;
-		
-		if (dataOpslagType == 1){
-			return new Bestellijst();
+	
+	public static AdresDAOInterface getAdresDAO(){
+		if (adresDAO == null){
+			if (dataOpslagType == 1){
+				adresDAO = new workshop.dao.mysql.AdresDAO();
+			}
+			else if (dataOpslagType == 2){
+				adresDAO = new workshop.dao.firebird.AdresDAO();
+			}
+			
+			/*else if (dataOpslagType == 3){
+				return new AdreslijstJson();
+			}
+			
+			else if (dataOpslagType == 4){
+				return new AdreslijstXML();
+			}
+			*/
+			
 		}
-		else if (dataOpslagType == 2){
-			return new BestellingDAOFireBird();
+		return adresDAO;
+	}
+	
+	public static BestellingDAOInterface getBestellingDAO(){
+		if (bestellingDAO == null){
+			if (dataOpslagType == 1){
+				bestellingDAO = new workshop.dao.mysql.BestellingDAO();
+			}
+			else if (dataOpslagType == 2){
+				bestellingDAO = new workshop.dao.firebird.BestellingDAO();
+			}
+			
+			/*else if (dataOpslagType == 3){
+				return new BestellijstJson();
+			}
+			
+			else if (dataOpslagType == 4){
+				return new BestellijstXML();
+			}*/
+			
 		}
-		
-		/*else if (dataOpslagType == 3){
-			return new BestellijstJson();
-		}
-		
-		else if (dataOpslagType == 4){
-			return new BestellijstXML();
-		}*/
-		
-		else {
-			System.out.println("Voer een getal van 1 t/m 4 in");
-			return bestellingDao;
-		}
+		return bestellingDAO;
 	}
 	
 	// Deze hebben we nu (nog) niet maar moeten we wel nog opnemen
-	public ArtikelDAO getArtikelLijst(int dataOpslagType){
-		
-		ArtikelDAO artikelDao = null;
-		
-		if (dataOpslagType == 1){
-			return new ArtikelLijst();
+	public static ArtikelDAOInterface getArtikelDAO(){
+		if (artikelDAO == null){
+			if (dataOpslagType == 1){
+				artikelDAO = new workshop.dao.mysql.ArtikelDAO();
+			}
+			else if (dataOpslagType == 2){
+				artikelDAO = new workshop.dao.firebird.ArtikelDAO();
+			}
+			
+			/*else if (dataOpslagType == 3){
+				return new ArtikellijstJson();
+			}
+			
+			else if (dataOpslagType == 4){
+				return new ArtikellijstXML();
+			}
+			*/
 		}
-		else if (dataOpslagType == 2){
-			return new ArtikelLijstDAOFireBird();
-		}
-		
-		/*else if (dataOpslagType == 3){
-			return new ArtikellijstJson();
-		}
-		
-		else if (dataOpslagType == 4){
-			return new ArtikellijstXML();
-		}
-		*/
-		else {
-			System.out.println("Voer een getal van 1 t/m 4 in");
-			return artikelDao;
-		}
-		
+		return artikelDAO;
 	}
-	
+
 }

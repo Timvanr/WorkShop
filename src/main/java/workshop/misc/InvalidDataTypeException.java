@@ -1,3 +1,4 @@
+package workshop.misc;
 
 public class InvalidDataTypeException extends Exception{
 

@@ -1,16 +1,18 @@
-
+package workshop.dao;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.Set;
 
-public interface BestellingDAO {
+import workshop.model.Bestelling;
+
+public interface BestellingDAOInterface {
 	
 	//void maakTabel() throws SQLException ;
 	Bestelling getBestelling(int id) throws SQLException;
 	int haalKlant_id(int bestelling_id);
 	void verwijderBestelling(int id);
 	//void verwijderTabel() throws SQLException ;
-	ArrayList<Bestelling> haalBestellijst();
-	void voegBestellingToe(int klant_id, Bestelling bestelling);
+	Set<Bestelling> haalBestellijst();
+	void voegBestellingToe(Bestelling bestelling);
 	
 }

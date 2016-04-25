@@ -1,20 +1,27 @@
-
-
+package workshop.dao.mysql;
 
 import java.sql.*;
+import java.sql.Date;
 
+import workshop.DatabaseConnection;
+import workshop.model.*;
 import com.sun.rowset.*;
 import java.util.*;
 
 import javax.sql.RowSet;
 import javax.sql.rowset.JdbcRowSet;
 
-public class Bestellijst implements BestellingDAO {
+public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	private static Connection connection;
-	ArtikelDAO artikellijst;
+	//ArtikelDAO artikellijst;
 	
-	public Bestellijst() {
+	public BestellingDAO() {
+		getConnection();
+	}
+	
+	private static Connection getConnection(){
 		connection = DatabaseConnection.getPooledConnection();
+		return connection;
 	}
 	/*
 	public void maakTabel() throws SQLException {
@@ -68,14 +75,15 @@ public class Bestellijst implements BestellingDAO {
 	}
 */
 	@Override
-	public void voegBestellingToe(int klant_id, Bestelling bestelling){
+	public void voegBestellingToe(Bestelling bestelling){
+		connection = getConnection();
 		
 		HashMap<Artikel, Integer> artikelen = bestelling.getArtikelen();
 		try {
-			connection = DatabaseConnection.getPooledConnection();
-			PreparedStatement voegToe = connection.prepareStatement(
-					"INSERT INTO Bestelling (klant_id) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
-			voegToe.setInt(1, klant_id);
+			PreparedStatement voegToe = connection.prepareStatement
+					("INSERT INTO Bestelling (klant_id, datum_aanmaak) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+			voegToe.setInt(1, bestelling.getKlant_id());
+			voegToe.setDate(2, new Date(0, 0, 0));
 			voegToe.executeUpdate();
 			
 			ResultSet rs = voegToe.getGeneratedKeys();
@@ -104,53 +112,32 @@ public class Bestellijst implements BestellingDAO {
 			close();
 		}
 	}
-	
-	//@Override
-	
-	
-	
+		
 	@Override
 	public Bestelling getBestelling(int bestelling_id) throws SQLException{
 		connection = DatabaseConnection.getPooledConnection();
 		Bestelling bestelling = null;
-		RowSet artikelData = null;
+		ArtikelDAO artikellijst = new ArtikelDAO();
 		RowSet bestelData = null;
 		try{
 			bestelling = new Bestelling();
 			bestelData = new JdbcRowSetImpl(connection);
-			bestelData.setCommand("SELECT * FROM Bestelling INNER JOIN"
-					+ " bestelling_has_artikel ON bestelling.bestelling_id=bestelling_has_artikel.bestelling_id"
-					+ " WHERE bestelling.bestelling_id=?");
-			
+			bestelData.setCommand(
+					"SELECT * FROM Bestelling " +
+					"INNER JOIN bestelling_has_artikel " +
+					"ON Bestelling.bestelling_id=bestelling_has_artikel.bestelling_id " +
+					"WHERE Bestelling.bestelling_id=?");
 			bestelData.setInt(1, bestelling_id);
 			bestelData.execute();
 			
-			if (bestelData.isBeforeFirst()){
-								
+			bestelling.setKlant_id(bestelData.getInt("klant_id"));
+			bestelling.setBestelling_id(bestelling_id);
+			
 			while (bestelData.next()){
-				
-				artikelData = new JdbcRowSetImpl(connection);
-				artikelData.setCommand("SELECT * FROM Artikel WHERE artikel_id = ?");
-				artikelData.setInt(1, bestelData.getInt("artikel_id"));
-				artikelData.execute();
-				
-				while (artikelData.next()){
-					bestelling.setKlant_id(bestelData.getInt("klant_id"));
-					bestelling.setBestelling_id(bestelling_id);
-					Artikel artikel = new Artikel();
-					artikel.setId(artikelData.getInt("artikel_id"));
-					artikel.setNaam(artikelData.getString("artikel_naam"));
-					artikel.setPrijs(artikelData.getBigDecimal("artikel_prijs"));
+				bestelling.voegArtikelToe
+						(artikellijst.getArtikelWithArtikelId(bestelData.getInt("artikel_id")), bestelData.getInt("artikel_aantal"));
 					
-					bestelling.voegArtikelToeAanBestelling(artikel, bestelData.getInt("artikel_aantal"));
-						}
-					}
-				} 
-			
-		else {
-			System.out.println("Bestelling not found!");
-			
-		} 
+			}	 
 		}catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -161,12 +148,11 @@ public class Bestellijst implements BestellingDAO {
 	}
 	
 	@Override
-	public ArrayList<Bestelling> haalBestellijst(){
+	public Set<Bestelling> haalBestellijst(){
 		connection = DatabaseConnection.getPooledConnection();
 		RowSet rowSet = null;
-		ArrayList<Bestelling> bestellijst = new ArrayList();
+		Set<Bestelling> bestellijst = new LinkedHashSet();
 		try {
-			bestellijst = new ArrayList<>();
 			rowSet = new JdbcRowSetImpl(connection);
 			rowSet.setCommand("SELECT * FROM Bestelling");
 			rowSet.execute();
@@ -212,12 +198,15 @@ public class Bestellijst implements BestellingDAO {
 		int klant_id = 0;
 		try {
 			connection = DatabaseConnection.getPooledConnection();
-			haalKlant_id = connection.prepareStatement("SELECT klant_id FROM Bestelling WHERE bestelling_id = ?");
+			haalKlant_id = connection.prepareStatement
+					("SELECT klant_id FROM Bestelling WHERE bestelling_id = ?");
 			haalKlant_id.setInt(1, bestelling_id);
 			ResultSet rs = haalKlant_id.executeQuery();
 
 			if (rs.next()) {
 				klant_id = rs.getInt(1);
+			} else {
+				System.out.println("Bestelling niet gevonden; kan geen bijbehorende klant retourneren");
 			}
 			haalKlant_id.close();
 			
@@ -229,22 +218,22 @@ public class Bestellijst implements BestellingDAO {
 		return klant_id;
 	}
 	
-	public ArrayList<Bestelling> getBestellijstByKlant(int klant_id){
+	public Set<Bestelling> getBestellijstByKlant(int klant_id){
 		connection = DatabaseConnection.getPooledConnection();
 		
-		ArrayList<Bestelling> bestellijst = new ArrayList();
-		
+		Set<Bestelling> bestellijst = new LinkedHashSet();		
 		try {
 			RowSet bestellijstByKlant = new JdbcRowSetImpl(connection);
 			bestellijstByKlant.setCommand(
 					"SELECT * FROM Bestelling " +
 					"WHERE klant_id = ?");
 			bestellijstByKlant.setInt(1, klant_id);
+			
 			while (bestellijstByKlant.next()){
 				bestellijst.add(getBestelling(bestellijstByKlant.getInt(1)));
 			}
-			bestellijstByKlant.close();
-						
+			
+			bestellijstByKlant.close();			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -253,7 +242,7 @@ public class Bestellijst implements BestellingDAO {
 		
 		return bestellijst;
 	}
-	
+	/*
 	public void verwijderTabel() throws SQLException {
 		connection = DatabaseConnection.getPooledConnection();
 
@@ -262,7 +251,7 @@ public class Bestellijst implements BestellingDAO {
 
 		System.out.println("table Bestelling dropped!");
 	}
-	
+	*/
 	public void close(){
 		try {
 			connection.close();

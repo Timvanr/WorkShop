@@ -1,6 +1,9 @@
-import java.util.Set;
+package workshop.dao;
 
-public interface AdresDAO {
+import java.util.Set;
+import workshop.model.Adres;
+
+public interface AdresDAOInterface {
 	
 	//static connection getConnection(String user, String password) throws SQLException; evt inloggen met DBnaam?
 	void createAdres(int klant_id, Adres adres);
@@ -14,7 +17,7 @@ public interface AdresDAO {
 	Set<Adres> readAdresMetWoonplaats(String plaats);
 	Set<Adres> readAdresMetStraat(String straat, String plaats);
 	Set<Adres> readAdresMetStraatEnHuisnummer(String straat, int huisnummer, String toevoeging, String plaats);
-	Set<Klant> readKlantenMetAdresId(int adres_id);
+	Set<workshop.model.Klant> readKlantenMetAdresId(int adres_id);
 }	
 /*
 Gerbrich vind dat iedere methode moet beginnen met getConnection() en moet eindigen met connection.close().

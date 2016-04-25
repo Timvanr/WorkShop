@@ -1,4 +1,4 @@
-
+package workshop.misc;
 
 public class MissingEntityException extends Exception{
 	
