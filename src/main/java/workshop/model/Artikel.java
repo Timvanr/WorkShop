@@ -43,6 +43,21 @@ public class Artikel {
 	}
 	
 	@Override
+	public boolean equals(Object a){
+		if (a instanceof Artikel){
+			Artikel artikel = (Artikel)a;
+			return this.getId() == artikel.getId();
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.artikel_id;
+	}	
+	
+	@Override
 	public String toString(){
 		return "Artikelnummer: " + this.artikel_id + " Naam: " + this.artikel_naam + " Prijs: " + NumberFormat.getCurrencyInstance().format(this.artikel_prijs);
 	}

@@ -48,6 +48,7 @@ public class Bestelling {
 	
 	public void removeArtikel(Artikel artikel){
 		this.artikelen.remove(artikel);
+		//System.out.println(this.artikelen.containsKey(artikel));
 	}
 	
 	public BigDecimal getTotaalPrijs(){
@@ -81,6 +82,7 @@ public class Bestelling {
 		Bestelling bestelling = new Bestelling(555);
 		bestelling.voegArtikelToe(new Artikel(34, "warm broodje", new BigDecimal(3.95)), new Integer(2));
 		bestelling.voegArtikelToe(new Artikel(44, "latte machiato", new BigDecimal(2.95)), new Integer(2));
+		bestelling.removeArtikel(new Artikel(34, "warm broodje", new BigDecimal(3.95)), new Integer(2));
 		System.out.println(bestelling);
 	}
 	*/
