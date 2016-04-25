@@ -370,17 +370,17 @@ public class KeuzeMenu {
 		String artikelNaam = input.nextLine();
 		return artikelNaam;
 	}
-	int artikelIdPrompt(){
-		System.out.println("Geef het artikelnummer van het artikel: ");
+	private int artikelIdPrompt(){
+		System.out.print("Geef het artikelnummer: ");
 		String artikelIdString = input.nextLine();
 		return Integer.parseInt(artikelIdString);
 	}
-	int artikelAantalPrompt() {
-		System.out.print("Hoeveel van deze atikelen wilt u: ");
+	private int artikelAantalPrompt() {
+		System.out.print("Hoeveel van deze artikelen wilt u: ");
 		String artikelAantalstr = input.nextLine();
 		return Integer.parseInt(artikelAantalstr);
 	}
-	int bestellingIdPrompt(){
+	private int bestellingIdPrompt(){
 		System.out.println("Bestelling ID:");
 		String bestellingidString = input.nextLine();
 		int bestelling_id = Integer.parseInt(bestellingidString);
@@ -393,42 +393,42 @@ public class KeuzeMenu {
 		return keuze;
 	}
 
-	Adres adresPrompt(){
+	private Adres adresPrompt(){
 		return new Adres(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), postcodePrompt(), woonplaatsPrompt());
 	}
-	int adresIdPrompt(){
+	private int adresIdPrompt(){
 		System.out.print("Adres ID: ");
 		String adres_idString = input.nextLine();
 		int adres_id = Integer.parseInt(adres_idString);
 		return adres_id;
 	}
-	String straatnaamPrompt(){
+	private String straatnaamPrompt(){
 		System.out.print("Straatnaam: ");
 		String straatnaam = input.nextLine();
 		return straatnaam;
 	}
-	int huisnummerPrompt(){
+	private int huisnummerPrompt(){
 		System.out.print("Huisnummer: ");
 		String huisnummerstr = input.nextLine();
 		int huisnummer = Integer.parseInt(huisnummerstr);
 		return huisnummer;
 	}
-	String toevoegingPrompt(){
+	private String toevoegingPrompt(){
 		System.out.print("Toevoeging: ");
 		String toevoeging = input.nextLine();
 		return toevoeging;
 	}
-	String postcodePrompt(){
+	private String postcodePrompt(){
 		System.out.print("Postcode: ");
 		String postcode = input.nextLine();
 		return postcode;
 	}
-	String woonplaatsPrompt(){
+	private String woonplaatsPrompt(){
 		System.out.print("Woonplaats: ");
 		String woonplaats = input.nextLine();
 		return woonplaats;
 	}
-	/*
+/*
 	private void startClassSelectie() throws IOException, SQLException {
 		System.out.println("");
 		System.out.println("KLASSE SELECTIE: ");
@@ -768,34 +768,34 @@ public class KeuzeMenu {
 	}
 */
 		
-	Klant klantPrompt(){
+	private Klant klantPrompt(){
 		Klant k = new Klant(voornaamPrompt(), tussenvoegselPrompt(), achternaamPrompt(), emailPrompt());
 		return k;
 	}
 	
-	int klant_idPrompt(){
+	private int klant_idPrompt(){
 		System.out.println("Geef uw klant ID: ");
 		String IDstr = input.nextLine();
 		int id = Integer.parseInt(IDstr);
 		return id;
 	}
 	
-	String voornaamPrompt(){
+	private String voornaamPrompt(){
 		System.out.print("Voornaam: ");
 		String voornaam = input.nextLine();
 		return voornaam;
 	}
-	String tussenvoegselPrompt(){
+	private String tussenvoegselPrompt(){
 		System.out.print("Tussenvoegsel: ");
 		String tussenvoegsel = input.nextLine();
 		return tussenvoegsel;
 	}
-	String achternaamPrompt(){
+	private String achternaamPrompt(){
 		System.out.print("Achternaam: ");
 		String achternaam = input.nextLine();
 		return achternaam;
 	}
-	String emailPrompt(){
+	private String emailPrompt(){
 		EmailValidator emailVal = EmailValidator.getInstance();
 		boolean validInput = false;
 		String email = null;
@@ -812,7 +812,7 @@ public class KeuzeMenu {
 	}
 	
 	private void exit() {
-		System.out.println("Uw bewerking is beeindigd.");	
+		System.out.println("Uw sessie is beëindigd.");	
 		System.exit(1);
 	}
 	
