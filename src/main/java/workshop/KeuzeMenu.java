@@ -122,6 +122,10 @@ public class KeuzeMenu {
 			case 4:
 				startHoofd();
 				break;
+			default:
+				defaultSwitch();
+				updateMenu();
+				break;
 		}
 	}
 	
@@ -171,6 +175,7 @@ public class KeuzeMenu {
 		System.out.println(" 5. Zoek klant(en) met adresgegevens");
 		System.out.println(" 6. Zoek klant met bestellingnummer");
 		System.out.println(" 7. Lijst van alle Klanten");
+		System.out.println(" 8. Terug (naar Hoofdmenu");
 		int keuze = keuzePrompt();
 		KlantDAOInterface kdi = DAOFactory.getKlantDAO();
 		switch (keuze) {
@@ -199,11 +204,19 @@ public class KeuzeMenu {
 				BestellingDAOInterface bdi = DAOFactory.getBestellingDAO();
 				this.klant_id = bdi.haalKlant_id(bestellingIdPrompt());
 				voegToeMenu();
+				break;
 			case 7: 
 				service.printKlanten(kdi.readAll());
 				this.klant_id = klant_idPrompt();
 				voegToeMenu();
-			default: defaultSwitch();
+				break;
+			case 8:
+				startHoofd();
+				break;
+			default: 
+				defaultSwitch();
+				zoekKlant();
+				break;
 		}
 	}
 	
@@ -255,7 +268,7 @@ public class KeuzeMenu {
 		} else if (keuze == 5){
 			System.exit(5);
 		} else {
-			System.out.println("Geef een getal van 1 t/m 4 op aub");
+			System.out.println("Geef een getal van 1 t/m 5 op aub");
 			bronDoelSelectie();
 		}	
 	}
