@@ -137,7 +137,7 @@ public class KeuzeMenu {
 		Klant klant = klantPrompt();
 		System.out.println(klant);
 		
-		System.out.println("Deze klant opslaan?\n ja(j) of nee(n)");
+		System.out.println("Deze klant opslaan?\nJa(j) of Nee(n)");
 		if (input.nextLine().equalsIgnoreCase("J")){
 			KlantDAOInterface kdi = DAOFactory.getKlantDAO();
 			this.klant_id = kdi.createKlant(klant);
@@ -296,7 +296,8 @@ public class KeuzeMenu {
 		System.out.println("1. Voer een artikelnummer in om toe te voegen");
 		System.out.println("2. Zoek een artikel");
 		System.out.println("3. Verwijder een artikel");
-		System.out.println("4. Bestelling is afgerond");
+		System.out.println("4. Bestelling afronden");
+		System.out.println("5. Bestelling annuleren");
 		int keuze = keuzePrompt();
 		ArtikelDAOInterface artikelDAO = DAOFactory.getArtikelDAO();
 		BestellingDAOInterface bestelDAO = DAOFactory.getBestellingDAO();
@@ -320,6 +321,9 @@ public class KeuzeMenu {
 				} else {
 					bestelDAO.updateBestelling(this.bestelling.getBestelling_id(), this.bestelling);
 				}
+				voegToeMenu();
+				break;
+			case 5:
 				voegToeMenu();
 				break;
 			default: 
