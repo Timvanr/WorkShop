@@ -43,12 +43,20 @@ public class Bestelling {
 	}
 	
 	public void voegArtikelToe(Artikel artikel, Integer aantal){
-		this.artikelen.put(artikel, aantal);
+		if (this.artikelen.containsKey(artikel)){
+			Integer totaalAantal = new Integer(this.artikelen.get(artikel).intValue() + aantal.intValue());
+			this.artikelen.put(artikel, totaalAantal);
+		} else {
+			this.artikelen.put(artikel, aantal);
+		}
 	}
 	
 	public void removeArtikel(Artikel artikel){
-		this.artikelen.remove(artikel);
-		//System.out.println(this.artikelen.containsKey(artikel));
+		if (this.artikelen.containsKey(artikel)){
+			this.artikelen.remove(artikel);
+		} else {
+			System.out.println("Artikel staat niet in de lijst; verwijderen mislukt.");
+		}
 	}
 	
 	public BigDecimal getTotaalPrijs(){
