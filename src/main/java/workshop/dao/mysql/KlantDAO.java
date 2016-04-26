@@ -125,6 +125,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 
 			while (rowSet.next()) {
 				klant = new Klant();
+				klant.setId(klant_id);
 				klant.setVoornaam(rowSet.getString("voornaam"));
 				klant.setTussenvoegsel(rowSet.getString("tussenvoegsel"));
 				klant.setAchternaam(rowSet.getString("achternaam"));
@@ -247,23 +248,21 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 						+ tussenvoegsel + " " + achternaam);
 				logger.info("Geen gegevens gevonden");
 				return klant;
-			}
-
-			while (rowSet2.next()) {
-				klant = new Klant();
-				klant.setId(rowSet2.getInt("klant_id"));
-				klant.setVoornaam(rowSet2.getString("voornaam"));
-				klant.setTussenvoegsel(rowSet2.getString("tussenvoegsel"));
-				klant.setAchternaam(rowSet2.getString("achternaam"));
-				klant.setEmail(rowSet2.getString("email"));	
-				logger.info("readKlantWithFirstLastName(String voornaam, String tussenvoegsel, String achternaam); uitgevoerd");		
-
+			} else {
+				while (rowSet2.next()) {
+					klant = new Klant();
+					klant.setId(rowSet2.getInt("klant_id"));
+					klant.setVoornaam(rowSet2.getString("voornaam"));
+					klant.setTussenvoegsel(rowSet2.getString("tussenvoegsel"));
+					klant.setAchternaam(rowSet2.getString("achternaam"));
+					klant.setEmail(rowSet2.getString("email"));	
+					logger.info("readKlantWithFirstLastName(String voornaam, String tussenvoegsel, String achternaam); uitgevoerd");		
+				}
 			}
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		} finally {
-			//System.out.println();
 			try {
 				rowSet2.close();
 				connection.close();
@@ -338,7 +337,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	// WILLEN WE HIER ALLEEN EEN NAAM OF OOK EEN ADRES? ANDERS MOET DIT NOG AANGEPAST WORDEN...
 	public Set<Klant> readAll(){
 		Connection connection = getConnection();
-		LinkedHashSet<Klant> klantList = new LinkedHashSet<>();		
+		LinkedHashSet<Klant> klantList = new LinkedHashSet();		
 		String query = "Select * from `Klant`";
 
 		try{ 
@@ -350,8 +349,8 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 				Klant klant = new Klant();
 				klant.setId(rowSet.getInt(1));
 				klant.setVoornaam(rowSet.getString(2));
-				klant.setAchternaam(rowSet.getString(3));
-				klant.setTussenvoegsel(rowSet.getString(4));
+				klant.setTussenvoegsel(rowSet.getString(3));
+				klant.setAchternaam(rowSet.getString(4));
 				klant.setEmail(rowSet.getString(5));
 
 				klantList.add(klant);	

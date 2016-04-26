@@ -33,7 +33,16 @@ public class Klant {
 	
 	public Set<Adres> getAdres(){
 		AdresDAOInterface adi = DAOFactory.getAdresDAO();
-		return adi.readAdressenPerKlant(this.klant_id); 
+		return adi.readAdressenPerKlant(this.klant_id);
+	}
+	
+	public String adresSetString(){
+		Set<Adres> adresSet = getAdres();
+		String adresString = "";
+		for (Adres a: adresSet){
+			adresString += a.toString() + "\n";
+		}
+		return adresString;
 	}
 			
 	public int getId() {
@@ -68,7 +77,7 @@ public class Klant {
 		this.achternaam = achternaam;
 	}
 	
-		public String getEmail() {
+	public String getEmail() {
 		return email;
 	}
 
@@ -78,6 +87,8 @@ public class Klant {
 	
 	@Override
 	public String toString(){
-		return this.voornaam + " " + this.tussenvoegsel + " " + this.achternaam + "\n" + getAdres().toString() + "\n" + this.email;
+		return "Klantnummer: " + this.klant_id + "\n" + 
+				this.voornaam + " " + this.tussenvoegsel + " " + this.achternaam + "\n" + 
+				adresSetString() + "\n" + this.email;
 	}
 }

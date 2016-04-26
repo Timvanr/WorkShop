@@ -118,7 +118,7 @@ public class DatabaseConnection {
 	private static ComboPooledDataSource getC3p0DataSource(){
 		if (c3p0DS == null){
 				
-			ComboPooledDataSource cpds = new ComboPooledDataSource();
+			ComboPooledDataSource c3p0DS = new ComboPooledDataSource();
 			
 			try{
 				c3p0DS.setDriverClass(DriverClass);

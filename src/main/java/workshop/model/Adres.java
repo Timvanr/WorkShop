@@ -74,7 +74,8 @@ public class Adres {
 	}
 
 	public String toString(){
-		return this.straatnaam + " " + this.huisnummer + " " + this.toevoeging + "\n" + 
+		return "Adresnummer: " + this.adres_id + "\n" +
+				this.straatnaam + " " + this.huisnummer + " " + this.toevoeging + "\n" + 
 				this.postcode + " " + this.woonplaats;
 	}
 	

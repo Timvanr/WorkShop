@@ -108,7 +108,11 @@ public class KeuzeMenu {
 		int keuze = keuzePrompt();
 		switch (keuze){
 			case 1:
-				zoekKlant();
+				if (this.klant_id == 0) {
+					zoekKlant();
+				} else {
+					voegToeMenu();
+				}
 				break;
 			case 2:
 				BestellingDAOInterface bdi = DAOFactory.getBestellingDAO();
@@ -175,7 +179,7 @@ public class KeuzeMenu {
 		System.out.println(" 5. Zoek klant(en) met adresgegevens");
 		System.out.println(" 6. Zoek klant met bestellingnummer");
 		System.out.println(" 7. Lijst van alle Klanten");
-		System.out.println(" 8. Terug (naar Hoofdmenu");
+		System.out.println(" 8. Terug (naar Hoofdmenu)");
 		int keuze = keuzePrompt();
 		KlantDAOInterface kdi = DAOFactory.getKlantDAO();
 		switch (keuze) {
@@ -228,7 +232,8 @@ public class KeuzeMenu {
 		System.out.println("1. Voeg Adres toe aan Klant");
 		System.out.println("2. Voeg Bestelling toe aan Klant");
 		System.out.println("3. Voer wijziging door");
-		System.out.println("4. Terug naar Hoofdmenu");
+		System.out.println("4. Verhuizing");
+		System.out.println("5. Terug (naar Hoofdmenu)");
 		
 		int keuze = keuzePrompt();
 		switch (keuze){
@@ -242,7 +247,15 @@ public class KeuzeMenu {
 			case 3:
 				updateMenu();
 				break;
-			case 4:	
+			case 4:
+				AdresDAOInterface adi = DAOFactory.getAdresDAO();
+				System.out.println("Oud:");				
+				adi.deleteKlantAdresPair(this.klant_id, adresIdPrompt());
+				System.out.println("Nieuw:");
+				adi.createAdres(this.klant_id, adresPrompt());
+				voegToeMenu();
+				break;
+			case 5:	
 				startHoofd();
 				break;	
 			default:
@@ -290,15 +303,22 @@ public class KeuzeMenu {
 				break;
 			case 2: 
 				service.printAdressen(adi.readAdresMetStraatEnHuisnummer(straatnaamPrompt(), huisnummerPrompt(), toevoegingPrompt(), woonplaatsPrompt()));
+				adresIdPrompt();
 				break;
 			case 3:
 				service.printAdressen(adi.readAdresMetStraat(straatnaamPrompt(), woonplaatsPrompt()));
+				adresIdPrompt();
 				break;
 			case 4:
 				service.printAdressen(adi.readAdresMetWoonplaats(woonplaatsPrompt()));
+				adresIdPrompt();
 				break;
 			case 5:
 				zoekKlant();
+				break;
+			default:
+				defaultSwitch();
+				zoekAdres();
 				break;
 		}
 	}

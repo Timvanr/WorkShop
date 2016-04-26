@@ -198,7 +198,7 @@ public class AdresDAO implements workshop.dao.AdresDAOInterface {
 	public Set<Adres> readAdressenPerKlant(int klant_id){
 		connection = getConnection();		
 		logger.info("readAdressenPerKlant(int klant_id); gestart");
-		Set<Adres> adressen = new LinkedHashSet<Adres>();
+		Set<Adres> adressen = new LinkedHashSet();
 		try {
 			RowSet adressenPerKlant = new JdbcRowSetImpl(connection);
 			adressenPerKlant.setCommand(
