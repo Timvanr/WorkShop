@@ -15,9 +15,7 @@ public class DatabaseConnection {
 	private static String USERNAME;
 	private static int connectieKeuze;
 	private static HikariDataSource hikariDS;
-	private static Connection hikariConn;
 	private static ComboPooledDataSource c3p0DS;
-	private static Connection c3p0Conn;
 	
 	public static String getDriverClass() {
 		return DriverClass;
@@ -73,7 +71,10 @@ public class DatabaseConnection {
 
 	private static Connection getC3p0Connection(){
 		try {
-			return getC3p0DataSource().getConnection();
+			if (c3p0DS == null){
+				getC3p0DataSource();
+			}
+			return c3p0DS.getConnection();
 				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -84,7 +85,10 @@ public class DatabaseConnection {
 
 	private static Connection getHikariConnection(){
 		try {
-			return getHikariDataSource().getConnection();
+			if (hikariDS == null){
+				getHikariDataSource();
+			}
+			return hikariDS.getConnection();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -92,7 +96,7 @@ public class DatabaseConnection {
 		return null;
 	}
 	
-	private static HikariDataSource getHikariDataSource() {
+	private static void getHikariDataSource() {
 		if (hikariDS == null){
 				
 			HikariConfig config = new HikariConfig();
@@ -108,34 +112,53 @@ public class DatabaseConnection {
 			config.addDataSourceProperty("prepStmtCacheSize", "250");
 			config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 			
-			HikariDataSource hikariDS = new HikariDataSource(config);
+			HikariDataSource hkrDS = new HikariDataSource(config);
 			
-			return hikariDS;
+			hikariDS = hkrDS;
 		}
-		return null;
 	}
 
-	private static ComboPooledDataSource getC3p0DataSource(){
+	private static void getC3p0DataSource(){
 		if (c3p0DS == null){
 				
-			ComboPooledDataSource c3p0DS = new ComboPooledDataSource();
+			ComboPooledDataSource cpDS = new ComboPooledDataSource();
 			
 			try{
-				c3p0DS.setDriverClass(DriverClass);
-				c3p0DS.setJdbcUrl(URL +"?useSSL=false"); 
-				c3p0DS.setUser(USERNAME); 
-				c3p0DS.setPassword(PW);
-				c3p0DS.setMinPoolSize(1); 
-				c3p0DS.setAcquireIncrement(1); 
-				c3p0DS.setMaxPoolSize(14);
+				cpDS.setDriverClass(DriverClass);
+				cpDS.setJdbcUrl(URL +"?useSSL=false"); 
+				cpDS.setUser(USERNAME); 
+				cpDS.setPassword(PW);
+				cpDS.setMinPoolSize(1); 
+				cpDS.setAcquireIncrement(1); 
+				cpDS.setMaxPoolSize(14);
+				cpDS.setMaxIdleTime(100);
+				cpDS.setMaxIdleTimeExcessConnections(100);
+				cpDS.setMaxStatements(90);
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-			return c3p0DS;
 			
+			c3p0DS = cpDS;
 		}
-		return null;
+	}
+	
+	static void close(){
+		if (getConnectieKeuze() == 1){
+			hikariDS.close();
+			hikariDS = null;
+			System.out.println("HikariCP verbinding verbroken.");
+		}
+		if (getConnectieKeuze() == 2){
+			c3p0DS.close();
+			c3p0DS = null;
+			System.out.println("C3p0 verbinding verbroken.");
+		}
+		/* Deze select werkt niet goed.. Waarom weet ik niet.. race condition??
+		else {
+			System.out.println("Verbinding verbreken is mislukt.");
+		}
+		*/
 	}
 
 	public static Connection getSingleConnection() {

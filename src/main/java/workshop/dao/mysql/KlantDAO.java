@@ -20,18 +20,18 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Scanner scInput = new Scanner(System.in);
 	protected static Logger logger = LoggerFactory.getLogger(KlantDAO.class);
-
-
+	private static Connection connection;
+	
 	public KlantDAO() {
+		getConnection();
 	}
 
 	public static Connection getConnection(){
-		Connection connection = DatabaseConnection.getPooledConnection();
-		return connection;		
+		return DatabaseConnection.getPooledConnection();		
 	}
 
 	public void createTable() throws SQLException{
-		Connection connection = getConnection();
+		connection = getConnection();
 
 		Statement createTable = connection.createStatement();
 		createTable.execute("CREATE TABLE Klant (" +
@@ -49,7 +49,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	
 	@Override
 	public int createKlant(Klant klant) {
-		Connection connection = getConnection();
+		connection = getConnection();
 		logger.info("CreataKlant(Klant klant); gestart.");
 		String insertKlantNaamString = "INSERT INTO Klant (voornaam, tussenvoegsel, achternaam, email) values (?,?,?,?);";
 		PreparedStatement insertKlantNaam = null;
@@ -112,7 +112,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	
 	@Override
 	public Klant readKlantWithId(int klant_id){
-		Connection connection = getConnection();
+		connection = getConnection();
 		logger.info("readKlantWithId(int klant_id); gestart");		
 		String query = "SELECT * FROM Klant WHERE klant_id =?";
 		Klant klant = null;
@@ -132,10 +132,9 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 				klant.setEmail(rowSet.getString("email"));
 				logger.info("readKlantWithId(int klant_id) ); uitgevoerd"
 						+ klant.toString() + "gelezen");
-
 			}			
+			
 			rowSet.close();
-
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
@@ -151,7 +150,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 
 	@Override
 	public Set<Klant> readKlantWithFirstName(String voornaam) {
-		Connection connection = getConnection();
+		connection = getConnection();
 		logger.info("readKlantWithFirstName(String voornaam); gestart");		
 		LinkedHashSet<Klant> klantset = new LinkedHashSet<>();
 		String query = "Select * from Klant where voornaam='" + voornaam + "'";
@@ -197,7 +196,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	
 	@Override
 	public Set<Klant> readKlantByAchternaam(String achter){
-		Connection connection = getConnection();
+		connection = getConnection();
 		String query = "SELECT * FROM Klant WHERE achternaam = ?";
 		Set<Klant> klantSet = new HashSet();
 		RowSet klantenByAchternaam = null;
@@ -232,7 +231,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	}
 
 	public Klant readKlantWithFirstLastName(String voornaam, String tussenvoegsel, String achternaam){
-		Connection connection = getConnection();
+		connection = getConnection();
 		logger.info("readKlantWithFirstLastName(String voornaam, String tussenvoegsel, String achternaam); gestart");		
 		String query2 = "Select * from Klant where voornaam='" + voornaam + "' AND tussenvoegsel='" + tussenvoegsel
 				+ "' AND achternaam='" + achternaam + "'";
@@ -275,7 +274,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 
 
 	public void UpdateKlantNaam(int klant_id, Klant klant){
-		Connection connection = getConnection();
+		connection = getConnection();
 		logger.info("UpdateKlantNaam(int klant_id, Klant klant); gestart");
 		String updateKlantNaamquery = "UPDATE Klant SET voornaam=?, achternaam=?, tussenvoegsel=? WHERE klant_id=?;";
 		PreparedStatement updateKlantNaam = null;
@@ -304,7 +303,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	}
 
 	public void updateEmail(int klant_id, String email){
-		Connection connection = getConnection();
+		connection = getConnection();
 		logger.info("updateEmail(int klant_id); gestart"); 
 		PreparedStatement updateEmail = null;
 		try {
@@ -336,7 +335,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 
 	// WILLEN WE HIER ALLEEN EEN NAAM OF OOK EEN ADRES? ANDERS MOET DIT NOG AANGEPAST WORDEN...
 	public Set<Klant> readAll(){
-		Connection connection = getConnection();
+		connection = getConnection();
 		LinkedHashSet<Klant> klantList = new LinkedHashSet();		
 		String query = "Select * from `Klant`";
 
@@ -370,7 +369,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	}
 
 	public void deleteAllFromKlantId(int klant_id){
-		Connection connection = getConnection();
+		connection = getConnection();
 		logger.info("deleteAllFromKlantId(int klant_id); gestart");
 		PreparedStatement deleteFromId = null;
 		String query = "Delete FROM Klant WHERE klant_id=?;";
@@ -397,7 +396,7 @@ public class KlantDAO implements workshop.dao.KlantDAOInterface{
 	}
 
 	public void deleteAllFromKlantNaam(String voornaam, String achternaam, String tussenvoegsel){
-		Connection connection = getConnection();
+		connection = getConnection();
 		logger.info("deleteAllFromKlantNaam(String voornaam, String achternaam, String tussenvoegsel); gestart");
 		PreparedStatement deleteAllFromNaam = null;
 		String query = "Delete FROM Klant WHERE voornaam='" + voornaam + "' AND tussenvoegsel='" + tussenvoegsel

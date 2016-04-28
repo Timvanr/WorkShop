@@ -78,7 +78,7 @@ public class Service {
 		System.out.println(bestelling);
 		}
 	
-	void printBestellingen(ArrayList<Bestelling> bestellijst){
+	void printBestellingen(Set<Bestelling> bestellijst){
 		System.out.println("Dit zijn alle bekende bestellingen");
 		for (Bestelling bestelling: bestellijst){
 			System.out.println(bestelling);

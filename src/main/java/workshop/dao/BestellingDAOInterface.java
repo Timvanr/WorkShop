@@ -14,6 +14,7 @@ public interface BestellingDAOInterface {
 	void updateBestelling(int bestelling_id, Bestelling bestelling);
 	//void verwijderTabel() throws SQLException ;
 	Set<Bestelling> haalBestellijst();
+	Set<Bestelling> getBestellijstByKlant(int klant_id);
 	void voegBestellingToe(Bestelling bestelling);
 	
 }

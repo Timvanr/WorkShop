@@ -20,8 +20,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	}
 	
 	private static Connection getConnection(){
-		connection = DatabaseConnection.getPooledConnection();
-		return connection;
+		return DatabaseConnection.getPooledConnection();
 	}
 	/*
 	public void maakTabel() throws SQLException {
@@ -115,17 +114,15 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 		
 	@Override
 	public Bestelling getBestelling(int bestelling_id){
-		connection = DatabaseConnection.getPooledConnection();
+		connection = getConnection();
 		Bestelling bestelling = null;
 		ArtikelDAO artikellijst = new ArtikelDAO();
-		try{
+		try {
 			bestelling = new Bestelling();
 			RowSet bestelData = new JdbcRowSetImpl(connection);
 			bestelData.setCommand(
 					"SELECT * FROM Bestelling " +
-					"INNER JOIN bestelling_has_artikel " +
-					"ON Bestelling.bestelling_id = bestelling_has_artikel.bestelling_id " +
-					"WHERE Bestelling.bestelling_id = ?");
+					"WHERE bestelling_id = ?");
 			bestelData.setInt(1, bestelling_id);
 			bestelData.execute();
 			
@@ -134,18 +131,27 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 				bestelling.setKlant_id(bestelData.getInt("klant_id"));
 				bestelling.setBestelling_id(bestelling_id);
 				
-				bestelData.beforeFirst();//Weer vooraan beginnen!! Haha dat heeft een boel geld gekost voor deze koffietent.				
-				while (bestelData.next()){
-					bestelling.voegArtikelToe
-							(artikellijst.getArtikelWithArtikelId(bestelData.getInt("artikel_id")), bestelData.getInt("artikel_aantal"));	
+				bestelData.setCommand(
+						"SELECT * FROM bestelling_has_artikel " +
+						"WHERE bestelling_id = ?");
+				bestelData.setInt(1, bestelling_id);
+				bestelData.execute();
+				
+				if (bestelData.isBeforeFirst()){
+					while (bestelData.next()){
+						bestelling.voegArtikelToe
+								(artikellijst.getArtikelWithArtikelId(bestelData.getInt("artikel_id")), bestelData.getInt("artikel_aantal"));	
+					}
+				} else {
+					System.out.println("Deze bestelling is leeg; geen artikelen gevonden");
 				}
 			} else {
-				System.out.println("Bestelling is niet gevonden");
+				System.out.println("Fout bij het lezen van de bestelling of geen bestelling gevonden");
 			}
 			
 			bestelData.close();
-			connection.close();	 
-		}catch (SQLException e) {
+			connection.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
 		
@@ -154,7 +160,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	
 	@Override
 	public Set<Bestelling> haalBestellijst(){
-		connection = DatabaseConnection.getPooledConnection();
+		connection = getConnection();
 		RowSet rowSet = null;
 		Set<Bestelling> bestellijst = new LinkedHashSet();
 		try {
@@ -177,16 +183,22 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 
 	@Override
 	public void verwijderBestelling(int bestelling_id){
+		connection = getConnection();
 		PreparedStatement verwijder = null;
+		PreparedStatement removeArtikel = null;
 		try {
-			connection = DatabaseConnection.getPooledConnection();
 			verwijder = connection.prepareStatement(
-					"DELETE FROM Bestelling, bestelling_has_artikel" + 
-					" USING Bestelling INNER JOIN bestelling_has_artikel ON" + 
-					" bestelling.bestelling_id=bestelling_has_artikel.bestelling_id WHERE bestelling.bestelling_id=?");
+					"DELETE FROM Bestelling " + 
+					"WHERE bestelling_id = ?");
 			verwijder.setInt(1, bestelling_id);
+			removeArtikel = connection.prepareStatement(
+					"DELETE FROM bestelling_has_artikel " +
+					"WHERE bestelling_id = ?");
+			removeArtikel.setInt(1, bestelling_id);
+			removeArtikel.executeUpdate();
 			verwijder.executeUpdate();
 			
+			removeArtikel.close();
 			verwijder.close();
 			System.out.println("Bestelling " + bestelling_id + " is verwijderd!");
 		} catch (SQLException ex) {
@@ -196,13 +208,12 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 		}
 	}
 
-
 	@Override
 	public int haalKlant_id(int bestelling_id){
 		PreparedStatement haalKlant_id = null;
 		int klant_id = 0;
 		try {
-			connection = DatabaseConnection.getPooledConnection();
+			connection = getConnection();
 			haalKlant_id = connection.prepareStatement
 					("SELECT klant_id FROM Bestelling WHERE bestelling_id = ?");
 			haalKlant_id.setInt(1, bestelling_id);
@@ -223,8 +234,9 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 		return klant_id;
 	}
 	
+	@Override
 	public Set<Bestelling> getBestellijstByKlant(int klant_id){
-		connection = DatabaseConnection.getPooledConnection();
+		connection = getConnection();
 		
 		Set<Bestelling> bestellijst = new LinkedHashSet();		
 		try {
@@ -233,6 +245,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 					"SELECT * FROM Bestelling " +
 					"WHERE klant_id = ?");
 			bestellijstByKlant.setInt(1, klant_id);
+			bestellijstByKlant.execute();
 			
 			while (bestellijstByKlant.next()){
 				bestellijst.add(getBestelling(bestellijstByKlant.getInt(1)));
@@ -254,7 +267,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 		
 		HashMap<Artikel, Integer> artikelen = bestelling.getArtikelen();
 		try {
-			connection = DatabaseConnection.getPooledConnection();
+			connection = getConnection();
 			
 			PreparedStatement deleteArtikelenOud = connection.prepareStatement(
 					"DELETE FROM bestelling_has_artikel " +
