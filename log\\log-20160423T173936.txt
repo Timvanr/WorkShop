@@ -1,3 +1,0 @@
-2016-04-23 17:39:40.645 [workshop.KeuzeMenu.main()] INFO  workshop.KeuzeMenu.startInlog(35) - test3 {}
-2016-04-23 17:39:50.995 [workshop.KeuzeMenu.main()] INFO  workshop.KeuzeMenu.startInlog(35) - test3 {}
-2016-04-23 17:39:51.951 [workshop.KeuzeMenu.main()] INFO  workshop.KeuzeMenu.startInlog(35) - test3 {}
