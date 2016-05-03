@@ -3,23 +3,40 @@ package workshop.model;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 
+import javax.persistence.*;
 
+@Entity
 public class Artikel {
+	@Id @GeneratedValue
 	private int artikel_id;
+	
 	private String artikel_naam;
+	@Lob
+	private String omschrijving;
+	
 	private BigDecimal artikel_prijs;
 	
-	public Artikel(){
-		this(0, null, null);
-	}
 	
+	public Artikel(){
+		this(0, null, null, null);
+	}
+	//zonder omschrijving
 	public Artikel(String naam, BigDecimal prijs){
-		this(0, naam, prijs);
+		this(0, naam, null, prijs);
 	}
 	
 	public Artikel(int id, String naam, BigDecimal prijs){
+		this(id, naam, null, prijs);
+	}
+	
+	public Artikel(String naam, String disc, BigDecimal prijs){
+		this(0, naam, disc, prijs);
+	}
+	
+	public Artikel(int id, String naam, String disc, BigDecimal prijs){
 		this.artikel_id = id;
 		this.artikel_naam = naam;
+		this.omschrijving = disc;
 		this.artikel_prijs = prijs;
 	}
 	
@@ -35,6 +52,12 @@ public class Artikel {
 	public void setNaam(String artikel_naam) {
 		this.artikel_naam = artikel_naam;
 	}
+	public String getOmschrijving(){
+		return this.omschrijving;
+	}
+	public void setOmschrijving(String disc){
+		this.omschrijving = disc;
+	}
 	public BigDecimal getPrijs() {
 		return this.artikel_prijs;
 	}
@@ -47,9 +70,8 @@ public class Artikel {
 		if (a instanceof Artikel){
 			Artikel artikel = (Artikel)a;
 			return this.getId() == artikel.getId();
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	@Override

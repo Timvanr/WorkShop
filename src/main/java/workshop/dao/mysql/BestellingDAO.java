@@ -1,12 +1,12 @@
 package workshop.dao.mysql;
 
 import java.sql.*;
-import java.sql.Date;
 
 import workshop.DatabaseConnection;
 import workshop.model.*;
 import com.sun.rowset.*;
 import java.util.*;
+import java.util.Date;
 
 import javax.sql.RowSet;
 import javax.sql.rowset.JdbcRowSet;
@@ -80,9 +80,9 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 		HashMap<Artikel, Integer> artikelen = bestelling.getArtikelen();
 		try {
 			PreparedStatement voegToe = connection.prepareStatement
-					("INSERT INTO Bestelling (klant_id, datum_aanmaak) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+					("INSERT INTO Bestelling (klant_id) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
 			voegToe.setInt(1, bestelling.getKlant_id());
-			voegToe.setDate(2, new Date(0, 0, 0));
+			//voegToe.setDate(2, new Date());
 			voegToe.executeUpdate();
 			
 			ResultSet rs = voegToe.getGeneratedKeys();

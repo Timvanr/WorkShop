@@ -18,7 +18,6 @@ public class KeuzeMenu {
 	static Logger logger = LoggerFactory.getLogger(KeuzeMenu.class);
 	private Connection connection;
 	private Scanner input;
-	private static KeuzeMenu keuzeMenu;
 	private int klant_id;
 	private int adres_id;
 	private Bestelling bestelling;
@@ -102,7 +101,7 @@ public class KeuzeMenu {
 		System.out.println("1. Klant of Adres -gegevens");
 		System.out.println("2. Een Bestelling");
 		System.out.println("3. Een Artikel");
-		System.out.println("4. Terug naar het hoofdmenu");
+		System.out.println("4. Terug (naar Hoofdmenu)");
 		int keuze = keuzePrompt();
 		switch (keuze){
 			case 1:

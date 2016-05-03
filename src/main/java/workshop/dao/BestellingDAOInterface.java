@@ -1,6 +1,5 @@
 package workshop.dao;
 
-import java.sql.*;
 import java.util.Set;
 
 import workshop.model.Bestelling;

@@ -115,6 +115,7 @@ public class DatabaseConnection {
 			HikariDataSource hkrDS = new HikariDataSource(config);
 			
 			hikariDS = hkrDS;
+			System.out.println("Nieuwe connectiepool");
 		}
 	}
 
@@ -140,6 +141,7 @@ public class DatabaseConnection {
 			}
 			
 			c3p0DS = cpDS;
+			System.out.println("Nieuwe connectiepool");
 		}
 	}
 	

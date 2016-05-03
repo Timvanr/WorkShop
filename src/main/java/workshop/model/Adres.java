@@ -1,32 +1,58 @@
 package workshop.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.*;
+
+@Entity
 public class Adres {
+	@Id @GeneratedValue
 	private int adres_id;
 	private String straatnaam;
 	private int huisnummer;
 	private String toevoeging;
 	private String postcode;
 	private String woonplaats;
+	@ManyToMany
+	@JoinTable(name="klant_has_adres", 
+			joinColumns=@JoinColumn(name="adres_id"),
+			inverseJoinColumns=@JoinColumn(name="klant_id")
+	)
+	private Set<Klant> bewoners;
 	
 	public Adres(){
-		this(0, null, 0, null, null, null);
+		this(0, null, 0, null, null, null, new HashSet());
+	}
+	
+	public Adres(String straat, int huisnummer, String postcode, String plaats){
+		this(0, straat, huisnummer, null, postcode, plaats, new HashSet());
 	}
 	
 	public Adres(String straat, int huisnummer, String toevoeging, String postcode, String plaats){
-		this(0, straat, huisnummer, toevoeging, postcode, plaats);
+		this(0, straat, huisnummer, toevoeging, postcode, plaats, new HashSet());
 	}
 	
-	public Adres(int adres_id, String straat, int huisnummer, String toevoeging, String postcode, String plaats){
+	public Adres(int adres_id, String straat, int huisnummer, String toevoeging, String postcode, String plaats, HashSet<Klant> bewoners){
 		this.adres_id = adres_id;
 		this.straatnaam = straat;
 		this.huisnummer = huisnummer;
 		this.toevoeging = toevoeging;
 		this.postcode = postcode;
 		this.woonplaats = plaats;
+		this.bewoners = bewoners;
+	}
+
+	public Set<Klant> getBewoners() {
+		return this.bewoners;
+	}
+
+	public void setBewoners(Set<Klant> bewoners) {
+		this.bewoners = bewoners;
 	}
 
 	public int getId(){
-		return adres_id;
+		return this.adres_id;
 	}
 	
 	public void setId(int adres_id){
@@ -34,7 +60,7 @@ public class Adres {
 	}
 	
 	public String getStraatnaam() {
-		return straatnaam;
+		return this.straatnaam;
 	}
 
 	public void setStraatnaam(String straatnaam) {
@@ -42,7 +68,7 @@ public class Adres {
 	}
 
 	public int getHuisnummer() {
-		return huisnummer;
+		return this.huisnummer;
 	}
 
 	public void setHuisnummer(int huisnummer) {
@@ -50,7 +76,7 @@ public class Adres {
 	}
 
 	public String getToevoeging() {
-		return toevoeging;
+		return this.toevoeging;
 	}
 
 	public void setToevoeging(String toevoeging) {
@@ -58,7 +84,7 @@ public class Adres {
 	}
 
 	public String getPostcode() {
-		return postcode;
+		return this.postcode;
 	}
 
 	public void setPostcode(String postcode) {
@@ -66,7 +92,7 @@ public class Adres {
 	}
 
 	public String getWoonplaats() {
-		return woonplaats;
+		return this.woonplaats;
 	}
 
 	public void setWoonplaats(String woonplaats) {
@@ -74,8 +100,7 @@ public class Adres {
 	}
 
 	public String toString(){
-		return "Adresnummer: " + this.adres_id + "\n" +
-				this.straatnaam + " " + this.huisnummer + " " + this.toevoeging + "\n" + 
+		return this.straatnaam + " " + this.huisnummer + " " + this.toevoeging + "\n" + 
 				this.postcode + " " + this.woonplaats;
 	}
 	
