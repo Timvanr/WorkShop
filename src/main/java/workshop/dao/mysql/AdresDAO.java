@@ -32,7 +32,7 @@ public class AdresDAO implements AdresDAOInterface {
 	SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
 	
 	@Override
-	public void createAdres(long klant_id, Adres adres){
+	public void createAdres(Adres adres){
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		try {
