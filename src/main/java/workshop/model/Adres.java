@@ -1,111 +1,73 @@
 package workshop.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-public class Adres {
-	@Id @GeneratedValue
-	private int adres_id;
+@Table(name = "adres")
+public class Adres implements java.io.Serializable{
+	@Id
+	@GeneratedValue (strategy=GenerationType.AUTO)
+	private long adres_id;
+	@Column
 	private String straatnaam;
-	private int huisnummer;
-	private String toevoeging;
+	@Column
 	private String postcode;
+	@Column
+	private String toevoeging;
+	@Column
+	private int huisnummer;
+	@Column
 	private String woonplaats;
-	@ManyToMany
-	@JoinTable(name="klant_has_adres", 
-			joinColumns=@JoinColumn(name="adres_id"),
-			inverseJoinColumns=@JoinColumn(name="klant_id")
-	)
-	private Set<Klant> bewoners;
-	
-	public Adres(){
-		this(0, null, 0, null, null, null, new HashSet());
-	}
-	
-	public Adres(String straat, int huisnummer, String postcode, String plaats){
-		this(0, straat, huisnummer, null, postcode, plaats, new HashSet());
-	}
-	
-	public Adres(String straat, int huisnummer, String toevoeging, String postcode, String plaats){
-		this(0, straat, huisnummer, toevoeging, postcode, plaats, new HashSet());
-	}
-	
-	public Adres(int adres_id, String straat, int huisnummer, String toevoeging, String postcode, String plaats, HashSet<Klant> bewoners){
-		this.adres_id = adres_id;
-		this.straatnaam = straat;
-		this.huisnummer = huisnummer;
-		this.toevoeging = toevoeging;
-		this.postcode = postcode;
-		this.woonplaats = plaats;
-		this.bewoners = bewoners;
+
+	public Adres() {
 	}
 
-	public Set<Klant> getBewoners() {
-		return this.bewoners;
+	public long getAdres_id() {
+		return adres_id;
 	}
-
-	public void setBewoners(Set<Klant> bewoners) {
-		this.bewoners = bewoners;
-	}
-
-	public int getId(){
-		return this.adres_id;
-	}
-	
-	public void setId(int adres_id){
+	public void setAdres_id(long adres_id) {
 		this.adres_id = adres_id;
 	}
-	
+
 	public String getStraatnaam() {
-		return this.straatnaam;
+		return straatnaam;
 	}
-
 	public void setStraatnaam(String straatnaam) {
 		this.straatnaam = straatnaam;
 	}
 
-	public int getHuisnummer() {
-		return this.huisnummer;
-	}
-
-	public void setHuisnummer(int huisnummer) {
-		this.huisnummer = huisnummer;
-	}
-
-	public String getToevoeging() {
-		return this.toevoeging;
-	}
-
-	public void setToevoeging(String toevoeging) {
-		this.toevoeging = toevoeging;
-	}
-
 	public String getPostcode() {
-		return this.postcode;
+		return postcode;
 	}
-
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
 	}
 
-	public String getWoonplaats() {
-		return this.woonplaats;
+	public String getToevoeging() {
+		return toevoeging;
+	}
+	public void setToevoeging(String toevoeging) {
+		this.toevoeging = toevoeging;
 	}
 
+	public int getHuisnummer() {
+		return huisnummer;
+	}
+	public void setHuisnummer(int huisnummer) {
+		this.huisnummer = huisnummer;
+	}
+
+	public String getWoonplaats() {
+		return woonplaats;
+	}
 	public void setWoonplaats(String woonplaats) {
 		this.woonplaats = woonplaats;
 	}
 
-	public String toString(){
-		return this.straatnaam + " " + this.huisnummer + " " + this.toevoeging + "\n" + 
-				this.postcode + " " + this.woonplaats;
-	}
-	
-	public String toDB(){
-		return "'" + this.toString().replaceAll("[ \n]", "', '") + "'";	
-				//"'" + this.straatnaam + "', " + this.huisnummer + ", '" + this.toevoeging + "', " + this.postcode + "', " + this.woonplaats + "', ";
-	}
 }
+
