@@ -6,6 +6,8 @@ public class DAOFactory {
 	private static AdresDAOInterface adresDAO;
 	private static BestellingDAOInterface bestellingDAO;
 	private static ArtikelDAOInterface artikelDAO;
+	private static FactuurDAOInterface factuurDAO;
+	private static BetalingDAOInterface betalingDAO;
 	private static int dataOpslagType;
 	
 	public static void setDataOpslagType(int opslagType) {
@@ -100,4 +102,48 @@ public class DAOFactory {
 		return artikelDAO;
 	}
 
+
+public static BetalingDAOInterface getBetalingDAO(){
+	if (betalingDAO == null){
+		if (dataOpslagType == 1){
+			betalingDAO = new workshop.dao.mysql.BetalingDAO();
+		}
+	/*	else if (dataOpslagType == 2){
+			betalingDAO = new workshop.dao.firebird.BetalingDAO();
+		}
+		
+		else if (dataOpslagType == 3){
+			return new betalinglijstJson();
+		}
+		
+		else if (dataOpslagType == 4){
+			return new betalinglijstXML();
+		}
+		*/
+	}
+	return betalingDAO;
 }
+
+public static FactuurDAOInterface getFactuurDAO(){
+	if (factuurDAO == null){
+		if (dataOpslagType == 1){
+			factuurDAO = new workshop.dao.mysql.FactuurDAO();
+		}
+		/*else if (dataOpslagType == 2){
+			factuurDAO = new workshop.dao.firebird.FactuurDAO();
+		}
+		
+		else if (dataOpslagType == 3){
+			return new factuurlijstJson();
+		}
+		
+		else if (dataOpslagType == 4){
+			return new factuurlijstXML();
+		}
+		*/
+	}
+	return factuurDAO;
+}
+
+}
+
