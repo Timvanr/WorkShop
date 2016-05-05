@@ -11,6 +11,7 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import workshop.model.*;
+import workshop.model.Betaling.Betaalwijze;
 
 public class TestHibernate {
 
@@ -25,13 +26,16 @@ public class TestHibernate {
 				.addAnnotatedClass(Adres.class)
 				.addAnnotatedClass(Factuur.class)
 				.addAnnotatedClass(Betaling.class)
+				.addAnnotatedClass(AdresType.class)
+				.addAnnotatedClass(Account.class)
+				.addAnnotatedClass(Betaalwijze.class)
 				.getMetadataBuilder()
 				.build();
-		//System.out.println(metadata.getNamedEntityGraphs());
+		
 		SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
 		try {
 			Session session = sessionFactory.openSession();
-			Adres adres = new Adres("Kreupelstraat", 1, "9711JA", "Groningen");
+			Adres adres = new Adres("Kreupelstraat", 1, "", "9711JA", "Groningen");
 			Klant k2 = new Klant("Sjaak", "", "Smaak", "sjaak@somewhere.com");
 			
 			session.beginTransaction();
@@ -62,20 +66,20 @@ public class TestHibernate {
 			session = sessionFactory.openSession();
 			
 			session.beginTransaction();
-			bestelling.voegArtikelToe((Artikel)session.get(Artikel.class, 1), 4);
-			bestelling.voegArtikelToe((Artikel)session.get(Artikel.class, 2), 11);
+			bestelling.voegArtikelToe((Artikel)session.get(Artikel.class, (long)1), 4);
+			bestelling.voegArtikelToe((Artikel)session.get(Artikel.class, (long)2), 11);
 			session.persist(bestelling);
 			System.out.println(" - " + bestelling.getTotaalPrijs() + " - ");
 			Factuur factuur = new Factuur(bestelling);
 			session.persist(factuur);
-			bestelling.getFactuurSet().add(factuur);
+			bestelling.setFactuur(factuur);
 			session.persist(bestelling);
 			session.getTransaction().commit();
 			session.close();
 			
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			Factuur opgeslagenFactuur = (Factuur)session.get(Factuur.class, 1);
+			Factuur opgeslagenFactuur = (Factuur)session.get(Factuur.class, (long)1);
 			session.getTransaction().commit();
 			session.close();
 			
@@ -83,7 +87,7 @@ public class TestHibernate {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			session.persist(betaling);
-			opgeslagenFactuur = (Factuur)session.get(Factuur.class, 1);
+			opgeslagenFactuur = (Factuur)session.get(Factuur.class, (long)1);
 			opgeslagenFactuur.getBetalingSet().add(betaling);
 			session.persist(opgeslagenFactuur);
 			session.getTransaction().commit();
@@ -93,7 +97,7 @@ public class TestHibernate {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			session.persist(betaling2);
-			opgeslagenFactuur = (Factuur)session.get(Factuur.class, 1);
+			opgeslagenFactuur = (Factuur)session.get(Factuur.class, (long)1);
 			opgeslagenFactuur.getBetalingSet().add(betaling2);
 			
 			session.persist(opgeslagenFactuur);
@@ -101,7 +105,7 @@ public class TestHibernate {
 			session.getTransaction().commit();
 			session.close();
 			
-		sessionFactory.close();
+			sessionFactory.close();
 			
 		} catch (HibernateException e) {
 			e.printStackTrace();

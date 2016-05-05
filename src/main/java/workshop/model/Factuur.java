@@ -31,7 +31,7 @@ public class Factuur {
 	private BigDecimal openstaandBedrag;
 	
 	
-	
+	@Deprecated
 	public Factuur(){
 		this.factuurDatum = new Date();
 		this.betalingSet = new HashSet<Betaling>();
@@ -41,9 +41,10 @@ public class Factuur {
 		this.bestelling = bestelling;
 		this.factuurDatum = new Date();
 		this.betalingSet = new HashSet<Betaling>();
+		this.openstaandBedrag = bestelling.getTotaalPrijs();
 	}
 	public long getFactuur_id() {
-		return factuur_id;
+		return this.factuur_id;
 	}
 	
 	public void setFactuur_id(long factuur_id) {
@@ -51,14 +52,14 @@ public class Factuur {
 	}
 	
 	public String getFactuurNummer() {
-		return factuurNummer;
+		return this.factuurNummer;
 	}
 	public void setFactuurNummer(String factuurNummer) {
 		this.factuurNummer = factuurNummer;
 	}
 	
 	public Date getFactuurDatum() {
-		return factuurDatum;
+		return this.factuurDatum;
 	}
 	public void setFactuurDatum(Date factuurDatum) {
 		this.factuurDatum = factuurDatum;
@@ -66,7 +67,7 @@ public class Factuur {
 	
 	
 	public Set<Betaling> getBetalingSet() {
-		return betalingSet;
+		return this.betalingSet;
 	}
 	
 	public void setBetalingSet(Set<Betaling> betalingSet) {
@@ -74,14 +75,19 @@ public class Factuur {
 	}
 	
 	public Bestelling getBestelling() {
-		return bestelling;
+		return this.bestelling;
 	}
 	public void setBestelling(Bestelling bestelling) {
 		this.bestelling = bestelling;
 	}
 	
 	public BigDecimal getOpenstaandBedrag() {
-		return openstaandBedrag;
+		BigDecimal totaal = this.bestelling.getTotaalPrijs(); 
+		
+		for (Betaling b : this.betalingSet){
+			totaal = totaal.subtract(b.getBetaaldBedrag()); 
+		}
+		return totaal;
 	}
 
 	public void setOpenstaandBedrag(BigDecimal openstaandBedrag) {

@@ -17,8 +17,8 @@ public class Bestelling {
 	
 	@Id
 	@GeneratedValue
-	@JoinColumn(name="bestelling_id")
-	private int id;
+	@Column(name="bestelling_id")
+	private long id;
 	
 	private Date datum;
 	
@@ -28,25 +28,23 @@ public class Bestelling {
 	@Column(name="artikel_aantal")
 	private Map<Artikel, Integer> artikelen;
 	
-	@ElementCollection
-	@CollectionTable(name="bestelling_has_factuur")
-	@JoinColumn(name="factuur_id")
-	private Set<Factuur> factuurSet;
+	@OneToOne(mappedBy="bestelling")
+	private Factuur factuur;
 
 	public Bestelling(Klant klant) {
 		this.datum = new Date();
 		this.klant = klant;
 		this.artikelen = new HashMap();
-		this.factuurSet = new HashSet();
+		this.factuur = new Factuur();
 	}
 	//@Deprecated
 	public Bestelling(){
 		this.datum = new Date();
 		this.artikelen = new HashMap();
-		this.factuurSet = new HashSet();
+		this.factuur = new Factuur();
 	}
 	
-	public int getKlant_id() { 
+	public long getKlant_id() { 
 		return this.klant.getId();
 	}
 	public Klant getKlant(){
@@ -55,7 +53,7 @@ public class Bestelling {
 	public void setKlant_id(Klant klant){
 		this.klant = klant;
 	}
-	public int getId() {
+	public long getId() {
 		return this.id;
 	}
 	public void setId(int bestelling_id) {
@@ -73,11 +71,11 @@ public class Bestelling {
 	public void setArtikelen(Map<Artikel, Integer> artikelen){
 		this.artikelen = artikelen;
 	}
-	public Set<Factuur> getFactuurSet() {
-		return this.factuurSet;
+	public Factuur getFactuur() {
+		return this.factuur;
 	}
-	public void setFactuurSet(Set<Factuur> factuurSet) {
-		this.factuurSet = factuurSet;
+	public void setFactuur(Factuur factuur) {
+		this.factuur = factuur;
 	}
 	
 	public void voegArtikelToe(Artikel artikel, Integer aantal){

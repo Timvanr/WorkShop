@@ -25,8 +25,8 @@ public enum Betaalwijze {
 	private Betaalwijze betaalWijze;
 	
 	@ManyToOne
-	@JoinColumn (name="klant_id")
-	protected Klant klant;
+	@JoinColumn (name="klant_id", nullable=false)
+	private Klant klant;
 	
 	@ManyToOne
 	@JoinColumn (name="factuur_id")
@@ -38,12 +38,14 @@ public enum Betaalwijze {
 	@Column
 	private BigDecimal betaaldBedrag;
 	
-public Betaling(){}
+	@Deprecated
+	public Betaling(){}
 	
 	public Betaling(Factuur factuur, BigDecimal bedrag){
 		this.factuur = factuur;
 		this.betaaldBedrag = bedrag;
 		this.betaalDatum = new Date();
+		this.klant = factuur.getBestelling().getKlant();//moet alles wel geSet zijn.
 	}
 	
 	public Betaling(Factuur factuur, BigDecimal bedrag, String gegevens){
@@ -51,9 +53,10 @@ public Betaling(){}
 		this.betaaldBedrag = bedrag;
 		this.betaalDatum = new Date();
 		this.betalingsGegevens = gegevens;
+		this.klant = factuur.getBestelling().getKlant();
 	}
 	public long getBetaling_id() {
-		return betaling_id;
+		return this.betaling_id;
 	}
 	
 	public void setBetaling_id(long betaling_id) {
@@ -61,14 +64,14 @@ public Betaling(){}
 	}
 	
 	public Date getBetaalDatum() {
-		return betaalDatum;
+		return this.betaalDatum;
 	}
 	public void setBetaalDatum(Date betaalDatum) {
 		this.betaalDatum = betaalDatum;
 	}
 	
 	public Betaalwijze getBetaalWijze() {
-	return betaalWijze;
+	return this.betaalWijze;
 	}
 	
 	public void setBetaalWijze(Betaalwijze betaalWijze) {
@@ -76,15 +79,15 @@ public Betaling(){}
 	}
 	
 	public Klant getKlant() {
-	return klant;
+		return this.klant;
 	}
+	
 	public void setKlant(Klant klant) {
 		this.klant = klant;
 	}
 	
-	
 	public Factuur getFactuur() {
-		return factuur;
+		return this.factuur;
 	}
 	
 	public void setFactuur(Factuur factuur) {
@@ -93,7 +96,7 @@ public Betaling(){}
 	
 	
 	public String getBetalingsGegevens() {
-		return betalingsGegevens;
+		return this.betalingsGegevens;
 	}
 	
 	public void setBetalingsGegevens(String betalingsGegevens) {
@@ -101,7 +104,7 @@ public Betaling(){}
 	}
 	
 	public BigDecimal getBetaaldBedrag() {
-		return betaaldBedrag;
+		return this.betaaldBedrag;
 	}
 
 	public void setBetaaldBedrag(BigDecimal betaaldBedrag) {

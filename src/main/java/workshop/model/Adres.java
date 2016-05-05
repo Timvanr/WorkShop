@@ -1,14 +1,13 @@
 package workshop.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.*;
 
 @Entity
-@Table(name = "adres")
+@Table(name = "Adres")
 public class Adres implements java.io.Serializable{
 	@Id
 	@GeneratedValue (strategy=GenerationType.AUTO)
@@ -23,50 +22,69 @@ public class Adres implements java.io.Serializable{
 	private int huisnummer;
 	@Column
 	private String woonplaats;
+	@ManyToMany(mappedBy="adressen")
+	private Set<Klant> bewoners;
 
 	public Adres() {
+		this.bewoners = new HashSet();
+	}
+
+	public Adres(String straat, int huisnummer, String toevoeging, String postcode,	String plaats) {
+		this.straatnaam = straat;
+		this.huisnummer = huisnummer;
+		this.toevoeging = toevoeging;
+		this.postcode = postcode;
+		this.woonplaats = plaats;
+		this.bewoners = new HashSet();
 	}
 
 	public long getAdres_id() {
-		return adres_id;
+		return this.adres_id;
 	}
 	public void setAdres_id(long adres_id) {
 		this.adres_id = adres_id;
 	}
 
 	public String getStraatnaam() {
-		return straatnaam;
+		return this.straatnaam;
 	}
 	public void setStraatnaam(String straatnaam) {
 		this.straatnaam = straatnaam;
 	}
 
 	public String getPostcode() {
-		return postcode;
+		return this.postcode;
 	}
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
 	}
 
 	public String getToevoeging() {
-		return toevoeging;
+		return this.toevoeging;
 	}
 	public void setToevoeging(String toevoeging) {
 		this.toevoeging = toevoeging;
 	}
 
 	public int getHuisnummer() {
-		return huisnummer;
+		return this.huisnummer;
 	}
 	public void setHuisnummer(int huisnummer) {
 		this.huisnummer = huisnummer;
 	}
 
 	public String getWoonplaats() {
-		return woonplaats;
+		return this.woonplaats;
 	}
 	public void setWoonplaats(String woonplaats) {
 		this.woonplaats = woonplaats;
+	}
+
+	public Set<Klant> getBewoners() {
+		return this.bewoners;
+	}
+	public void setBewoners(Set<Klant> bewoners){
+		this.bewoners = bewoners;
 	}
 
 }

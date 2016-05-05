@@ -8,7 +8,8 @@ import javax.persistence.*;
 @Entity
 public class Artikel {
 	@Id @GeneratedValue
-	private int artikel_id;
+	@Column(name="artikel_id")
+	private long id;
 	
 	private String artikel_naam;
 	@Lob
@@ -34,17 +35,17 @@ public class Artikel {
 	}
 	
 	public Artikel(int id, String naam, String disc, BigDecimal prijs){
-		this.artikel_id = id;
+		this.id = id;
 		this.artikel_naam = naam;
 		this.omschrijving = disc;
 		this.artikel_prijs = prijs;
 	}
 	
-	public int getId() {
-		return this.artikel_id;
+	public long getId() {
+		return this.id;
 	}
-	public void setId(int artikel_id) {
-		this.artikel_id = artikel_id;
+	public void setId(long artikel_id) {
+		this.id = artikel_id;
 	}
 	public String getNaam() {
 		return this.artikel_naam;
@@ -76,12 +77,12 @@ public class Artikel {
 	
 	@Override
 	public int hashCode(){
-		return this.artikel_id;
+		return (int)this.id;
 	}	
 	
 	@Override
 	public String toString(){
-		return "Artikelnummer: " + this.artikel_id + " Naam: " + this.artikel_naam + " Prijs: " + NumberFormat.getCurrencyInstance().format(this.artikel_prijs);
+		return "Artikelnummer: " + this.id + " Naam: " + this.artikel_naam + " Prijs: " + NumberFormat.getCurrencyInstance().format(this.artikel_prijs);
 	}
 	
 	

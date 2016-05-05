@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "account")
+@Table(name = "Account")
 public class Account implements java.io.Serializable{
 	@Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -28,14 +28,14 @@ public class Account implements java.io.Serializable{
 	
 	
 	public long getAccount_id() {
-		return account_id;
+		return this.account_id;
 	}
 	public void setAccount_id(long account_id) {
 		this.account_id = account_id;
 	}
 
 	public Klant getKlant() {
-		return klant;
+		return this.klant;
 	}
 
 	public void setKlant(Klant klant) {
@@ -43,7 +43,7 @@ public class Account implements java.io.Serializable{
 	}
 
 	public String getNaam() {
-		return naam;
+		return this.naam;
 	}
 
 	public void setNaam(String naam) {
@@ -51,7 +51,7 @@ public class Account implements java.io.Serializable{
 	}
 	
 	public java.util.Date getCreateDatum() {
-		return createDatum;
+		return this.createDatum;
 	}
 
 	public void setCreateDatum(java.util.Date createDatum) {
