@@ -5,7 +5,7 @@ import workshop.model.Adres;
 
 public interface AdresDAOInterface {
 	
-	void createAdres(long klant_id, Adres adres);
+	void createAdres(Adres adres);
 	List<Adres> readAll();
 	Adres readAdresmetId(long adres_id);
 	void updateAdres(Adres adres);
