@@ -28,10 +28,10 @@ public class Factuur {
 	private Bestelling bestelling;
 	
 	@Column
-	private BigDecimal openstaandBedrag;
+	private BigDecimal totaalBedrag;
 	
 	
-	@Deprecated
+	//@Deprecated
 	public Factuur(){
 		this.factuurDatum = new Date();
 		this.betalingSet = new HashSet<Betaling>();
@@ -41,7 +41,7 @@ public class Factuur {
 		this.bestelling = bestelling;
 		this.factuurDatum = new Date();
 		this.betalingSet = new HashSet<Betaling>();
-		this.openstaandBedrag = bestelling.getTotaalPrijs();
+		this.totaalBedrag = bestelling.getTotaalPrijs();
 	}
 	public long getFactuur_id() {
 		return this.factuur_id;
@@ -82,16 +82,20 @@ public class Factuur {
 	}
 	
 	public BigDecimal getOpenstaandBedrag() {
-		BigDecimal totaal = this.bestelling.getTotaalPrijs(); 
+		BigDecimal totaal = this.totaalBedrag; 
 		
 		for (Betaling b : this.betalingSet){
 			totaal = totaal.subtract(b.getBetaaldBedrag()); 
 		}
 		return totaal;
 	}
-
-	public void setOpenstaandBedrag(BigDecimal openstaandBedrag) {
-		this.openstaandBedrag = openstaandBedrag;
+	
+	public BigDecimal getTotaalBedrag() {
+		return this.totaalBedrag;
+	}
+// Als er achteraf nog een korting of boete ofzo toegekend wordt misschien
+	public void setTotaalBedrag(BigDecimal totaalBedrag) {
+		this.totaalBedrag = totaalBedrag;
 	}
 
 	

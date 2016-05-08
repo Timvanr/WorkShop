@@ -12,18 +12,19 @@ import workshop.dao.KlantDAOInterface;
 
 @Entity
 public class Bestelling {
-	@ManyToOne
-	private Klant klant;
 	
-	@Id
-	@GeneratedValue
+	@Id	@GeneratedValue
 	@Column(name="bestelling_id")
 	private long id;
+	
+	@ManyToOne
+	@JoinColumn(name="klant_id")
+	private Klant klant;
 	
 	private Date datum;
 	
 	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="bestelling_has_artikel")//, joinColumns=@JoinColumn(name="bestelling_id"))
+	@CollectionTable(name="bestelling_has_artikel", joinColumns=@JoinColumn(name="bestelling_id"))
 	@MapKeyJoinColumn(name="artikel_id", referencedColumnName="artikel_id")
 	@Column(name="artikel_aantal")
 	private Map<Artikel, Integer> artikelen;
@@ -32,16 +33,15 @@ public class Bestelling {
 	private Factuur factuur;
 
 	public Bestelling(Klant klant) {
-		this.datum = new Date();
 		this.klant = klant;
-		this.artikelen = new HashMap();
-		this.factuur = new Factuur();
-	}
-	//@Deprecated
-	public Bestelling(){
 		this.datum = new Date();
 		this.artikelen = new HashMap();
-		this.factuur = new Factuur();
+		this.factuur = new Factuur(this);
+	}
+	
+	@Deprecated
+	public Bestelling() {
+		this(null);
 	}
 	
 	public long getKlant_id() { 
@@ -50,7 +50,7 @@ public class Bestelling {
 	public Klant getKlant(){
 		return this.klant;
 	}
-	public void setKlant_id(Klant klant){
+	public void setKlant(Klant klant){
 		this.klant = klant;
 	}
 	public long getId() {

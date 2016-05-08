@@ -16,7 +16,13 @@ public class AdresType implements java.io.Serializable{
     private String adres_type;
     //private static String[] types = {"Bezorgadres", "Factuuradres", "Bezoekadres"};
     
-    @Id
+    public AdresType(){}
+    
+    public AdresType(int id) {
+		this.adres_type_id = id;
+	}
+
+	@Id
     public int getAdres_type_id(){
         return this.adres_type_id;
     }
@@ -30,7 +36,7 @@ public class AdresType implements java.io.Serializable{
         return this.adres_type;
     }
     
-    protected void setAdres_type(String adres_type){
+    public void setAdres_type(String adres_type){
         this.adres_type = adres_type;
     }
     /*

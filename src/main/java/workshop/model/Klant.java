@@ -1,20 +1,18 @@
 package workshop.model;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 //import javax.annotation.Resource;
 import javax.persistence.*;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
-
 @Entity
 @Table(name= "Klant")
 public class Klant implements java.io.Serializable {
 	@Id
 	@GeneratedValue (strategy=GenerationType.AUTO)
+	@Column(name="klant_id")
 	private long klant_id;
 	@Column
 	private String voornaam;
@@ -22,26 +20,28 @@ public class Klant implements java.io.Serializable {
 	private String tussenvoegsel;
 	@Column
 	private String achternaam;
-	@Column
+	@Column(unique = true)
 	private String email;
-
 
 	//@Resource(name="bestellingen")
 	@OneToMany(mappedBy = "klant", targetEntity = Bestelling.class)//, fetch = FetchType.EAGER) 
-	@Cascade({CascadeType.SAVE_UPDATE})
-	private Set<Bestelling> bestellingen;
-	//@Resource(name="Factuur")
-	//@OneToMany(mappedBy = "klant", targetEntity = Factuur.class)//, fetch = FetchType.EAGER)
 	//@Cascade({CascadeType.SAVE_UPDATE})
-	//private Set<Factuur> facturen;
-	//@Resource(name="accounts")
-	@OneToMany(mappedBy = "klant", targetEntity = Account.class)//, fetch = FetchType.EAGER)
+	private Set<Bestelling> bestellingen;
+/*
+	//@Resource(name="Factuur")
+	@OneToMany(mappedBy = "klant", targetEntity = Factuur.class)//, fetch = FetchType.EAGER)
 	@Cascade({CascadeType.SAVE_UPDATE})
+	private Set<Factuur> facturen;
+*/	
+	//@Resource(name="accounts")
+	@OneToMany(mappedBy = "klant", targetEntity = Account.class, cascade=CascadeType.ALL)//, fetch = FetchType.EAGER)
+	//@Cascade({CascadeType.SAVE_UPDATE})
 	private Set<Account> accounts;
+	
 	//@Resource(name="adressen")
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.MERGE)
 	@JoinTable(name="klant_has_adres", joinColumns=@JoinColumn(name="klant_id"),
-	inverseJoinColumns=@JoinColumn(name="adrestype_id"))
+		inverseJoinColumns=@JoinColumn(name="adrestype_id"))
 	@MapKeyJoinColumn(name = "adres_id", table = "klant_has_adres")
 	private Map<Adres, AdresType> adressen;
 
@@ -58,6 +58,7 @@ public class Klant implements java.io.Serializable {
 		this.achternaam = achternaam;
 		this.tussenvoegsel = tussenvoegsel;
 		this.email = email;
+		this.adressen = new HashMap();
 	}
 
 	public long getId() {
@@ -132,7 +133,7 @@ public class Klant implements java.io.Serializable {
 
 	@Override
 	public String toString(){
-		return this.voornaam + " " + this.tussenvoegsel + " " + this.achternaam + "\n" +  "\n" + this.email;
+		return this.voornaam + " " + this.tussenvoegsel + " " + this.achternaam + "\n" + this.email;
 	}
 
 }
