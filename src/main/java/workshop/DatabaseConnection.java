@@ -96,7 +96,8 @@ public class DatabaseConnection {
 		return null;
 	}
 	
-	private static void getHikariDataSource() {
+	static HikariDataSource getHikariDataSource() {
+		HikariDataSource hkrDS = null;
 		if (hikariDS == null){
 				
 			HikariConfig config = new HikariConfig();
@@ -112,10 +113,10 @@ public class DatabaseConnection {
 			config.addDataSourceProperty("prepStmtCacheSize", "250");
 			config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 			
-			HikariDataSource hkrDS = new HikariDataSource(config);
+			hkrDS = new HikariDataSource(config);
 			
-			hikariDS = hkrDS;
 		}
+		return hkrDS;
 	}
 
 	private static void getC3p0DataSource(){
@@ -140,6 +141,7 @@ public class DatabaseConnection {
 			}
 			
 			c3p0DS = cpDS;
+			System.out.println("Nieuwe connectiepool");
 		}
 	}
 	

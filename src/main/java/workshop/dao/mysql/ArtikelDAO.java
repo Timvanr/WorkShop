@@ -10,11 +10,19 @@ import java.util.Set;
 import workshop.DatabaseConnection;
 import workshop.model.Artikel;
 import javax.sql.RowSet;
+
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.mysql.jdbc.Statement;
 import com.sun.rowset.JdbcRowSetImpl;
-
+@Repository
 public class ArtikelDAO implements workshop.dao.ArtikelDAOInterface {
 
+	@Autowired
+	SessionFactory sessionFactory;
 	private static Connection getConnection() {
 		Connection connection = DatabaseConnection.getPooledConnection();
 
@@ -25,7 +33,12 @@ public class ArtikelDAO implements workshop.dao.ArtikelDAOInterface {
 
 	}
 
+	public ArtikelDAO(SessionFactory sessionFactory){
+		this.sessionFactory = sessionFactory;
+	}
+
 	@Override
+	@Transactional
 	public int createArtikel(Artikel artikel) {
 		Connection connection = getConnection();
 		String createArtikelString = "INSERT INTO Artikel (artikel_naam, artikel_prijs) values (?,?);";
@@ -60,6 +73,7 @@ public class ArtikelDAO implements workshop.dao.ArtikelDAOInterface {
 	}
 
 	@Override
+	@Transactional
 	public Artikel getArtikelWithArtikelId(int artikel_id) {
 		Connection connection = getConnection();
 		String getArtikelString = "SELECT * FROM Artikel WHERE artikel_id=?;";
@@ -98,6 +112,7 @@ public class ArtikelDAO implements workshop.dao.ArtikelDAOInterface {
 	}
 	
 	@Override
+	@Transactional
 	public Artikel getArtikelWithNaam(String naam) {
 		Connection connection = getConnection();
 		String query = "SELECT * FROM Artikel WHERE artikel_naam = ?";
@@ -134,6 +149,7 @@ public class ArtikelDAO implements workshop.dao.ArtikelDAOInterface {
 	
 	
 	@Override
+	@Transactional
 	public Set<Artikel> getArtikellijst(){
 		Connection connection = getConnection();
 		String query = "SELECT * FROM Artikel ORDER BY artikel_naam";
@@ -166,6 +182,7 @@ public class ArtikelDAO implements workshop.dao.ArtikelDAOInterface {
 	}
 	
 	@Override
+	@Transactional
 	public void updateArtikel(int id, Artikel artikel) {
 		Connection connection = getConnection();
 		String update = "UPDATE Artikel SET artikel_naam = ?, artikel_prijs = ? WHERE artikel_id = ?";
@@ -190,6 +207,7 @@ public class ArtikelDAO implements workshop.dao.ArtikelDAOInterface {
 	}
 
 	@Override
+	@Transactional
 	public void deleteArtikelWithArtikelId(int artikel_id) {
 		Connection connection = getConnection();
 		String deleteArtikelString = "DELETE FROM Artikel WHERE artikel_id=?;";

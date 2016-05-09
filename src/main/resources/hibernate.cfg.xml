@@ -1,0 +1,26 @@
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/workshop2
+		</property>
+		<property name="connection.username">sandermegens</property>
+		<property name="connection.password">FrIkandel</property>
+		<property name="connection.pool_size">10</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="show_sql">true</property>
+		<property name="hbm2dll.auto">create</property>
+
+		
+		<mapping class="workshop.model.Klant" />
+		<mapping class="workshop.model.Adres" />
+		<mapping class="workshop.model.Bestelling" />
+		<mapping class="workshop.model.Account" />
+		<mapping class="workshop.model.Artikel" />
+	
+		<mapping class="workshop.model.Betaling" />
+		<mapping class="workshop.model.Factuur" />
+		<mapping class="workshop.model.AdresType" />
+		
+
+	</session-factory>
+</hibernate-configuration>

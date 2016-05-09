@@ -1,86 +1,93 @@
 package workshop.model;
 
-public class Adres {
-	private int adres_id;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.*;
+
+import org.springframework.stereotype.Component;
+@Component
+@Entity
+@Table(name = "Adres")
+public class Adres implements java.io.Serializable{
+	@Id
+	@GeneratedValue (strategy=GenerationType.AUTO)
+	private long adres_id;
+	@Column
 	private String straatnaam;
-	private int huisnummer;
-	private String toevoeging;
+	@Column
 	private String postcode;
+	@Column
+	private String toevoeging;
+	@Column
+	private int huisnummer;
+	@Column
 	private String woonplaats;
-	
-	public Adres(){
-		this(0, null, 0, null, null, null);
+	@ManyToMany(mappedBy="adressen")
+	private Set<Klant> bewoners;
+
+	public Adres() {
+		this.bewoners = new HashSet();
 	}
-	
-	public Adres(String straat, int huisnummer, String toevoeging, String postcode, String plaats){
-		this(0, straat, huisnummer, toevoeging, postcode, plaats);
-	}
-	
-	public Adres(int adres_id, String straat, int huisnummer, String toevoeging, String postcode, String plaats){
-		this.adres_id = adres_id;
+
+	public Adres(String straat, int huisnummer, String toevoeging, String postcode,	String plaats) {
 		this.straatnaam = straat;
 		this.huisnummer = huisnummer;
 		this.toevoeging = toevoeging;
 		this.postcode = postcode;
 		this.woonplaats = plaats;
+		this.bewoners = new HashSet();
 	}
 
-	public int getId(){
-		return adres_id;
+	public long getAdres_id() {
+		return this.adres_id;
 	}
-	
-	public void setId(int adres_id){
+	public void setAdres_id(long adres_id) {
 		this.adres_id = adres_id;
 	}
-	
-	public String getStraatnaam() {
-		return straatnaam;
-	}
 
+	public String getStraatnaam() {
+		return this.straatnaam;
+	}
 	public void setStraatnaam(String straatnaam) {
 		this.straatnaam = straatnaam;
 	}
 
-	public int getHuisnummer() {
-		return huisnummer;
-	}
-
-	public void setHuisnummer(int huisnummer) {
-		this.huisnummer = huisnummer;
-	}
-
-	public String getToevoeging() {
-		return toevoeging;
-	}
-
-	public void setToevoeging(String toevoeging) {
-		this.toevoeging = toevoeging;
-	}
-
 	public String getPostcode() {
-		return postcode;
+		return this.postcode;
 	}
-
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
 	}
 
-	public String getWoonplaats() {
-		return woonplaats;
+	public String getToevoeging() {
+		return this.toevoeging;
+	}
+	public void setToevoeging(String toevoeging) {
+		this.toevoeging = toevoeging;
 	}
 
+	public int getHuisnummer() {
+		return this.huisnummer;
+	}
+	public void setHuisnummer(int huisnummer) {
+		this.huisnummer = huisnummer;
+	}
+
+	public String getWoonplaats() {
+		return this.woonplaats;
+	}
 	public void setWoonplaats(String woonplaats) {
 		this.woonplaats = woonplaats;
 	}
 
-	public String toString(){
-		return "Adresnummer: " + this.adres_id + "\n" +
-				this.straatnaam + " " + this.huisnummer + " " + this.toevoeging + "\n" + 
-				this.postcode + " " + this.woonplaats;
+	public Set<Klant> getBewoners() {
+		return this.bewoners;
 	}
-	
-	public String toDB(){
-		return "'" + this.toString().replaceAll("[ \n]", "', '") + "'";	
-				//"'" + this.straatnaam + "', " + this.huisnummer + ", '" + this.toevoeging + "', " + this.postcode + "', " + this.woonplaats + "', ";
+	public void setBewoners(Set<Klant> bewoners){
+		this.bewoners = bewoners;
 	}
+
 }
+

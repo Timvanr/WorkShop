@@ -1,24 +1,35 @@
 package workshop.dao.mysql;
 
 import java.sql.*;
-import java.sql.Date;
 
 import workshop.DatabaseConnection;
 import workshop.model.*;
 import com.sun.rowset.*;
 import java.util.*;
+import java.util.Date;
 
 import javax.sql.RowSet;
 import javax.sql.rowset.JdbcRowSet;
 
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+@Repository
 public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	private static Connection connection;
 	//ArtikelDAO artikellijst;
+	@Autowired
+	SessionFactory sessionFactory;
 	
 	public BestellingDAO() {
 		getConnection();
 	}
 	
+	public BestellingDAO(SessionFactory sessionFactory){
+		this.sessionFactory = sessionFactory;
+	}
+
 	private static Connection getConnection(){
 		return DatabaseConnection.getPooledConnection();
 	}
@@ -74,15 +85,16 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	}
 */
 	@Override
+	@Transactional
 	public void voegBestellingToe(Bestelling bestelling){
 		connection = getConnection();
 		
 		HashMap<Artikel, Integer> artikelen = bestelling.getArtikelen();
 		try {
 			PreparedStatement voegToe = connection.prepareStatement
-					("INSERT INTO Bestelling (klant_id, datum_aanmaak) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+					("INSERT INTO Bestelling (klant_id) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
 			voegToe.setInt(1, bestelling.getKlant_id());
-			voegToe.setDate(2, new Date(0, 0, 0));
+			//voegToe.setDate(2, new Date());
 			voegToe.executeUpdate();
 			
 			ResultSet rs = voegToe.getGeneratedKeys();
@@ -113,6 +125,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	}
 		
 	@Override
+	@Transactional
 	public Bestelling getBestelling(int bestelling_id){
 		connection = getConnection();
 		Bestelling bestelling = null;
@@ -159,6 +172,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	}
 	
 	@Override
+	@Transactional
 	public Set<Bestelling> haalBestellijst(){
 		connection = getConnection();
 		RowSet rowSet = null;
@@ -182,6 +196,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	}
 
 	@Override
+	@Transactional
 	public void verwijderBestelling(int bestelling_id){
 		connection = getConnection();
 		PreparedStatement verwijder = null;
@@ -209,6 +224,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	}
 
 	@Override
+	@Transactional
 	public int haalKlant_id(int bestelling_id){
 		PreparedStatement haalKlant_id = null;
 		int klant_id = 0;
@@ -235,6 +251,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	}
 	
 	@Override
+	@Transactional
 	public Set<Bestelling> getBestellijstByKlant(int klant_id){
 		connection = getConnection();
 		
@@ -262,6 +279,7 @@ public class BestellingDAO implements workshop.dao.BestellingDAOInterface {
 	}
 	
 	@Override
+	@Transactional
 	public void updateBestelling(int bestelling_id, Bestelling bestelling) {
 		PreparedStatement update = null;
 		
