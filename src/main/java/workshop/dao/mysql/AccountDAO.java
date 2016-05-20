@@ -2,9 +2,7 @@ package workshop.dao.mysql;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Scanner;
-
+import java.util.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,14 +14,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import workshop.dao.AdresDAOInterface;
-import workshop.model.Adres;
+import workshop.dao.AccountDAOInterface;
+import workshop.model.*;
+
 @Repository
-public class AdresDAO implements AdresDAOInterface {
+public class AccountDAO implements AccountDAOInterface {
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Scanner scInput = new Scanner(System.in);
-	protected static Logger logger = LoggerFactory.getLogger(AdresDAO.class);
-	
+	protected static Logger logger = LoggerFactory.getLogger(AccountDAO.class);
 	
 	private SessionFactory sessionFactory;
 	 
@@ -36,17 +34,17 @@ public class AdresDAO implements AdresDAOInterface {
 	this.sessionFactory = sessionFactory;
 	}
 	
-	public AdresDAO(){			
+	public AccountDAO(){			
 	}
 	
 	@Override
-	public void createAdres(Adres adres){
+	public void createAccount(Account account){
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		try {
 
 			tx = session.beginTransaction();
-			session.persist(adres);
+			session.persist(account);
 			tx.commit();
 		}catch (HibernateException e) {
 			if (tx!=null) tx.rollback();
@@ -55,48 +53,61 @@ public class AdresDAO implements AdresDAOInterface {
 			session.close(); 
 		}
 	}
-
-	@Override
-	public List<Adres> readAll(){
-		Session session = sessionFactory.openSession();
-		List<Adres> adresList = null;
-		try{
-			adresList = (List<Adres>)session.createQuery("from Adres").list();
-		}catch(HibernateException e){
-			e.printStackTrace();
-		}finally {
-			session.close(); 
-		}
-		return adresList;
-	}
 	
 	@Override
-	public Adres readAdresmetId(long adres_id) {
+	public Account readAccountmetId(long Account_id) {
 		Session session = sessionFactory.openSession();
-		Adres adres = null;
+		Account account = null;
 		try {	
-			adres = (Adres) session.get(Adres.class, adres_id);
+			account = (Account) session.get(Account.class, Account_id);
 		}catch (HibernateException e){
 			e.printStackTrace();
 		}finally {
 			session.close();
 		}
-		return adres;
+		return account;
 	}
 	
 	@Override
-	public void updateAdres(Adres adres){		
-		
+	public List<Account> readAll(){
+		Session session = sessionFactory.openSession();
+		List<Account> accountList = null;
+		try{
+			accountList = (List<Account>)session.createQuery("from Account").list();
+		}catch(HibernateException e){
+			e.printStackTrace();
+		}finally {
+			session.close(); 
+		}
+		return accountList;
 	}
 	
 	@Override
-	public void deleteAdres(long adres_id) {
+	public void UpdateAccount(long account_id, Account account1){
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			Account account = (Account)session.load(Account.class, account_id);
+			account.setNaam(account1.getNaam());
+			session.update(account); 
+			tx.commit();
+		}catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}finally {
+			session.close(); 
+		}
+	}
+	
+	@Override
+	public void deleteAccount(long account_id) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		try{ 
 			tx = session.beginTransaction();
-			Adres adres = (Adres)session.get(Adres.class, adres_id);
-			session.delete(adres);
+			Account account = (Account)session.get(Account.class, account_id);
+			session.delete(account);
 			tx.commit();
 		}catch (HibernateException e) {
 			if (tx!=null) tx.rollback();

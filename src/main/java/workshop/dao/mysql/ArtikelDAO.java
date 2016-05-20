@@ -10,17 +10,27 @@ import java.util.Set;
 import workshop.DatabaseConnection;
 import workshop.model.Artikel;
 import javax.sql.RowSet;
+
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.mysql.jdbc.Statement;
 import com.sun.rowset.JdbcRowSetImpl;
-
+@Repository
 public class ArtikelDAO implements workshop.dao.ArtikelDAOInterface {
 
-	private static Connection getConnection() {
-		Connection connection = DatabaseConnection.getPooledConnection();
-
-		return connection;
+	private SessionFactory sessionFactory;
+	 
+	public SessionFactory getSessionFactory() {
+	return sessionFactory;
 	}
-
+	 
+	@Autowired
+	public void setSessionFactory(SessionFactory sessionFactory) {
+	this.sessionFactory = sessionFactory;
+	}
+	
 	public ArtikelDAO() {
 
 	}

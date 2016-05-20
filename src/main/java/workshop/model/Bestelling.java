@@ -2,44 +2,82 @@ package workshop.model;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.Date;
+
+import javax.persistence.*;
+
+import org.springframework.stereotype.Component;
 
 import workshop.dao.DAOFactory;
 import workshop.dao.KlantDAOInterface;
-
-
+@Component
+@Entity
 public class Bestelling {
-	private int klant_id;
-	private int bestelling_id;
-	private HashMap<Artikel, Integer> artikelen;
 	
-	public Bestelling(int klant_id) {
-		this.klant_id = klant_id;
+	@Id	@GeneratedValue
+	@Column(name="bestelling_id")
+	private long id;
+	
+	@ManyToOne
+	@JoinColumn(name="klant_id")
+	private Klant klant;
+	
+	private Date datum;
+	
+	@ElementCollection(fetch=FetchType.EAGER)
+	@CollectionTable(name="bestelling_has_artikel", joinColumns=@JoinColumn(name="bestelling_id"))
+	@MapKeyJoinColumn(name="artikel_id", referencedColumnName="artikel_id")
+	@Column(name="artikel_aantal")
+	private Map<Artikel, Integer> artikelen;
+	
+	@OneToOne(mappedBy="bestelling")
+	private Factuur factuur;
+
+	public Bestelling(Klant klant) {
+		this.klant = klant;
+		this.datum = new Date();
 		this.artikelen = new HashMap();
-	}
-	public Bestelling(){
-		this.artikelen = new HashMap();
+		this.factuur = new Factuur(this);
 	}
 	
-	public int getKlant_id() { 
-		return this.klant_id;
+	@Deprecated
+	public Bestelling() {
+		this(null);
 	}
 	
-	public void setKlant_id(int klant_id){
-		this.klant_id = klant_id;
+	public long getKlant_id() { 
+		return this.klant.getId();
 	}
-	
-	public int getBestelling_id() {
-		return this.bestelling_id;
+	public Klant getKlant(){
+		return this.klant;
 	}
-	
-	public void setBestelling_id(int bestelling_id) {
-		this.bestelling_id = bestelling_id;
+	public void setKlant(Klant klant){
+		this.klant = klant;
 	}
-	
-	public HashMap<Artikel, Integer> getArtikelen(){
+	public long getId() {
+		return this.id;
+	}
+	public void setId(int bestelling_id) {
+		this.id = bestelling_id;
+	}
+	public Date getDatum() {
+		return this.datum;
+	}
+	public void setDatum(Date datum) {
+		this.datum = datum;
+	}
+	public Map<Artikel, Integer> getArtikelen(){
 		return this.artikelen;
+	}
+	public void setArtikelen(Map<Artikel, Integer> artikelen){
+		this.artikelen = artikelen;
+	}
+	public Factuur getFactuur() {
+		return this.factuur;
+	}
+	public void setFactuur(Factuur factuur) {
+		this.factuur = factuur;
 	}
 	
 	public void voegArtikelToe(Artikel artikel, Integer aantal){
@@ -69,12 +107,6 @@ public class Bestelling {
 		
 		return total;
 	}
-	
-	public Klant getKlant(){
-		KlantDAOInterface klantDAO = DAOFactory.getKlantDAO();
-		Klant klant = klantDAO.readKlantWithId(this.klant_id);
-		return klant;
-	}
 		
 	@Override
 	public String toString(){
@@ -82,7 +114,7 @@ public class Bestelling {
 		for (Map.Entry<Artikel, Integer> entry: this.artikelen.entrySet()){
 			artikelLijst += entry.getKey().toString() + " aantal: " + entry.getValue() + "\n";
 		}
-		return "Bestellingnummer: " + this.bestelling_id + ", Klantnummer: " + this.klant_id + "\n" + 
+		return "Bestellingnummer: " + this.id + ", Klantnummer: " + getKlant_id() + "\n" + 
 				artikelLijst + "Totaalprijs: " + NumberFormat.getCurrencyInstance().format(getTotaalPrijs());
 	}
 	/*
