@@ -8,6 +8,6 @@
 </head>
 <body> 
 Welkom bij Workshop.com!
-<a href="Klant.jsp"><input type=submit value="Toegang"/></a>
+<a href="Nieuw.jsp"><input type=submit value="Toegang"/></a>
 </body>
 </html>

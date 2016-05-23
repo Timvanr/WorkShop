@@ -14,7 +14,7 @@ import workshop.model.Klant;
 @Service
 public class KlantDAO{
 	
-	protected static Logger logger = LoggerFactory.getLogger(KlantDAO.class);
+	// protected static Logger logger = LoggerFactory.getLogger(KlantDAO.class);
 	private KlantDAOInterface klantDaoInterface;
 	private SessionFactory sessionFactory;
 	 

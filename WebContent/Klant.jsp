@@ -7,8 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-<form method="POST" action='KlantController' name="frmAddUser">
-Naam : <input type="text" name="Naam"/><br /> 
-Emailadres : <input type="text" name="Emailadres"/> <br /> 
+
+Bestaande klant : <input type="text" name="Naam"/><br /> 
+<a href="">Nieuwe klant: <input type="text" name="Emailadres"/></a> <br /> 
 </body>
 </html>
