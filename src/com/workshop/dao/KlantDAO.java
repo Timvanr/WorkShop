@@ -15,39 +15,38 @@ import com.workshop.model.Klant;
 @Repository
 public class KlantDAO{
 	
-	protected static Logger logger = LoggerFactory.getLogger(KlantDAO.class);
-	private KlantDAOInterface klantDaoInterface;
+	@PersistenceContext
+	private EntityManager em;
 	
-	@Autowired
-	@Qualifier("sessionFactory")
-	private SessionFactory sessionFactory;
-	 
-	public SessionFactory getSessionFactory() {
-	return sessionFactory;
+	@Override
+	public long createKlant(Klant klant) {
+		this.em.persist(klant);
+		
+		return artikel.getId();
+	}
+	
+	@Override
+	public Klant getKlantWithKlantId(long klant_id) {
+		return this.em.find(Klant.class, klant_id);
 	}
 
-	@Transactional
-	public void createKlant(Klant klant){
-		klantDaoInterface.save(klant);
+	@Override
+	public List<Klant> getKlantlijst() {
+		return this.em.createNativeQuery("SELECT * FROM ", Klant.class).getResultList();
 	}
-	
-	@Transactional
-	public void delete(Klant klant){
-		klantDaoInterface.delete(klant);
+
+	@Override
+	public void updateKlant(long id, Klant klant) {
+		Klant oud = getKlantWithKlantId(id);
+		this.em.getTransaction().begin();
+		oud.setVoornaam(klant.getVoornaam());
+		oud.setTussenvoegsel(klant.getTussenvoegsel());
+		oud.setAchternaam(klant.getAchternaam());
+		oud.setEmail(klant.getEmail());
+		this.em.getTransaction().commit();
 	}
-	
-	@Transactional
-	public void deleteByAchternaam(String voornaam, String achternaam){
-		klantDaoInterface.deleteByVoornaamAndAchternaam(voornaam, achternaam);
+
+	@Override
+	public void deleteKlantWithKlantId(long klant_id) {
+		this.em.remove(getKlantWithKlantId(klant_id));
 	}
-	
-	@Transactional
-	public Klant findOne(Long klant_id){
-		return klantDaoInterface.findOne(klant_id);
-	}
-	
-	@Transactional
-	public List<Klant> findAll(){
-		return klantDaoInterface.findAll();		
-	}
-}
