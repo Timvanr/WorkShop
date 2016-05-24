@@ -34,7 +34,7 @@ public class AccountDAO implements AccountDAOInterface {
 	}
 	
 	@Override
-	public List<Account> readAll() {
+	public List<Account> getAccountlijst() {
 		return this.em.createNativeQuery("SELECT * FROM ", Account.class).getResultList();
 	}
 	
