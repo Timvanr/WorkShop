@@ -6,7 +6,7 @@ import java.text.NumberFormat;
 import javax.persistence.*;
 
 import org.springframework.stereotype.Component;
-@Component
+
 @Entity
 public class Artikel {
 	@Id @GeneratedValue

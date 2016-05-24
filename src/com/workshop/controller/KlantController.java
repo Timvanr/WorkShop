@@ -15,10 +15,13 @@ import com.workshop.service.KlantService;
 
 @Controller
 public class KlantController {
-
+	
 	@Autowired
 	public KlantService klantService;
 	
+	public void toegang(){
+		System.out.println("toegang tot controller?");
+	}
 	@RequestMapping ("/welcome")
     public ModelAndView listKlanten() {
 		String message = "<br><div style='text-align:center;'>"

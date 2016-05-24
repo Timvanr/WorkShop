@@ -4,14 +4,11 @@ package com.workshop.model;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-//import javax.annotation.Resource;
 import javax.persistence.*;
 
-import org.springframework.stereotype.Component;
-@Component
 @Entity
-@Table(name= "Klant")
-public class Klant implements java.io.Serializable {
+@Table
+public class Klant {
 	
 	private static final long serialVersionUID = 1270183298575805842L;
 	@Id

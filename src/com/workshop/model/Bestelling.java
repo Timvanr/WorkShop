@@ -10,7 +10,7 @@ import javax.persistence.*;
 import org.springframework.stereotype.Component;
 
 import com.workshop.dao.KlantDAOInterface;
-@Component
+
 @Entity
 public class Bestelling {
 	

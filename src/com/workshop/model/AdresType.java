@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.springframework.stereotype.Component;
-@Component
+
 @Entity
 @Table(name = "AdresType")
 public class AdresType implements java.io.Serializable{

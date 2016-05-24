@@ -7,7 +7,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 import org.springframework.stereotype.Component;
-@Component
+
 @Entity
 @Table
 public class Factuur {

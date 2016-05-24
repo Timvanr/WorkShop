@@ -6,7 +6,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 import org.springframework.stereotype.Component;
-@Component
+
 @Entity
 @Table
 public class Betaling {

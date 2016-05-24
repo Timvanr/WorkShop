@@ -26,12 +26,10 @@ import com.zaxxer.hikari.HikariDataSource;
 
 
 @Configuration
-@ComponentScan(basePackages = {"com.workshop"})
+@ComponentScan(basePackages = {"com.workshop.service", "com.workshop.dao", "com.workhop.main", "com.workshop.model", "com.workshop.controller"})
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.workshop.dao")
 @EnableWebMvc
-@EnableAutoConfiguration
-@EntityScan(basePackages="com.workshop.model")
 public class SpringConfig {
 
 	@Bean (name = "dataSource")
@@ -61,7 +59,7 @@ public class SpringConfig {
 		
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
-		factory.setPackagesToScan("workshop.model");
+		factory.setPackagesToScan("com.workshop.model");
 		factory.setDataSource(dataSource());
 		factory.afterPropertiesSet();
 		
