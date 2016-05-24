@@ -7,8 +7,8 @@ import com.workshop.model.Account;
 public interface AccountDAOInterface {
 	
 	void createAccount(Account account);
-	Account readAccountmetId(long Account_id);
+	Account getAccountmetId(long account_id);
 	List<Account> readAll();
-	void UpdateAccount(long account_id, Account account);
+	void updateAccount(long account_id, Account account);
 	void deleteAccount(long account_id);
 }
