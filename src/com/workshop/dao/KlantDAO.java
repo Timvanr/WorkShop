@@ -21,8 +21,7 @@ public class KlantDAO{
 	@Override
 	public long createKlant(Klant klant) {
 		this.em.persist(klant);
-		
-		return artikel.getId();
+		return klant.getId();
 	}
 	
 	@Override
