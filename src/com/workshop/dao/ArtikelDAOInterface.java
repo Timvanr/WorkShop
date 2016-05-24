@@ -1,22 +1,18 @@
-package com.workshop.dao;
+package workshop.dao;
 
+import java.util.List;
 import java.util.Set;
 
-import com.workshop.model.Artikel;
+import workshop.model.Artikel;
 
 
 public interface ArtikelDAOInterface {
 
-	//static Connection getConnection();
-	int createArtikel(Artikel artikel);
-	Artikel getArtikelWithArtikelId(int artikel_id);
+	long createArtikel(Artikel artikel);
+	Artikel getArtikelWithArtikelId(long artikel_id);
 	Artikel getArtikelWithNaam(String naam);
-	Set<Artikel> getArtikellijst();
-	void updateArtikel(int id, Artikel artikel);
-	void deleteArtikelWithArtikelId(int artikel_id);
-	
-	//void voegArtikelToeAanBestelling(int bestelling_id, int artikel_id, int artikel_aantal) throws SQLException;
-	//void verwijderArtikelUitBestelling(int bestelling_id, int artikel_id) throws SQLException;
-	
+	List<Artikel> getArtikellijst();
+	void updateArtikel(long id, Artikel artikel);
+	void deleteArtikelWithArtikelId(long artikel_id);
 
 }

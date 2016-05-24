@@ -1,19 +1,17 @@
-package com.workshop.dao;
+package workshop.dao;
 
-import java.util.Set;
+import java.util.List;
 
-import com.workshop.model.Bestelling;
+import workshop.model.Bestelling;
 
 public interface BestellingDAOInterface {
 	
-	//void maakTabel() throws SQLException ;
-	Bestelling getBestelling(int id);
-	int haalKlant_id(int bestelling_id);
-	void verwijderBestelling(int id);
-	void updateBestelling(int bestelling_id, Bestelling bestelling);
-	//void verwijderTabel() throws SQLException ;
-	Set<Bestelling> haalBestellijst();
-	Set<Bestelling> getBestellijstByKlant(int klant_id);
-	void voegBestellingToe(Bestelling bestelling);
+	Bestelling getBestelling(long id);
+	long haalKlant_id(long id);
+	void verwijderBestelling(long id);
+	void updateBestelling(long id, Bestelling bestelling);
+	List<Bestelling> haalBestellijst();
+	List<Bestelling> getBestellijstByKlant(long klant_id);
+	long createBestelling(Bestelling bestelling);
 	
 }
