@@ -1,19 +1,13 @@
 package com.workshop.dao;
 
 import java.util.List;
-
-import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.workshop.model.Klant;
 
 @Repository
-public class KlantDAO{
+public class KlantDAO implements KlantDAOInterface {
 	
 	@PersistenceContext
 	private EntityManager em;
@@ -49,3 +43,4 @@ public class KlantDAO{
 	public void deleteKlantWithKlantId(long klant_id) {
 		this.em.remove(getKlantWithKlantId(klant_id));
 	}
+}
