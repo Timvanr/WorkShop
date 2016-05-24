@@ -8,7 +8,7 @@ public interface AdresDAOInterface {
 	
 	void createAdres(Adres adres);
 	List<Adres> readAll();
-	Adres readAdresmetId(long adres_id);
+	Adres getAdresmetId(long adres_id);
 	void updateAdres(Adres adres);
 	void deleteAdres(long adres_id);
 	
