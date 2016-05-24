@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[3.7.3.201602250914-RELEASE]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[false]]></enableImports>
+	<configs>
+		<config>java:com.workshop.main.SpringConfig</config>
+	</configs>
+	<autoconfigs>
+		<config>java:com.workshop.model.Bestelling</config>
+		<config>java:com.workshop.model.Klant</config>
+		<config>java:com.workshop.model.AdresType</config>
+		<config>java:com.workshop.model.Artikel</config>
+		<config>java:com.workshop.model.Betaling</config>
+		<config>java:com.workshop.model.Account</config>
+		<config>java:com.workshop.model.Factuur</config>
+		<config>java:com.workshop.model.Adres</config>
+	</autoconfigs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>
