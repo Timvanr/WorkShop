@@ -8,7 +8,7 @@ public interface AccountDAOInterface {
 	
 	void createAccount(Account account);
 	Account getAccountmetId(long account_id);
-	List<Account> readAll();
+	List<Account> getAccountlijst();
 	void updateAccount(long account_id, Account account);
 	void deleteAccount(long account_id);
 }
