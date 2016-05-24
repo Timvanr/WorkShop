@@ -2,11 +2,12 @@ package com.workshop.dao;
 
 import com.workshop.model.Klant;
 
-public interface KlantDAOInterface extends GenericDao<Klant, Long> {
+public interface KlantDAOInterface {
 
-	//Extra methodes. Methodes uit de genericDAO kun je gewoon aanspreken.
-	
-	Long deleteByVoornaamAndAchternaam(String voornaam, String achternaam);
+	Klant getKlantWithKlantId(long klant_id);
+	List<Klant> getKlantlijst();
+	public void updateKlant(long id, Klant klant);
+	public void deleteKlantWithKlantId(long klant_id);
 	
 	
 	
