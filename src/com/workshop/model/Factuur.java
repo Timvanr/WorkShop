@@ -1,23 +1,21 @@
-package com.workshop.model;
+package workshop.model;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
 
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Table
-public class Factuur {
+public class Factuur implements java.io.Serializable {
 	
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	@Column
 	private long factuur_id;
-	
-	@Column
-	private String factuurNummer;
 	
 	@Temporal(TemporalType.DATE)
 	private Date factuurDatum;
@@ -33,33 +31,34 @@ public class Factuur {
 	private BigDecimal totaalBedrag;
 	
 	
-	//@Deprecated
+	@Deprecated
 	public Factuur(){
 		this.factuurDatum = new Date();
 		this.betalingSet = new HashSet<Betaling>();
 	}
 	
+	@Autowired
 	public Factuur(Bestelling bestelling){
 		this.bestelling = bestelling;
 		this.factuurDatum = new Date();
 		this.betalingSet = new HashSet<Betaling>();
 		this.totaalBedrag = bestelling.getTotaalPrijs();
 	}
+	
 	public long getFactuur_id() {
 		return this.factuur_id;
 	}
-	
 	public void setFactuur_id(long factuur_id) {
 		this.factuur_id = factuur_id;
 	}
-	
+/*
 	public String getFactuurNummer() {
 		return this.factuurNummer;
 	}
 	public void setFactuurNummer(String factuurNummer) {
 		this.factuurNummer = factuurNummer;
 	}
-	
+*/	
 	public Date getFactuurDatum() {
 		return this.factuurDatum;
 	}
@@ -83,6 +82,7 @@ public class Factuur {
 		this.bestelling = bestelling;
 	}
 	
+	
 	public BigDecimal getOpenstaandBedrag() {
 		BigDecimal totaal = this.totaalBedrag; 
 		
@@ -100,5 +100,9 @@ public class Factuur {
 		this.totaalBedrag = totaalBedrag;
 	}
 
-	
+	@Override
+	public String toString(){
+		return "FactuurId: " + getFactuur_id() + " BestellingId: " + getBestelling().getId() + " Datum: " + getFactuurDatum() + 
+				"\nOpenstaand bedrag: " + NumberFormat.getCurrencyInstance().format(getOpenstaandBedrag());
+	}
 }

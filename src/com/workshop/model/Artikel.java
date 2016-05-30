@@ -1,15 +1,14 @@
-package com.workshop.model;
+package workshop.model;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 
 import javax.persistence.*;
 
-import org.springframework.stereotype.Component;
-
 @Entity
 public class Artikel {
-	@Id @GeneratedValue
+	
+	@Id @GeneratedValue (strategy=GenerationType.AUTO)
 	@Column(name="artikel_id")
 	private long id;
 	

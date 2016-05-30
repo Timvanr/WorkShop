@@ -1,20 +1,19 @@
-package com.workshop.model;
+package workshop.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
 
 import javax.persistence.*;
 
-import org.springframework.stereotype.Component;
-
 @Entity
 @Table
 public class Betaling {
 
-public enum Betaalwijze {
-	IDeal, PinBetaling, Contant, CreditCard;
+	public enum Betaalwijze {
+		IDeal, PinBetaling, Contant, CreditCard;
+		
+	}
 	
-}
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	@Column
 	private long betaling_id;
@@ -44,10 +43,7 @@ public enum Betaalwijze {
 	public Betaling(){}
 	
 	public Betaling(Factuur factuur, BigDecimal bedrag){
-		this.factuur = factuur;
-		this.betaaldBedrag = bedrag;
-		this.betaalDatum = new Date();
-		this.klant = factuur.getBestelling().getKlant();//moet alles wel geSet zijn.
+		this(factuur, bedrag, null);
 	}
 	
 	public Betaling(Factuur factuur, BigDecimal bedrag, String gegevens){
@@ -57,6 +53,7 @@ public enum Betaalwijze {
 		this.betalingsGegevens = gegevens;
 		this.klant = factuur.getBestelling().getKlant();
 	}
+	
 	public long getBetaling_id() {
 		return this.betaling_id;
 	}
