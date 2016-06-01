@@ -1,4 +1,4 @@
-package workshop.model;
+package com.workshop.model;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -7,9 +7,6 @@ import java.util.*;
 import javax.persistence.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import workshop.dao.DAOFactory;
-import workshop.dao.KlantDAOInterface;
 
 @Entity
 public class Bestelling implements java.io.Serializable {

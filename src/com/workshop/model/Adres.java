@@ -28,7 +28,7 @@ public class Adres implements java.io.Serializable{
 	private String postcode;
 	@Column
 	private String woonplaats;
-
+	/*
 	//@Transient//werkt niet
 	@ManyToMany(cascade=CascadeType.MERGE)
 	@JoinTable(name="klant_has_adres", joinColumns=@JoinColumn(name="adres_id"),
@@ -38,7 +38,7 @@ public class Adres implements java.io.Serializable{
 	
 	public Adres() {
 		//this.bewoners = new HashMap();
-	}
+	}*/
 
 	public Adres(String straat, int huisnummer, String toevoeging, String postcode,	String plaats) {
 		this.straatnaam = straat;
@@ -46,7 +46,7 @@ public class Adres implements java.io.Serializable{
 		this.toevoeging = toevoeging;
 		this.postcode = postcode;
 		this.woonplaats = plaats;
-		this.bewoners = new HashMap();
+		//this.bewoners = new HashMap();
 	}
 
 	public long getAdres_id() {
@@ -90,14 +90,14 @@ public class Adres implements java.io.Serializable{
 	public void setWoonplaats(String woonplaats) {
 		this.woonplaats = woonplaats;
 	}
-
+/*
 	public Map<Klant, AdresType> getBewoners() {
 		return this.bewoners;
 	}
 	public void setBewoners(Map<Klant, AdresType> bewoners){
 		this.bewoners = bewoners;
 	}
-/*
+
 	public Set<Klant> getKlanten() {
 		return this.klanten;
 	}

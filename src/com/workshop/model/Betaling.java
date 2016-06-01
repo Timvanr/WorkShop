@@ -1,4 +1,5 @@
-package workshop.model;
+package com.workshop.model;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
