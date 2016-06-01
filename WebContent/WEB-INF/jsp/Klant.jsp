@@ -1,52 +1,105 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <head>
-<title>Workshop Web-App</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Klant menu</title>
 <style type="text/css">
 </style>
 </head>
-<h1>add Klant</h1>
-<c:url var="addKlant" value="/addKlant"></c:url>
-<form:form action="${addKlant}" commandName="Klant">
-	<table>
-		<tr>
-			<td><form:label path="voornaam">
-					<spring:message text="Voornaam" />
-				</form:label></td>
-			<td><form:input path="klant.voornaam" readonly="true" size="25"
-					disabled="true" /> <form:hidden path="voornaam" /></td>
-		</tr>
-		<tr>
-			<td><form:label path="tussenvoegsel">
-					<spring:message text="tussenvoegsel" />
-				</form:label></td>
-			<td><form:input path="klant.tussenvoegsel" /></td>
-		</tr>
-		<tr>
-			<td><form:label path="achternaam">
-					<spring:message text="Achternaam" />
-				</form:label></td>
-			<td><form:input path="klant.achternaam" /></td>
-		</tr>
-		<tr>
-		<tr>
-			<td><form:label path="email">
-					<spring:message text="Email" />
-				</form:label></td>
-			<td><form:input path="klant.email" /></td>
-		</tr>
-		<tr>
+<body>
+<h2>Welkom in het Klant Menu</h2>
 
-			<td colspan="2"><input type="submit"
-				value="<spring:message text="Add Person"/>" /></td>
-		</tr>
-	</table>
-</form:form>
+
+<form action="klant/nieuweAccount" method=post>
+<table cellpadding=4 cellspacing=2 border=5>
+<th bgcolor="#CCCCFF" colspan=2>
+<font size=5>Klant Toevoegen</font>
 <br>
-<table border="5" bordercolor="black">
+<font size=1><sup>*</sup> Verplichte velden</font>
+</th>
+<tr>
+<td valign=top> 
+<b>Accountnaam<sup>*</sup></b> 
+<br>
+<input type="text" name="naam" value="" size=20 maxlength=25></td>
+</tr>
+<tr bgcolor="#c8d8f8">
+<td valign=top> 
+<b>Voornaam<sup>*</sup></b> 
+<br>
+<input type="text" name="voornaam" value="" size=20 maxlength=100></td>
+</tr>
+<td  valign=top>
+<b>Tussenvoegsel<sup></sup></b> 
+<br>
+<input type="text" name="tussenvoegsel" value="" size=10  maxlength=10></td>
+</tr>
+<tr bgcolor="#c8d8f8">
+<td  valign=top>
+<b>Achternaam<sup>*</sup></b>
+<br>
+<input type="text" name="achternaam" value="" size=20 maxlength=100></td>
+</tr>
+<tr>
+<td valign=top>
+<b>E-Mail<sup>*</sup></b> 
+<br>
+<input type="text" name="email" value="" size=20  maxlength=125>
+<br></td>
 
+<br>
+</th>
+<tr bgcolor="#c8d8f8">
+<td valign=top> 
+<b>Straatnaam<sup>*</sup></b> 
+<br>
+<input type="text" name="straatnaam" value="" size=20 maxlength=100></td>
+</tr>
+<td  valign=top>
+<b>Huisnummer<sup>*</sup></b>
+<br>
+<input type="text" name="huisnummer" value="" size=5 maxlength=5></td>
+</tr>
+<tr bgcolor="#c8d8f8">
+<td  valign=top>
+<b>Toevoeging<sup></sup></b> 
+<br>
+<input type="text" name="toevoeging" value="" size=5 maxlength=5></td>
+<tr>
+<td  valign=top>
+<b>Postcode<sup>*</sup></b>
+<br>
+<input type="text" name="postcode" value="" size=20 maxlength=6></td>
+</tr>
+<tr bgcolor="#c8d8f8">
+<td valign=top>
+<b>Woonplaats<sup>*</sup></b> 
+<br>
+<input type="text" name="woonplaats" value="" size=20  maxlength=125>
+<br></td>
+</tr>
+<td  valign=top>
+<b>Adrestype<sup></sup></b> 
+<br>
+<select>
+			<option value="1">1: Bezorgadres</option>
+  			<option value="2">2: Factuuradres</option>
+  			<option value="3">3: Bezoekadres</option>
+<select></td>
+</tr>
+<td  align=center colspan=2>
+<input type="submit" value="Submit"> <input type="reset"  
+value="Reset">
+</td>
+</tr>
+</table>
+</form>
+
+<table border="5" bordercolor="black">
 	<tr>
 		<th width="80">id</th>
 		<th width="120">voornaam</th>
@@ -70,13 +123,5 @@
 		</tr>
 	</c:forEach>
 </table>
-
-
-
-<br>
-<div
-	style="font-family: verdana; padding: 10px; border-radius: 10px; font-size: 12px; text-align: center;">
-
-	Jaa, dit zijn alle klanten uit mijn database!</div>
 </body>
 </html>
