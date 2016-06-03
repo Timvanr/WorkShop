@@ -3,25 +3,23 @@ package com.workshop.model;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.Date;
 
 import javax.persistence.*;
 
-import org.springframework.stereotype.Component;
-
-import com.workshop.dao.KlantDAOInterface;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
-public class Bestelling {
+public class Bestelling implements java.io.Serializable {
 	
 	@Id	@GeneratedValue
 	@Column(name="bestelling_id")
 	private long id;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name="klant_id")
 	private Klant klant;
 	
+	@Temporal(TemporalType.DATE)
 	private Date datum;
 	
 	@ElementCollection(fetch=FetchType.EAGER)
@@ -32,12 +30,12 @@ public class Bestelling {
 	
 	@OneToOne(mappedBy="bestelling")
 	private Factuur factuur;
-
+	
+	@Autowired
 	public Bestelling(Klant klant) {
 		this.klant = klant;
 		this.datum = new Date();
 		this.artikelen = new HashMap();
-		this.factuur = new Factuur(this);
 	}
 	
 	@Deprecated
@@ -48,6 +46,9 @@ public class Bestelling {
 	public long getKlant_id() { 
 		return this.klant.getId();
 	}
+	public void setKlant_id(long klant_id){
+		this.klant.setId(klant_id);
+	}
 	public Klant getKlant(){
 		return this.klant;
 	}
@@ -57,7 +58,7 @@ public class Bestelling {
 	public long getId() {
 		return this.id;
 	}
-	public void setId(int bestelling_id) {
+	public void setId(long bestelling_id) {
 		this.id = bestelling_id;
 	}
 	public Date getDatum() {
@@ -96,6 +97,7 @@ public class Bestelling {
 		}
 	}
 	
+	@OneToOne(fetch = FetchType.EAGER)
 	public BigDecimal getTotaalPrijs(){
 		BigDecimal total = BigDecimal.ZERO;
 		

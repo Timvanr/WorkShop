@@ -4,10 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Factuur Menu</title>
+<title>Workshop Web-App</title>
 </head>
 <body>
-Welkom in het Factuur Menu
-
+Succes
 </body>
 </html>

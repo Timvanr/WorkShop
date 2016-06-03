@@ -5,19 +5,18 @@ import java.text.NumberFormat;
 
 import javax.persistence.*;
 
-import org.springframework.stereotype.Component;
-
 @Entity
 public class Artikel {
-	@Id @GeneratedValue
+	
+	@Id @GeneratedValue (strategy=GenerationType.AUTO)
 	@Column(name="artikel_id")
 	private long id;
-	
-	private String artikel_naam;
+	@Column
+	private String naam;
 	@Lob
 	private String omschrijving;
-	
-	private BigDecimal artikel_prijs;
+	@Column
+	private BigDecimal prijs;
 	
 	
 	public Artikel(){
@@ -38,9 +37,9 @@ public class Artikel {
 	
 	public Artikel(int id, String naam, String disc, BigDecimal prijs){
 		this.id = id;
-		this.artikel_naam = naam;
+		this.naam = naam;
 		this.omschrijving = disc;
-		this.artikel_prijs = prijs;
+		this.prijs = prijs;
 	}
 	
 	public long getId() {
@@ -50,10 +49,10 @@ public class Artikel {
 		this.id = artikel_id;
 	}
 	public String getNaam() {
-		return this.artikel_naam;
+		return this.naam;
 	}
 	public void setNaam(String artikel_naam) {
-		this.artikel_naam = artikel_naam;
+		this.naam = artikel_naam;
 	}
 	public String getOmschrijving(){
 		return this.omschrijving;
@@ -62,10 +61,10 @@ public class Artikel {
 		this.omschrijving = disc;
 	}
 	public BigDecimal getPrijs() {
-		return this.artikel_prijs;
+		return this.prijs;
 	}
 	public void setPrijs(BigDecimal artikelPrijs) {
-		this.artikel_prijs = artikelPrijs;
+		this.prijs = artikelPrijs;
 	}
 	
 	@Override
@@ -84,7 +83,7 @@ public class Artikel {
 	
 	@Override
 	public String toString(){
-		return "Artikelnummer: " + this.id + " Naam: " + this.artikel_naam + " Prijs: " + NumberFormat.getCurrencyInstance().format(this.artikel_prijs);
+		return "Artikelnummer: " + this.id + " Naam: " + this.naam + " Prijs: " + NumberFormat.getCurrencyInstance().format(this.prijs);
 	}
 	
 	

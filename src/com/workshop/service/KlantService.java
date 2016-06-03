@@ -6,7 +6,8 @@ import com.workshop.model.Klant;
 
 public interface KlantService {
 
-	public List<Klant> listKlanten();
-	public void deleteKlant(long id);
-	public void addKlant(Klant k);
+	List<Klant> listKlanten();
+	void deleteKlant(long id);
+	void addKlant(Klant k);
+	Klant findKlant(long id);
 }

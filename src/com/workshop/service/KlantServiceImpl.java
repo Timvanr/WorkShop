@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.workshop.dao.KlantDAOInterface;
-import com.workshop.model.Klant;
+import com.workshop.dao.*;
+import com.workshop.model.*;
 
 @Service("klantService")
 @Transactional
@@ -32,4 +32,8 @@ public class KlantServiceImpl implements KlantService{
 		
 	}
 
+	@Override
+	public Klant findKlant(long id){
+		return klantDAO.findOne(id);
+	}
 }
