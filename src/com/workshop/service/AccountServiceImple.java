@@ -1,12 +1,13 @@
 package com.workshop.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.workshop.dao.AccountDAOInterface;
+import com.workshop.dao.AccountDAO;
 import com.workshop.model.Account;
 
 @Service
@@ -14,7 +15,7 @@ import com.workshop.model.Account;
 public class AccountServiceImple implements AccountService{
 	
 	@Autowired
-	private AccountDAOInterface accountDAO;
+	private AccountDAO accountDAO;
 
 	@Override
 	public Account findAccount(long account_id) {
@@ -23,6 +24,8 @@ public class AccountServiceImple implements AccountService{
 
 	@Override
 	public void addAccount(Account account) {
+		Date date = new Date();
+		account.setCreateDatum(date);
 		accountDAO.save(account);	
 	}
 

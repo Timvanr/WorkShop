@@ -26,8 +26,8 @@ public class Klant {
 	@Column(unique = true)
 	private String email;
 
-	//@Resource(name="bestellingen")
-	@OneToMany(mappedBy = "klant", targetEntity = Bestelling.class)//, fetch = FetchType.EAGER) 
+	@Resource(name="bestellingen")
+	@OneToMany(mappedBy = "klant", targetEntity = Bestelling.class, fetch = FetchType.EAGER) 
 	//@Cascade({CascadeType.SAVE_UPDATE})
 	private Set<Bestelling> bestellingen;
 /*
@@ -41,10 +41,10 @@ public class Klant {
 	//@Cascade({CascadeType.SAVE_UPDATE})
 	private Set<Account> accounts;
 	
-	//@Resource(name="adressen")
+	@Resource(name="adressen")
 	@ManyToMany(cascade=CascadeType.MERGE)
 	@JoinTable(name="klant_has_adres", joinColumns=@JoinColumn(name="klant_id"),
-		inverseJoinColumns=@JoinColumn(name="adrestype_id"))
+		inverseJoinColumns=@JoinColumn(name="adres_type_id"))
 	@MapKeyJoinColumn(name = "adres_id", table = "klant_has_adres")
 	private Map<Adres, AdresType> adressen;
 
