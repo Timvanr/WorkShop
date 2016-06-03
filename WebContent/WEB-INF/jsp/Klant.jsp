@@ -6,100 +6,59 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Klant menu</title>
+<title>Workshop Web-App</title>
 <style type="text/css">
 </style>
 </head>
-<body>
-<h2>Welkom in het Klant Menu</h2>
-
-
-<form action="klant/nieuweAccount" method=post>
-<table cellpadding=4 cellspacing=2 border=5>
+<form action="Klant/save.html" method=post>
+<table cellpadding=4 cellspacing=2 border=0>
 <th bgcolor="#CCCCFF" colspan=2>
 <font size=5>Klant Toevoegen</font>
 <br>
 <font size=1><sup>*</sup> Verplichte velden</font>
 </th>
-<tr>
-<td valign=top> 
-<b>Accountnaam<sup>*</sup></b> 
-<br>
-<input type="text" name="naam" value="" size=20 maxlength=25></td>
-</tr>
 <tr bgcolor="#c8d8f8">
 <td valign=top> 
 <b>Voornaam<sup>*</sup></b> 
 <br>
-<input type="text" name="voornaam" value="" size=20 maxlength=100></td>
-</tr>
-<td  valign=top>
-<b>Tussenvoegsel<sup></sup></b> 
-<br>
-<input type="text" name="tussenvoegsel" value="" size=10  maxlength=10></td>
-</tr>
-<tr bgcolor="#c8d8f8">
+<input type="text" name="voornaam" value="" size=15 maxlength=20></td>
 <td  valign=top>
 <b>Achternaam<sup>*</sup></b>
 <br>
-<input type="text" name="achternaam" value="" size=20 maxlength=100></td>
+<input type="text" name="achternaam" value="" size=15 maxlength=20></td>
 </tr>
-<tr>
+<tr bgcolor="#c8d8f8">
 <td valign=top>
 <b>E-Mail<sup>*</sup></b> 
 <br>
-<input type="text" name="email" value="" size=20  maxlength=125>
+<input type="text" name="email" value="" size=25  maxlength=125>
 <br></td>
+<td  valign=top>
+<b>Tussenvoegsel<sup></sup></b> 
+<br>
+<input type="text" name="tussenvoegsel" value="" size=5  maxlength=5></td>
+</tr>
+<tr bgcolor="#c8d8f8">
+<td valign=top colspan=2>
+</td>
+</tr>
 
-<br>
-</th>
-<tr bgcolor="#c8d8f8">
-<td valign=top> 
-<b>Straatnaam<sup>*</sup></b> 
-<br>
-<input type="text" name="straatnaam" value="" size=20 maxlength=100></td>
-</tr>
-<td  valign=top>
-<b>Huisnummer<sup>*</sup></b>
-<br>
-<input type="text" name="huisnummer" value="" size=5 maxlength=5></td>
-</tr>
-<tr bgcolor="#c8d8f8">
-<td  valign=top>
-<b>Toevoeging<sup></sup></b> 
-<br>
-<input type="text" name="toevoeging" value="" size=5 maxlength=5></td>
-<tr>
-<td  valign=top>
-<b>Postcode<sup>*</sup></b>
-<br>
-<input type="text" name="postcode" value="" size=20 maxlength=6></td>
-</tr>
-<tr bgcolor="#c8d8f8">
-<td valign=top>
-<b>Woonplaats<sup>*</sup></b> 
-<br>
-<input type="text" name="woonplaats" value="" size=20  maxlength=125>
-<br></td>
-</tr>
-<td  valign=top>
-<b>Adrestype<sup></sup></b> 
-<br>
-<select>
-			<option value="1">1: Bezorgadres</option>
-  			<option value="2">2: Factuuradres</option>
-  			<option value="3">3: Bezoekadres</option>
-<select></td>
-</tr>
 <td  align=center colspan=2>
 <input type="submit" value="Submit"> <input type="reset"  
 value="Reset">
 </td>
 </tr>
 </table>
+</center>
 </form>
+<br>
+
+<form action="Klant/findKlant">
+Klant ID: <input type="text" name="id"> <input type="submit" value="Zoek Klant">
+</form><br>
 
 <table border="5" bordercolor="black">
+
 	<tr>
 		<th width="80">id</th>
 		<th width="120">voornaam</th>
@@ -123,5 +82,13 @@ value="Reset">
 		</tr>
 	</c:forEach>
 </table>
+
+<br>
+<div
+	style="font-family: verdana; padding: 10px; border-radius: 10px; font-size: 12px; text-align: center;">
+
+	Jaa, dit zijn alle klanten uit mijn database!</div>
+
+<a href="NewFile.html">FactuurMenu</a>
 </body>
 </html>

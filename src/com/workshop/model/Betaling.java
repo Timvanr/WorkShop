@@ -1,38 +1,37 @@
 package com.workshop.model;
-
 import java.math.BigDecimal;
 import java.util.Date;
-
 
 import javax.persistence.*;
 
 @Entity
 @Table
 public class Betaling {
-
+	
 	public enum Betaalwijze {
 		IDeal, PinBetaling, Contant, CreditCard;
 		
 	}
 	
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	@Column
-	private long betaling_id;
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column (name="betaling_id")
+	protected Long betaling_id;
 	
 	@Temporal(TemporalType.DATE)
 	private Date betaalDatum;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="betaalwijze")
-	private Betaalwijze betaalWijze;
+	protected Betaalwijze betaalwijze;
 	
 	@ManyToOne
 	@JoinColumn (name="klant_id", nullable=false)
-	private Klant klant;
+	protected Klant klant;
 	
 	@ManyToOne
 	@JoinColumn (name="factuur_id")
-	private Factuur factuur;
+	protected Factuur factuur;
 	
 	@Column
 	private String betalingsGegevens;
@@ -44,7 +43,10 @@ public class Betaling {
 	public Betaling(){}
 	
 	public Betaling(Factuur factuur, BigDecimal bedrag){
-		this(factuur, bedrag, null);
+		this.factuur = factuur;
+		this.betaaldBedrag = bedrag;
+		this.betaalDatum = new Date();
+		this.klant = factuur.getBestelling().getKlant();//moet alles wel geSet zijn.
 	}
 	
 	public Betaling(Factuur factuur, BigDecimal bedrag, String gegevens){
@@ -54,7 +56,6 @@ public class Betaling {
 		this.betalingsGegevens = gegevens;
 		this.klant = factuur.getBestelling().getKlant();
 	}
-	
 	public long getBetaling_id() {
 		return this.betaling_id;
 	}
@@ -71,11 +72,11 @@ public class Betaling {
 	}
 	
 	public Betaalwijze getBetaalWijze() {
-	return this.betaalWijze;
+	return this.betaalwijze;
 	}
 	
 	public void setBetaalWijze(Betaalwijze betaalWijze) {
-		this.betaalWijze = betaalWijze;
+		this.betaalwijze = betaalWijze;
 	}
 	
 	public Klant getKlant() {

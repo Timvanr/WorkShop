@@ -1,65 +1,49 @@
 package com.workshop.model;
-
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Table
-public class Factuur implements java.io.Serializable {
+public class Factuur {
 	
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="factuur_id")
+	protected Long factuur_id;
+	
 	@Column
-	private long factuur_id;
+	private String factuurNummer;
 	
 	@Temporal(TemporalType.DATE)
 	private Date factuurDatum;
 	
 	@OneToMany (mappedBy="factuur")
-	private Set<Betaling> betalingSet;
+	protected Set<Betaling> betalingSet;
 	
 	@OneToOne
 	@JoinColumn(name="bestelling_id")
-	private Bestelling bestelling;
+	protected Bestelling bestelling;
 	
 	@Column
 	private BigDecimal totaalBedrag;
 	
 	
-	@Deprecated
-	public Factuur(){
-		this.factuurDatum = new Date();
-		this.betalingSet = new HashSet<Betaling>();
-	}
-	
-	@Autowired
-	public Factuur(Bestelling bestelling){
-		this.bestelling = bestelling;
-		this.factuurDatum = new Date();
-		this.betalingSet = new HashSet<Betaling>();
-		this.totaalBedrag = bestelling.getTotaalPrijs();
-	}
-	
-	public long getFactuur_id() {
-		return this.factuur_id;
-	}
 	public void setFactuur_id(long factuur_id) {
 		this.factuur_id = factuur_id;
 	}
-/*
+	
 	public String getFactuurNummer() {
 		return this.factuurNummer;
 	}
 	public void setFactuurNummer(String factuurNummer) {
 		this.factuurNummer = factuurNummer;
 	}
-*/	
+	
 	public Date getFactuurDatum() {
 		return this.factuurDatum;
 	}
@@ -83,7 +67,6 @@ public class Factuur implements java.io.Serializable {
 		this.bestelling = bestelling;
 	}
 	
-	
 	public BigDecimal getOpenstaandBedrag() {
 		BigDecimal totaal = this.totaalBedrag; 
 		
@@ -101,9 +84,9 @@ public class Factuur implements java.io.Serializable {
 		this.totaalBedrag = totaalBedrag;
 	}
 
+	//openstaand en betaaldbedrag nog toevoegen
 	@Override
 	public String toString(){
-		return "FactuurId: " + getFactuur_id() + " BestellingId: " + getBestelling().getId() + " Datum: " + getFactuurDatum() + 
-				"\nOpenstaand bedrag: " + NumberFormat.getCurrencyInstance().format(getOpenstaandBedrag());
+		return "Factuur: " + this.factuur_id + " factuur datum: " + this.factuurDatum + " factuur nummer: " + this.factuurNummer;
 	}
 }

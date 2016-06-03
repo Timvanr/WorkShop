@@ -22,7 +22,8 @@ Uw gezochte klant:<br><br>
 		<th width="120">achternaam</th>
 		<th width="120">email</th>
 		
-	</tr>	
+	</tr>
+	
 	<tr>
 		<td>${klant.id}</td>
 		<td>${klant.voornaam }</td>
@@ -31,11 +32,7 @@ Uw gezochte klant:<br><br>
 		<td>${klant.email }</td>
 		 </tr>
 </table>
-
-<br>Wilt u:
-<br><a href = "Artikel.html">Nieuwe bestelling</a>
-<br><a href = "listKlant.html">Bestelling bekijken</a>
-
+<br>
 
 </body>
 </html>

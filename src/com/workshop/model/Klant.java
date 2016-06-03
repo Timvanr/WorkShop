@@ -4,15 +4,12 @@ package com.workshop.model;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Resource;
 import javax.persistence.*;
 
 @Entity
 @Table
 public class Klant {
 	
-	private static final long serialVersionUID = 1270183298575805842L;
 	@Id
 	@GeneratedValue (strategy=GenerationType.AUTO)
 	@Column(name="klant_id")
@@ -36,7 +33,7 @@ public class Klant {
 	@Cascade({CascadeType.SAVE_UPDATE})
 	private Set<Factuur> facturen;
 */	
-	@Resource(name="accounts")
+	//@Resource(name="accounts")
 	@OneToMany(mappedBy = "klant", targetEntity = Account.class, cascade=CascadeType.ALL)//, fetch = FetchType.EAGER)
 	//@Cascade({CascadeType.SAVE_UPDATE})
 	private Set<Account> accounts;

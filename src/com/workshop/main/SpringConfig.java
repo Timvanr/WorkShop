@@ -4,6 +4,9 @@ import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,13 +17,18 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 
 @Configuration
 @ComponentScan(basePackages = {"com.workshop.service", "com.workshop.dao", "com.workhop.main", "com.workshop.model"})
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "com.workshop.dao")
+@EnableJpaRepositories(basePackages = "com.workshop.*")
 public class SpringConfig {
 
 	@Bean (name = "dataSource")
@@ -31,13 +39,14 @@ public class SpringConfig {
 		config.setMaximumPoolSize(14);
 		config.setInitializationFailFast(true);
 		config.setDriverClassName("com.mysql.jdbc.Driver");
-		config.setJdbcUrl("jdbc:mysql://localhost:3306/test");
-		config.setUsername("Sysdba");
-		config.setPassword("MasterKey");
+		config.setJdbcUrl("jdbc:mysql://localhost:3306/workshop2");
+		config.setUsername("sandermegens");
+		config.setPassword("FrIkandel");
 		config.addDataSourceProperty("useSSL", "false");
 		config.addDataSourceProperty("cachePrepStmts", "true");
 		config.addDataSourceProperty("prepStmtCacheSize", "250");
-		config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");				
+		config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+				
 		HikariDataSource hikariDS = new HikariDataSource(config);
 		return hikariDS;
 	}
@@ -46,11 +55,13 @@ public class SpringConfig {
 	public EntityManagerFactory entityManagerFactory(){
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		vendorAdapter.setGenerateDdl(true);
+		
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
 		factory.setPackagesToScan("com.workshop.model");
 		factory.setDataSource(dataSource());
-		factory.afterPropertiesSet();		
+		factory.afterPropertiesSet();
+		
 		return factory.getObject();
 	}
 	
@@ -69,7 +80,6 @@ public class SpringConfig {
 		return transactionManager;
 	}
 	*/
-	
 	@Bean (name = "sessionFactory")
 	public LocalSessionFactoryBean sessionFactory(){
 		LocalSessionFactoryBean sfb = new LocalSessionFactoryBean();
@@ -80,4 +90,7 @@ public class SpringConfig {
 		sfb.setHibernateProperties(props);
 		return sfb;	
 	}
+	
+
+
 }

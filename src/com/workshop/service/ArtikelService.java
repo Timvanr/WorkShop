@@ -1,13 +1,17 @@
 package com.workshop.service;
 
+
+
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.workshop.model.Artikel;
 
 public interface ArtikelService {
-
-	Artikel findArtikel(long artikel_id);
-	 void addArtikel(Artikel artikel);
-	 List<Artikel> listArtikelen();
-	 void deleteArtikel(long artikel_id);
+	
+	Artikel findByArtikelId(Long artikel_id);
+	Artikel findByNaam(String artikel_naam);
+	List<Artikel> findAlleArtikelen();
+	List<Artikel> findAlleArtikelenDuurderDan(BigDecimal artikel_prijs);
+	List<Artikel> findAlleArtikelenGoedkoperDan(BigDecimal artikel_prijs);
 }

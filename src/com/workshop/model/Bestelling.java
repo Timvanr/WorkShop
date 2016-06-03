@@ -3,51 +3,34 @@ package com.workshop.model;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.Date;
 
 import javax.persistence.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 @Entity
-public class Bestelling implements java.io.Serializable {
+public class Bestelling {
 	
 	@Id	@GeneratedValue
 	@Column(name="bestelling_id")
-	private long id;
+	protected long id;
 	
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne
 	@JoinColumn(name="klant_id")
-	private Klant klant;
+	protected Klant klant;
 	
-	@Temporal(TemporalType.DATE)
 	private Date datum;
 	
 	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="bestelling_has_artikel", joinColumns=@JoinColumn(name="bestelling_id"))
 	@MapKeyJoinColumn(name="artikel_id", referencedColumnName="artikel_id")
 	@Column(name="artikel_aantal")
-	private Map<Artikel, Integer> artikelen;
+	protected Map<Artikel, Integer> artikelen;
 	
 	@OneToOne(mappedBy="bestelling")
-	private Factuur factuur;
-	
-	@Autowired
-	public Bestelling(Klant klant) {
-		this.klant = klant;
-		this.datum = new Date();
-		this.artikelen = new HashMap();
-	}
-	
-	@Deprecated
-	public Bestelling() {
-		this(null);
-	}
-	
+	protected Factuur factuur;
+
 	public long getKlant_id() { 
 		return this.klant.getId();
-	}
-	public void setKlant_id(long klant_id){
-		this.klant.setId(klant_id);
 	}
 	public Klant getKlant(){
 		return this.klant;
@@ -58,7 +41,7 @@ public class Bestelling implements java.io.Serializable {
 	public long getId() {
 		return this.id;
 	}
-	public void setId(long bestelling_id) {
+	public void setId(int bestelling_id) {
 		this.id = bestelling_id;
 	}
 	public Date getDatum() {
@@ -96,8 +79,7 @@ public class Bestelling implements java.io.Serializable {
 			System.out.println("Artikel staat niet in de lijst; verwijderen mislukt.");
 		}
 	}
-	
-	@OneToOne(fetch = FetchType.EAGER)
+	/*
 	public BigDecimal getTotaalPrijs(){
 		BigDecimal total = BigDecimal.ZERO;
 		
@@ -118,13 +100,5 @@ public class Bestelling implements java.io.Serializable {
 		return "Bestellingnummer: " + this.id + ", Klantnummer: " + getKlant_id() + "\n" + 
 				artikelLijst + "Totaalprijs: " + NumberFormat.getCurrencyInstance().format(getTotaalPrijs());
 	}
-	/*
-	public static void main(String[] args){
-		Bestelling bestelling = new Bestelling(555);
-		bestelling.voegArtikelToe(new Artikel(34, "warm broodje", new BigDecimal(3.95)), new Integer(2));
-		bestelling.voegArtikelToe(new Artikel(44, "latte machiato", new BigDecimal(2.95)), new Integer(2));
-		bestelling.removeArtikel(new Artikel(34, "warm broodje", new BigDecimal(3.95)), new Integer(2));
-		System.out.println(bestelling);
-	}
 	*/
-}
+	}
