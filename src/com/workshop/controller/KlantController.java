@@ -41,20 +41,18 @@ public class KlantController {
 		mav.addObject("klanten", klanten);
 		return mav;
     }
-	
-	
-	
+		
 	@RequestMapping(value = { "/deleteKlant{id}" }, method = RequestMethod.GET)
     public String deleteKlant(@PathVariable long id){
 		this.klantService.deleteKlant(id);
         return "redirect:/Klant.html";
     }
-	
+	/*
 	@RequestMapping(value = { "Klant/save" }, method = RequestMethod.POST)
 	public String addKlant(@ModelAttribute("klant") Klant k){		
 		this.klantService.addKlant(k);			
 		return "redirect:/Klant.html";
-	}
+	}*/
 	
 	@RequestMapping(value = {"Klant/findKlant"}, method =RequestMethod.GET)
 	public ModelAndView findKlant(@RequestParam("id") String account_id) {
@@ -80,19 +78,11 @@ public class KlantController {
 	}
 	
 	//Account Methode
-	@RequestMapping(value = { "klant/nieuweAccount" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "Klant/NewAccount" }, method = RequestMethod.POST)
 	public String addAccount(@ModelAttribute("klant, adres, account")
-				Klant k, Adres a, Account ac){	
-		this.adresService.addAdres(a);
-		Map<Adres, AdresType> adressen = new HashMap<>();
-		AdresType adresType = new AdresType();
-		adresType.setAdres_type_id(1);
-		adressen.put(a, adresType);
-		k.setAdressen(adressen);
-		this.klantService.addKlant(k);
-		ac.setKlant(k);
-		this.accountService.addAccount(ac);
-		return "redirect:/NewAccount.html";
+				Klant k, Adres a, Account ac){			
+		this.klantService.createAccount(k, a, ac);		
+		return "/NewAccount";
 	}
 	
 	@RequestMapping ("/Account")

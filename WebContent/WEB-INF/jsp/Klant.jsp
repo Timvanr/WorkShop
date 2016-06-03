@@ -14,7 +14,7 @@
 <h2>Welkom in het Klant Menu</h2>
 
 
-<form action="klant/nieuweAccount" method=post>
+<form action="Klant/NewAccount" method=post>
 <table cellpadding=4 cellspacing=2 border=5>
 <th bgcolor="#CCCCFF" colspan=2>
 <font size=5>Klant Toevoegen</font>

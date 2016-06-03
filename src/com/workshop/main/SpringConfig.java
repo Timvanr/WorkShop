@@ -20,7 +20,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @ComponentScan(basePackages = {"com.workshop.service", "com.workshop.dao", "com.workhop.main", "com.workshop.model"})
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "com.workshop.dao")
+@EnableJpaRepositories(basePackages = "com.workshop.*")
 public class SpringConfig {
 
 	@Bean (name = "dataSource")

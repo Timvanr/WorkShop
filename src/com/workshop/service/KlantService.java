@@ -2,7 +2,7 @@ package com.workshop.service;
 
 import java.util.List;
 
-import com.workshop.model.Klant;
+import com.workshop.model.*;
 
 public interface KlantService {
 
@@ -10,4 +10,5 @@ public interface KlantService {
 	void deleteKlant(long id);
 	void addKlant(Klant k);
 	Klant findKlant(long id);
+	void createAccount(Klant k, Adres a, Account ac);
 }

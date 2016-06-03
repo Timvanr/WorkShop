@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.workshop.dao.AdresDAOInterface;
-import com.workshop.dao.BestellingDAOInterface;
+import com.workshop.dao.AdresDAO;
+import com.workshop.dao.BestellingDAO;
 import com.workshop.model.Adres;
 import com.workshop.model.Bestelling;
 
@@ -17,7 +17,7 @@ public class BestellingServiceImpl implements BestellingService{
 
 	
 	@Autowired
-	private BestellingDAOInterface bestelDAO;
+	private BestellingDAO bestelDAO;
 	
 	@Override
 	public Bestelling findBestelling(long bestelling_id) {

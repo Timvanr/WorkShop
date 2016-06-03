@@ -1,13 +1,13 @@
 package com.workshop.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.workshop.dao.ArtikelDAOInterface;
-import com.workshop.model.Adres;
+import com.workshop.dao.ArtikelDAO;
 import com.workshop.model.Artikel;
 
 @Service
@@ -15,26 +15,31 @@ import com.workshop.model.Artikel;
 public class ArtikelServiceImpl implements ArtikelService{
 
 	@Autowired
-	private ArtikelDAOInterface artikelDAO;
+	private ArtikelDAO artikelDao;
 	
 	@Override
-	public Artikel findArtikel(long artikel_id) {
-		return artikelDAO.findOne(artikel_id);
+	public Artikel findByArtikelId(Long artikel_id) {
+		return artikelDao.findOne(artikel_id);
 	}
 
 	@Override
-	public void addArtikel(Artikel artikel) {
-		artikelDAO.save(artikel);
+	public Artikel findByNaam(String artikel_naam) {
+		return artikelDao.findByNaam(artikel_naam);
 	}
 
 	@Override
-	public List<Artikel> listArtikelen() {
-		return (List<Artikel>) artikelDAO.findAll();
+	public List<Artikel> findAlleArtikelen() {
+		return artikelDao.findAll();
 	}
 
 	@Override
-	public void deleteArtikel(long artikel_id) {
-		artikelDAO.delete(artikel_id);
+	public List<Artikel> findAlleArtikelenDuurderDan(BigDecimal artikel_prijs) {
+		return artikelDao.findByPrijsGreaterThan(artikel_prijs);
+	}
+
+	@Override
+	public List<Artikel> findAlleArtikelenGoedkoperDan(BigDecimal artikel_prijs) {
+		return artikelDao.findByPrijsLessThan(artikel_prijs);
 	}
 
 }

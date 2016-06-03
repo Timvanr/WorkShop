@@ -14,14 +14,14 @@
 
 Uw gezochte klant:<br><br>
 <table border=2 bordercolor="black" bgcolor=#CCCCFF>
-
 <tr>
 		<th width="80">id</th>
 		<th width="120">voornaam</th>
 		<th width="80">tussenvoegsel</th>
 		<th width="120">achternaam</th>
 		<th width="120">email</th>
-		
+		<th width="120">Nieuwe Bestelling</th>
+		<th width="120">Bestelling bekijken</th>		
 	</tr>	
 	<tr>
 		<td>${klant.id}</td>
@@ -29,13 +29,10 @@ Uw gezochte klant:<br><br>
 		<td>${klant.tussenvoegsel}</td>
 		<td>${klant.achternaam }</td>
 		<td>${klant.email }</td>
+		<td width="60"><a href="maakBestelling.html">Nieuw</a><br>
+		<td width="60"><a href="<c:url value='findBestelling${klant.id}.html'/>">Bekijk</a><br>		
 		 </tr>
 </table>
-
-<br>Wilt u:
-<br><a href = "Artikel.html">Nieuwe bestelling</a>
-<br><a href = "listKlant.html">Bestelling bekijken</a>
-
 
 </body>
 </html>

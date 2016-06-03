@@ -1,20 +1,13 @@
 package com.workshop.model;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.persistence.*;
-
-import org.springframework.stereotype.Component;
 
 @Entity
 @Table(name = "Adres", uniqueConstraints = {
-	@UniqueConstraint(columnNames = {"postcode", "huisnummer", "toevoeging"}, name = "uniek_adres")
-})
+	@UniqueConstraint(columnNames = {"postcode", "huisnummer", "toevoeging"}, name = "uniek_adres")})
 public class Adres implements java.io.Serializable{
+
+	private static final long serialVersionUID = 5713834300482152571L;
 	@Id
 	@GeneratedValue (strategy=GenerationType.AUTO)
 	private long adres_id;
@@ -35,10 +28,10 @@ public class Adres implements java.io.Serializable{
 		inverseJoinColumns=@JoinColumn(name="adrestype_id"))
 	@MapKeyJoinColumn(table="klant_has_adres", name="klant_id", referencedColumnName="klant_id")
 	private Map<Klant, AdresType> bewoners;
-	
+	*/
 	public Adres() {
 		//this.bewoners = new HashMap();
-	}*/
+	}
 
 	public Adres(String straat, int huisnummer, String toevoeging, String postcode,	String plaats) {
 		this.straatnaam = straat;

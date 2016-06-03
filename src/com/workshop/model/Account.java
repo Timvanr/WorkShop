@@ -8,12 +8,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.springframework.stereotype.Component;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "Account")
 public class Account implements java.io.Serializable{
+
+	private static final long serialVersionUID = -4448115878877995696L;
 	@Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
 	private long account_id;
@@ -22,6 +24,7 @@ public class Account implements java.io.Serializable{
 	@ManyToOne
     @JoinColumn(name = "klant_id", nullable = false)
 	private Klant klant; 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column (name = "create_datum")
 	private java.util.Date createDatum;
 	

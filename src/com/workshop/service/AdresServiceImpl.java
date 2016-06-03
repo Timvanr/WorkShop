@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.workshop.dao.AdresDAOInterface;
+import com.workshop.dao.AdresDAO;
 import com.workshop.model.Adres;
 
 @Service
@@ -14,7 +14,7 @@ import com.workshop.model.Adres;
 public class AdresServiceImpl implements AdresService{
 
 	@Autowired
-	private AdresDAOInterface adresDAO;
+	private AdresDAO adresDAO;
 	
 	
 	@Override
@@ -29,7 +29,7 @@ public class AdresServiceImpl implements AdresService{
 
 	@Override
 	public List<Adres> listAdressen() {
-		return (List<Adres>) adresDAO.findAll();
+		return adresDAO.findAll();
 	}
 
 

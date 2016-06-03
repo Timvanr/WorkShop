@@ -5,13 +5,10 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
-<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
-<style type="text/css">
-</style>
 </head>
 <body>
-
 <table border="5" bordercolor="black">
 	<tr>
 		<th width="80" >id</th>
@@ -22,7 +19,7 @@
 	</tr>
 	<c:forEach items="${artikelen}" var="artikel">
 		<tr>
-			<td width="80">${artikel.id}</td>
+			<td width="80">${artikel.artikel_id}</td>
 			<td width="120">${artikel.naam}</td>
 			<td width="80">&euro; ${artikel.prijs}</td>
 			<td width="120">${artikel.omschrijving}</td>
@@ -34,7 +31,5 @@
 		</tr>
 	</c:forEach>
 </table>
-
-
 </body>
 </html>

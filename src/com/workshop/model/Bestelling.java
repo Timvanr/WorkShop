@@ -3,9 +3,8 @@ package com.workshop.model;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.*;
-
+import javax.annotation.Resource;
 import javax.persistence.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
@@ -22,6 +21,7 @@ public class Bestelling implements java.io.Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date datum;
 	
+	@Resource(name="artikel")
 	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="bestelling_has_artikel", joinColumns=@JoinColumn(name="bestelling_id"))
 	@MapKeyJoinColumn(name="artikel_id", referencedColumnName="artikel_id")
@@ -38,9 +38,8 @@ public class Bestelling implements java.io.Serializable {
 		this.artikelen = new HashMap();
 	}
 	
-	@Deprecated
+	
 	public Bestelling() {
-		this(null);
 	}
 	
 	public long getKlant_id() { 

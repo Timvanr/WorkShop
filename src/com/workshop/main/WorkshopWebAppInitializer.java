@@ -11,18 +11,16 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 public class WorkshopWebAppInitializer implements WebApplicationInitializer{
 
-	 @Override
-	    public void onStartup(ServletContext container) {
+	@Override
+	public void onStartup(ServletContext container) {
 		AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
 		rootContext.register(SpringConfig.class);
 		container.addListener(new ContextLoaderListener(rootContext));
-		
 		AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
 		dispatcherContext.register(DispatcherConfig.class);
-		 
-		 ServletRegistration.Dynamic registration = container.addServlet("dispatcher", new DispatcherServlet(dispatcherContext));
-	        registration.setLoadOnStartup(1);
-	        registration.addMapping("/");
-	      
-	    }
+		ServletRegistration.Dynamic registration = container.addServlet("dispatcher", new DispatcherServlet(dispatcherContext));
+		registration.setLoadOnStartup(1);
+		registration.addMapping("/");
+
+	}
 }
