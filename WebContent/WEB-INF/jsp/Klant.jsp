@@ -1,50 +1,62 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Workshop Web-App</title>
 <style type="text/css">
 </style>
 </head>
-<h1>add Klant</h1>
-<c:url var="addKlant" value="/addKlant"></c:url>
-<form:form action="${addKlant}" commandName="Klant">
-	<table>
-		<tr>
-			<td><form:label path="voornaam">
-					<spring:message text="Voornaam" />
-				</form:label></td>
-			<td><form:input path="klant.voornaam" readonly="true" size="25"
-					disabled="true" /> <form:hidden path="voornaam" /></td>
-		</tr>
-		<tr>
-			<td><form:label path="tussenvoegsel">
-					<spring:message text="tussenvoegsel" />
-				</form:label></td>
-			<td><form:input path="klant.tussenvoegsel" /></td>
-		</tr>
-		<tr>
-			<td><form:label path="achternaam">
-					<spring:message text="Achternaam" />
-				</form:label></td>
-			<td><form:input path="klant.achternaam" /></td>
-		</tr>
-		<tr>
-		<tr>
-			<td><form:label path="email">
-					<spring:message text="Email" />
-				</form:label></td>
-			<td><form:input path="klant.email" /></td>
-		</tr>
-		<tr>
-
-			<td colspan="2"><input type="submit"
-				value="<spring:message text="Add Person"/>" /></td>
-		</tr>
-	</table>
-</form:form>
+<form action="Klant/save.html" method=post>
+<table cellpadding=4 cellspacing=2 border=0>
+<th bgcolor="#CCCCFF" colspan=2>
+<font size=5>Klant Toevoegen</font>
 <br>
+<font size=1><sup>*</sup> Verplichte velden</font>
+</th>
+<tr bgcolor="#c8d8f8">
+<td valign=top> 
+<b>Voornaam<sup>*</sup></b> 
+<br>
+<input type="text" name="voornaam" value="" size=15 maxlength=20></td>
+<td  valign=top>
+<b>Achternaam<sup>*</sup></b>
+<br>
+<input type="text" name="achternaam" value="" size=15 maxlength=20></td>
+</tr>
+<tr bgcolor="#c8d8f8">
+<td valign=top>
+<b>E-Mail<sup>*</sup></b> 
+<br>
+<input type="text" name="email" value="" size=25  maxlength=125>
+<br></td>
+<td  valign=top>
+<b>Tussenvoegsel<sup></sup></b> 
+<br>
+<input type="text" name="tussenvoegsel" value="" size=5  maxlength=5></td>
+</tr>
+<tr bgcolor="#c8d8f8">
+<td valign=top colspan=2>
+</td>
+</tr>
+
+<td  align=center colspan=2>
+<input type="submit" value="Submit"> <input type="reset"  
+value="Reset">
+</td>
+</tr>
+</table>
+</center>
+</form>
+<br>
+
+<form action="Klant/findKlant">
+Klant ID: <input type="text" name="id"> <input type="submit" value="Zoek Klant">
+</form><br>
+
 <table border="5" bordercolor="black">
 
 	<tr>
@@ -71,12 +83,12 @@
 	</c:forEach>
 </table>
 
-
-
 <br>
 <div
 	style="font-family: verdana; padding: 10px; border-radius: 10px; font-size: 12px; text-align: center;">
 
 	Jaa, dit zijn alle klanten uit mijn database!</div>
+
+<a href="NewFile.html">FactuurMenu</a>
 </body>
 </html>

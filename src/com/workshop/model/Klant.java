@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Table
 public class Klant {
 	
-	private static final long serialVersionUID = 1270183298575805842L;
 	@Id
 	@GeneratedValue (strategy=GenerationType.AUTO)
 	@Column(name="klant_id")

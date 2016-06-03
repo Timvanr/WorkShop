@@ -26,10 +26,9 @@ import com.zaxxer.hikari.HikariDataSource;
 
 
 @Configuration
-@ComponentScan(basePackages = {"com.workshop.service", "com.workshop.dao", "com.workhop.main", "com.workshop.model", "com.workshop.controller"})
+@ComponentScan(basePackages = {"com.workshop.service", "com.workshop.dao", "com.workhop.main", "com.workshop.model"})
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "com.workshop.dao")
-@EnableWebMvc
+@EnableJpaRepositories(basePackages = "com.workshop.*")
 public class SpringConfig {
 
 	@Bean (name = "dataSource")
@@ -85,20 +84,13 @@ public class SpringConfig {
 	public LocalSessionFactoryBean sessionFactory(){
 		LocalSessionFactoryBean sfb = new LocalSessionFactoryBean();
 		sfb.setDataSource(dataSource());
-		sfb.setPackagesToScan("workshop");
+		sfb.setPackagesToScan("com.workshop");
 		Properties props = new Properties();
 		props.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
 		sfb.setHibernateProperties(props);
 		return sfb;	
 	}
 	
-	@Bean (name="viewResolver")
-	public InternalResourceViewResolver viewResolver(){
-		InternalResourceViewResolver viewRes = new InternalResourceViewResolver();
-		viewRes.setPrefix("/WEB-INF/jsp/");
-		viewRes.setSuffix(".jsp");
-		viewRes.setViewClass(JstlView.class);
-		return viewRes;
-	}
+
 
 }
