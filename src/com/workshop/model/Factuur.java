@@ -6,15 +6,15 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import org.springframework.stereotype.Component;
 
 @Entity
 @Table
 public class Factuur {
 	
-	@Id 
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="factuur_id")
-	protected Long factuur_id;
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	@Column
+	private long factuur_id;
 	
 	@Column
 	private String factuurNummer;
@@ -23,15 +23,31 @@ public class Factuur {
 	private Date factuurDatum;
 	
 	@OneToMany (mappedBy="factuur")
-	protected Set<Betaling> betalingSet;
+	private Set<Betaling> betalingSet;
 	
 	@OneToOne
 	@JoinColumn(name="bestelling_id")
-	protected Bestelling bestelling;
+	private Bestelling bestelling;
 	
 	@Column
 	private BigDecimal totaalBedrag;
 	
+	
+	//@Deprecated
+	public Factuur(){
+		this.factuurDatum = new Date();
+		this.betalingSet = new HashSet<Betaling>();
+	}
+	
+	public Factuur(Bestelling bestelling){
+		this.bestelling = bestelling;
+		this.factuurDatum = new Date();
+		this.betalingSet = new HashSet<Betaling>();
+		this.totaalBedrag = bestelling.getTotaalPrijs();
+	}
+	public long getFactuur_id() {
+		return this.factuur_id;
+	}
 	
 	public void setFactuur_id(long factuur_id) {
 		this.factuur_id = factuur_id;
@@ -84,9 +100,5 @@ public class Factuur {
 		this.totaalBedrag = totaalBedrag;
 	}
 
-	//openstaand en betaaldbedrag nog toevoegen
-	@Override
-	public String toString(){
-		return "Factuur: " + this.factuur_id + " factuur datum: " + this.factuurDatum + " factuur nummer: " + this.factuurNummer;
-	}
+	
 }

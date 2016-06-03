@@ -2,36 +2,37 @@ package com.workshop.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+
 import javax.persistence.*;
+
+import org.springframework.stereotype.Component;
 
 @Entity
 @Table
 public class Betaling {
+
+public enum Betaalwijze {
+	IDeal, PinBetaling, Contant, CreditCard;
 	
-	public enum Betaalwijze {
-		IDeal, PinBetaling, Contant, CreditCard;
-		
-	}
-	
-	@Id 
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column (name="betaling_id")
-	protected Long betaling_id;
+}
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	@Column
+	private long betaling_id;
 	
 	@Temporal(TemporalType.DATE)
 	private Date betaalDatum;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="betaalwijze")
-	protected Betaalwijze betaalwijze;
+	private Betaalwijze betaalWijze;
 	
 	@ManyToOne
 	@JoinColumn (name="klant_id", nullable=false)
-	protected Klant klant;
+	private Klant klant;
 	
 	@ManyToOne
 	@JoinColumn (name="factuur_id")
-	protected Factuur factuur;
+	private Factuur factuur;
 	
 	@Column
 	private String betalingsGegevens;
@@ -72,11 +73,11 @@ public class Betaling {
 	}
 	
 	public Betaalwijze getBetaalWijze() {
-	return this.betaalwijze;
+	return this.betaalWijze;
 	}
 	
 	public void setBetaalWijze(Betaalwijze betaalWijze) {
-		this.betaalwijze = betaalWijze;
+		this.betaalWijze = betaalWijze;
 	}
 	
 	public Klant getKlant() {

@@ -6,15 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.workshop.dao.KlantDAO;
+import com.workshop.dao.KlantDAOInterface;
 import com.workshop.model.Klant;
 
-@Service
+@Service("klantService")
 @Transactional
 public class KlantServiceImpl implements KlantService{
 
 	@Autowired
-	private KlantDAO klantDAO;
+	private KlantDAOInterface klantDAO;
 	
 	@Override
 	public List<Klant> listKlanten() {
@@ -29,16 +29,7 @@ public class KlantServiceImpl implements KlantService{
 	@Override
 	public void addKlant(Klant k) {
 		klantDAO.save(k);
-	}
-	
-	@Override
-	public Klant findKlant(long id){
-		return klantDAO.findOne(id);
-	}
-
-	@Override
-	public List<Klant> findKlantByVoornaam(String voornaam) {
-		return klantDAO.readByVoornaam(voornaam);
+		
 	}
 
 }

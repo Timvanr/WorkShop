@@ -7,16 +7,20 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import org.springframework.stereotype.Component;
+
+import com.workshop.dao.KlantDAOInterface;
+
 @Entity
 public class Bestelling {
 	
 	@Id	@GeneratedValue
 	@Column(name="bestelling_id")
-	protected long id;
+	private long id;
 	
 	@ManyToOne
 	@JoinColumn(name="klant_id")
-	protected Klant klant;
+	private Klant klant;
 	
 	private Date datum;
 	
@@ -24,11 +28,23 @@ public class Bestelling {
 	@CollectionTable(name="bestelling_has_artikel", joinColumns=@JoinColumn(name="bestelling_id"))
 	@MapKeyJoinColumn(name="artikel_id", referencedColumnName="artikel_id")
 	@Column(name="artikel_aantal")
-	protected Map<Artikel, Integer> artikelen;
+	private Map<Artikel, Integer> artikelen;
 	
 	@OneToOne(mappedBy="bestelling")
-	protected Factuur factuur;
+	private Factuur factuur;
 
+	public Bestelling(Klant klant) {
+		this.klant = klant;
+		this.datum = new Date();
+		this.artikelen = new HashMap();
+		this.factuur = new Factuur(this);
+	}
+	
+	@Deprecated
+	public Bestelling() {
+		this(null);
+	}
+	
 	public long getKlant_id() { 
 		return this.klant.getId();
 	}
@@ -79,7 +95,7 @@ public class Bestelling {
 			System.out.println("Artikel staat niet in de lijst; verwijderen mislukt.");
 		}
 	}
-	/*
+	
 	public BigDecimal getTotaalPrijs(){
 		BigDecimal total = BigDecimal.ZERO;
 		
@@ -100,5 +116,13 @@ public class Bestelling {
 		return "Bestellingnummer: " + this.id + ", Klantnummer: " + getKlant_id() + "\n" + 
 				artikelLijst + "Totaalprijs: " + NumberFormat.getCurrencyInstance().format(getTotaalPrijs());
 	}
-	*/
+	/*
+	public static void main(String[] args){
+		Bestelling bestelling = new Bestelling(555);
+		bestelling.voegArtikelToe(new Artikel(34, "warm broodje", new BigDecimal(3.95)), new Integer(2));
+		bestelling.voegArtikelToe(new Artikel(44, "latte machiato", new BigDecimal(2.95)), new Integer(2));
+		bestelling.removeArtikel(new Artikel(34, "warm broodje", new BigDecimal(3.95)), new Integer(2));
+		System.out.println(bestelling);
 	}
+	*/
+}

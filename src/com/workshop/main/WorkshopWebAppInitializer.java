@@ -14,15 +14,14 @@ public class WorkshopWebAppInitializer implements WebApplicationInitializer{
 	 @Override
 	    public void onStartup(ServletContext container) {
 		AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
-		rootContext.register(SpringConfig.class);
+	    rootContext.register(SpringConfig.class);
+		WebApplicationContext context = rootContext;
 		container.addListener(new ContextLoaderListener(rootContext));
-		
-		AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
-		dispatcherContext.register(DispatcherConfig.class);
 		 
-		 ServletRegistration.Dynamic registration = container.addServlet("dispatcher", new DispatcherServlet(dispatcherContext));
+		 ServletRegistration.Dynamic registration = container.addServlet("dispatcher", new DispatcherServlet(context));
 	        registration.setLoadOnStartup(1);
-	        registration.addMapping("/");
-	      
+	        registration.addMapping("/welcome.jsp");
+	        registration.addMapping("/welcome.html");
+	        registration.addMapping("*.html");
 	    }
 }
