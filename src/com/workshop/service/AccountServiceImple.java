@@ -41,4 +41,14 @@ public class AccountServiceImple implements AccountService{
 		
 	}
 
+	@Override
+	public Account findByNaamAndWachtwoord(String account_naam, String wachtwoord) {
+		return accountDAO.findByNaamAndWachtwoord(account_naam, wachtwoord);
+	}
+
+	@Override
+	public Account findByNaam(String account_naam) {
+		return accountDAO.findByNaam(account_naam);
+	}
+
 }

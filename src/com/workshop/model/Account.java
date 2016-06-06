@@ -27,6 +27,8 @@ public class Account implements java.io.Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column (name = "create_datum")
 	private java.util.Date createDatum;
+	@Column (name = "wachtwoord")
+	private String wachtwoord;
 	
 	public Account() {
     }
@@ -61,5 +63,13 @@ public class Account implements java.io.Serializable{
 
 	public void setCreateDatum(java.util.Date createDatum) {
 		this.createDatum = createDatum;
+	}
+
+
+	public String getWachtwoord() {
+		return wachtwoord;
+	}
+	public void setWachtwoord(String wachtwoord) {
+		this.wachtwoord = wachtwoord;
 	}
 }

@@ -10,4 +10,6 @@ public interface AccountService {
 	 void addAccount(Account account);
 	 List<Account> listAccounts();
 	 void deleteAccount(long account_id);
+	 Account findByNaamAndWachtwoord(String account_naam, String wachtwoord);
+	 Account findByNaam(String account_naam);
 }

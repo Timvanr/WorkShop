@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,10 +34,17 @@ public class KlantController {
 	}
 	
 	// Klant methode
-	
 	@RequestMapping ("Klant")
-    public ModelAndView listKlanten() {
+    public ModelAndView lijstKlanten() {
 		ModelAndView mav = new ModelAndView("Klant");
+		List<Klant> klanten = klantService.listKlanten();
+		mav.addObject("klanten", klanten);
+		return mav;
+    }
+	
+	@RequestMapping ("CheckDatabase")
+    public ModelAndView listKlanten() {
+		ModelAndView mav = new ModelAndView("CheckDatabase");
 		List<Klant> klanten = klantService.listKlanten();
 		mav.addObject("klanten", klanten);
 		return mav;
@@ -54,16 +62,30 @@ public class KlantController {
 		return "redirect:/Klant.html";
 	}*/
 	
-	@RequestMapping(value = {"Klant/findKlant"}, method =RequestMethod.GET)
-	public ModelAndView findKlant(@RequestParam("id") String account_id) {
-		ModelAndView mav =  new ModelAndView("findKlant");
-		Long id = Long.decode(account_id);
-		Account account = accountService.findAccount(id);
-		Klant klant = klantService.findKlant(account.getKlant().getId());
-		mav.addObject("klant", klant);
+	@RequestMapping(value = {"findKlant"}, method = RequestMethod.GET)
+	public ModelAndView findKlant(@RequestParam Map<String, String> requestParams) {
+		String account_naam = requestParams.get("naam");
+		String wachtwoord = requestParams.get("wachtwoord");
+		ModelAndView mav = null;
+		Account account = accountService.findByNaam(account_naam);
+		if (account == null) {
+			String acountNietGevonden = "Account niet gevonden";
+			mav = new ModelAndView("Account");
+			mav.addObject("accBericht", acountNietGevonden);
+		}//BCrypt.checkpw(account.getWachtwoord(), wachtwoord)
+		else if (BCrypt.checkpw(wachtwoord, account.getWachtwoord()) == false) {
+			String verkeerdPW = "Het opgegeven wachtwoord voor deze account klopt niet";
+			mav = new ModelAndView("Account");
+			mav.addObject("accBericht", verkeerdPW);
+		}
+		else {
+			Klant klant = klantService.findKlant(account.getKlant().getId());
+			mav = new ModelAndView("findKlant");
+			mav.addObject("klant", klant);
+		}	
 		return mav;
 	}
-
+/*
 	@RequestMapping(value = { "Klant/saveAdres" }, method = RequestMethod.POST)
 	public String addKlant(@ModelAttribute("klant, adres, adresType")
 				Klant k, Adres a, AdresType at){
@@ -75,13 +97,18 @@ public class KlantController {
 		k.setAdressen(adressen);
 		this.klantService.addKlant(k);			
 		return "redirect:/Klant.html";
-	}
+	}*/
 	
 	//Account Methode
 	@RequestMapping(value = { "Klant/NewAccount" }, method = RequestMethod.POST)
 	public String addAccount(@ModelAttribute("klant, adres, account")
-				Klant k, Adres a, Account ac){			
-		this.klantService.createAccount(k, a, ac);		
+				Klant k, Adres a, Account ac){		
+		ac.setWachtwoord(BCrypt.hashpw(ac.getWachtwoord(), BCrypt.gensalt(12)));
+		try { 
+			this.klantService.createAccount(k, a, ac);		
+		}catch (Exception ex) {
+			return "/Fout";
+		}
 		return "/NewAccount";
 	}
 	
@@ -92,7 +119,7 @@ public class KlantController {
 		mav.addObject("accounts", accounts);
 		return mav;
     }
-	
+	/*
 	@RequestMapping(value = {"Account/findAccount"}, method =RequestMethod.GET)
 	public ModelAndView findAccount(@RequestParam("id") String account_id) {
 		ModelAndView mav =  new ModelAndView("findAccount");
@@ -102,5 +129,5 @@ public class KlantController {
 		mav.addObject("account", account);
 		mav.addObject("klant", klant);
 		return mav;
-	}
+	}*/
 }

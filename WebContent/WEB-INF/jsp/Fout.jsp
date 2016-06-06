@@ -6,16 +6,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Workshop Web-App</title>
+<title>Insert title here</title>
 </head>
 <body>
-${accBericht}
-<form action="findKlant" method="GET">
-Account Naam: <input type="text" name="naam" required> 
-Wachtwoord: <input type ="password" name="wachtwoord" required>
-<input type="submit" value="Zoek Klant">
-</form>
-<br>
-
+Deze klant bestaat al.
 </body>
 </html>

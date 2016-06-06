@@ -25,13 +25,19 @@
 <td valign=top> 
 <b>Accountnaam<sup>*</sup></b> 
 <br>
-<input type="text" name="naam" value="" size=20 maxlength=25></td>
+<input type="text" name="naam" value="" size=20 maxlength=25 required></td>
+</tr>
+<tr bgcolor="#c8d8f8">
+<td valign=top> 
+<b>Wachtwoord<sup>*</sup></b> 
+<br>
+<input type="password" name="wachtwoord" value="" size=20 maxlength=25 required></td>
 </tr>
 <tr bgcolor="#c8d8f8">
 <td valign=top> 
 <b>Voornaam<sup>*</sup></b> 
 <br>
-<input type="text" name="voornaam" value="" size=20 maxlength=100></td>
+<input type="text" name="voornaam" value="" size=20 maxlength=100 required></td>
 </tr>
 <td  valign=top>
 <b>Tussenvoegsel<sup></sup></b> 
@@ -42,13 +48,13 @@
 <td  valign=top>
 <b>Achternaam<sup>*</sup></b>
 <br>
-<input type="text" name="achternaam" value="" size=20 maxlength=100></td>
+<input type="text" name="achternaam" value="" size=20 maxlength=100 required></td>
 </tr>
 <tr>
 <td valign=top>
 <b>E-Mail<sup>*</sup></b> 
 <br>
-<input type="text" name="email" value="" size=20  maxlength=125>
+<input type="email" name="email" value="" size=20  maxlength=125 required placeholder="Enter a valid email address">
 <br></td>
 
 <br>
@@ -57,12 +63,12 @@
 <td valign=top> 
 <b>Straatnaam<sup>*</sup></b> 
 <br>
-<input type="text" name="straatnaam" value="" size=20 maxlength=100></td>
+<input type="text" name="straatnaam" value="" size=20 maxlength=100 required></td>
 </tr>
 <td  valign=top>
 <b>Huisnummer<sup>*</sup></b>
 <br>
-<input type="text" name="huisnummer" value="" size=5 maxlength=5></td>
+<input type="number" name="huisnummer" value="" size=5 maxlength=5 required></td>
 </tr>
 <tr bgcolor="#c8d8f8">
 <td  valign=top>
@@ -73,13 +79,13 @@
 <td  valign=top>
 <b>Postcode<sup>*</sup></b>
 <br>
-<input type="text" name="postcode" value="" size=20 maxlength=6></td>
+<input type="text" name="postcode" pattern="[1-9][0-9]{3}\s?[a-zA-Z]{2}" value="" size=20 maxlength=6 required ></td>
 </tr>
 <tr bgcolor="#c8d8f8">
 <td valign=top>
 <b>Woonplaats<sup>*</sup></b> 
 <br>
-<input type="text" name="woonplaats" value="" size=20  maxlength=125>
+<input type="text" name="woonplaats" value="" size=20  maxlength=125 required>
 <br></td>
 </tr>
 <td  valign=top>
@@ -99,29 +105,6 @@ value="Reset">
 </table>
 </form>
 
-<table border="5" bordercolor="black">
-	<tr>
-		<th width="80">id</th>
-		<th width="120">voornaam</th>
-		<th width="80">tussenvoegsel</th>
-		<th width="120">achternaam</th>
-		<th width="120">email</th>
-		<th width="60">edit delete</th>
-	</tr>
-	<c:forEach items="${klanten}" var="klant">
-		<tr>
-			<td width="80">${klant.id}</td>
-			<td width="120">${klant.voornaam}</td>
-			<td width="120">${klant.tussenvoegsel}</td>
-			<td width="80">${klant.achternaam}</td>
-			<td width="120">${klant.email}</td>
-			<td width="60"><a
-				href="${pageContext.request.contextPath}/team/edit/${team.id}.html">Edit</a><br>
-				<a href="<c:url value='deleteKlant${klant.id}.html'/>">Delete</a><br>
 
-			</td>
-		</tr>
-	</c:forEach>
-</table>
 </body>
 </html>

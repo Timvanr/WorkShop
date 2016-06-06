@@ -15,7 +15,8 @@ body
 		<h3>
 		<a href="Klant.html">Ben u een nieuwe klant? </a> 
 		<br><a href="Account.html">Of heeft u al een account bij ons?</a>
-		<br><br><br> 						
+		<br><br><br> 	
+			<a href="CheckDatabase.html">Dit is alleen even om te tonen dat dit kan.</a> 				
 		</h3>
 	</div>	
 </body>
